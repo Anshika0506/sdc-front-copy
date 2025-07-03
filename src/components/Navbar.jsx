@@ -74,7 +74,7 @@ const Navbar = () => {
 
   return (
     <div className="max-h-10">
-      <div className="fixed top-0 left-0 w-full h-24 gap-20 flex items-center z-50">
+      <div className="fixed left-0 top-0 z-50 flex h-24 w-full items-center gap-20">
         <div className="w-full p-3">
           <img
             src={headerLogo}
@@ -82,19 +82,19 @@ const Navbar = () => {
             className="h-18 w-auto object-contain"
           />
         </div>
-        <div className="fixed top-0 left-0 w-full h-24 pl-60 flex items-center">
-          <div className="fixed top-0 left-0 w-full flex items-center justify-between">
-            <div className="h-full flex items-center">
+        <div className="fixed left-0 top-0 flex h-24 w-full items-center pl-60">
+          <div className="fixed left-0 top-0 flex w-full items-center justify-between">
+            <div className="flex h-full items-center">
               <img src={header} alt="Logo" className="h-36 w-auto" />
             </div>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex flex-wrap items-center gap-3 mt-6 p-3 bg-white/3 backdrop-blur-sm rounded-3xl shadow-[inset_2px_2px_6px_rgba(255,255,255,0.5)]">
+          <div className="bg-white/3 mt-6 hidden flex-wrap items-center gap-3 rounded-3xl p-3 shadow-[inset_2px_2px_6px_rgba(255,255,255,0.5)] backdrop-blur-sm md:flex">
             {navItems.map((item, idx) => (
               <button
                 key={idx}
-                className="w-36 h-12 flex items-center justify-center rounded-xl text-white font-semibold text-lg cursor-pointer hover:text-xl transition-all duration-200 hover:shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] hover:backdrop-blur-md hover:bg-white/3"
+                className="hover:bg-white/3 flex h-12 w-36 cursor-pointer items-center justify-center rounded-xl text-lg font-semibold text-white transition-all duration-200 hover:text-xl hover:shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] hover:backdrop-blur-md"
               >
                 {item}
               </button>
@@ -102,24 +102,24 @@ const Navbar = () => {
           </div>
 
           {/* Hamburger Button - Mobile Only */}
-          <div className="md:hidden z-50 px-30">
+          <div className="px-30 z-50 md:hidden">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex flex-col justify-between w-8 h-6 focus:outline-none"
+              className="flex h-6 w-8 flex-col justify-between focus:outline-none"
             >
-              <span className="block h-1 bg-white rounded-sm"></span>
-              <span className="block h-1 bg-white rounded-sm"></span>
-              <span className="block h-1 bg-white rounded-sm"></span>
+              <span className="block h-1 rounded-sm bg-white"></span>
+              <span className="block h-1 rounded-sm bg-white"></span>
+              <span className="block h-1 rounded-sm bg-white"></span>
             </button>
           </div>
 
           {/* Mobile Menu Dropdown */}
           {menuOpen && (
-            <div className="absolute top-24 left-44 right-4 bg-white/5 backdrop-blur-md rounded-xl p-4 flex flex-col items-center gap-2 md:hidden z-40">
+            <div className="absolute left-44 right-4 top-24 z-40 flex flex-col items-center gap-2 rounded-xl bg-white/5 p-4 backdrop-blur-md md:hidden">
               {navItems.map((item, idx) => (
                 <button
                   key={idx}
-                  className="w-full text-center py-2 rounded-xl text-white font-semibold text-base cursor-pointer hover:text-lg hover:bg-white/10 transition-all duration-200"
+                  className="w-full cursor-pointer rounded-xl py-2 text-center text-base font-semibold text-white transition-all duration-200 hover:bg-white/10 hover:text-lg"
                 >
                   {item}
                 </button>
@@ -128,8 +128,12 @@ const Navbar = () => {
           )}
         </div>
       </div>
-      <div className="w-full h-24 flex items-center justify-center bg-cover">
-        <img src={BG} alt="Header" className="h-36 w-auto object-cover h-screen w-screen" />
+      <div className="flex w-full items-center justify-center bg-cover">
+        <img
+          src={BG}
+          alt="Header"
+          className="h-screen w-screen object-cover"
+        />
       </div>
     </div>
   );
