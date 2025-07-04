@@ -3,7 +3,7 @@
 // import About from '../pages/About/About';
 // import People from '../pages/People/People';
 // import Services from '../pages/Services/Services';
-// import Work from '../pages/Work/Work';
+ import Work from '../pages/Work/Work';
 // import Career from '../pages/Career/Career';
 // import Contact from '../pages/Contact/Contact';
 
