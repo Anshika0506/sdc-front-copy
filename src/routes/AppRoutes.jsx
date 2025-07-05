@@ -1,4 +1,15 @@
+<<<<<<< HEAD
+// import { Routes, Route } from 'react-router-dom';
+// import Home from '../pages/Home/Home';
+// import About from '../pages/About/About';
+// import People from '../pages/People/People';
+// import Services from '../pages/Services/Services';
+ import Work from '../pages/Work/Work';
+// import Career from '../pages/Career/Career';
+// import Contact from '../pages/Contact/Contact';
+=======
 // // src/routes/AppRoutes.jsx
+>>>>>>> a7b21e664b5a4eab00279ff2d823da1d64ebe55b
 
 import { Routes, Route } from 'react-router-dom';
 
