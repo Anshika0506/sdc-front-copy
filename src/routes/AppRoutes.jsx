@@ -1,54 +1,44 @@
-<<<<<<< HEAD
-// import { Routes, Route } from 'react-router-dom';
-// import Home from '../pages/Home/Home';
-// import About from '../pages/About/About';
-// import People from '../pages/People/People';
-// import Services from '../pages/Services/Services';
- import Work from '../pages/Work/Work';
-// import Career from '../pages/Career/Career';
-// import Contact from '../pages/Contact/Contact';
-=======
-// // src/routes/AppRoutes.jsx
->>>>>>> a7b21e664b5a4eab00279ff2d823da1d64ebe55b
+// src/routes/AppRoutes.jsx
 
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// Public pages
-// import Home from '../pages/Public/Home';
-// import About from '../pages/Public/About';
-// import People from '../pages/Public/People';
-// import Services from '../pages/Public/Services';
-// import Work from '../pages/Public/Work';
-// import Career from '../pages/Public/Career';
-// import Contact from '../pages/Public/Contact';
+import MainLayout from '../layout/MainLayout';
+import AdminLayout from '../layout/AdminLayout';
 
-// Admin pages
 import AdminLogin from '../pages/admin/Login';
-import AdminLayout from '../AdminLayout';
-// import AdminDashboard from '../pages/admin/Dashboard';
-// import ManageHome from '../pages/admin/ManageHome';
-// add more as needed...
+import Work from '../pages/public/Work/Work';
+import ProjectDetails from '../pages/public/Work/ProjectDetails';
 
-const AppRoutes = () => (
-  <Routes>
-    {/* ✅ Public routes */}
-    {/* <Route path="/" element={<Home />} /> */}
-    {/* <Route path="/about" element={<About />} /> */}
-    {/* <Route path="/people" element={<People />} /> */}
-    {/* <Route path="/services" element={<Services />} /> */}
-    {/* <Route path="/work" element={<Work />} /> */}
-    {/* <Route path="/career" element={<Career />} /> */}
-    {/* <Route path="/contact" element={<Contact />} /> */}
+// import other public and admin pages as needed
 
-    {/* ✅ Admin login route - without layout */}
-    <Route path="/admin/login" element={<AdminLogin />} />
+const AppRoutes = () => {
+  return (
+    <Routes>
 
-    {/* ✅ Admin routes - with AdminLayout */}
-    <Route path="/admin" element={<AdminLayout />}>
-      {/* <Route path="dashboard" element={<AdminDashboard />} /> */}
-      {/* <Route path="manage-home" element={<ManageHome />} /> */}
-      {/* Add other manage routes */}
-    </Route>
-  </Routes>
-);
+      {/* ✅ Public Site (wrapped in MainLayout) */}
+      <Route element={<MainLayout />}>
+        {/* Add all public routes inside here */}
+        {/* <Route path="/" element={<Home />} /> */}
+        {/* <Route path="/about" element={<About />} /> */}
+        {/* <Route path="/people" element={<People />} /> */}
+        <Route path="/work" element={<Work />} />
+        <Route path="/work/projectdetails" element={<ProjectDetails />} />
+        {/* <Route path="/contact" element={<Contact />} /> */}
+      </Route>
+
+      {/* ✅ Admin Login — does NOT use any layout */}
+      <Route path="/login" element={<AdminLogin />} />
+
+      {/* ✅ Admin Dashboard — wrapped in AdminLayout */}
+      <Route path="/admin" element={<AdminLayout />}>
+        {/* Example nested routes */}
+        {/* <Route path="dashboard" element={<Dashboard />} /> */}
+        {/* <Route path="manage-home" element={<ManageHome />} /> */}
+      </Route>
+
+    </Routes>
+  );
+};
+
 export default AppRoutes;

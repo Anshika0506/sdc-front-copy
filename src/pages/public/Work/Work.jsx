@@ -1,7 +1,7 @@
 import React from "react";
-import backgroundImage from '../components/img.png';
-import projectImage from '../components/project.png';
-import externalLinkIcon from '../components/breakpoint=Tablet, icon=external-link.png';
+import backgroundImage from '../../../assets/mesh-gradient.webp';
+import projectImage from '../../../assets/project.png';
+import externalLinkIcon from '../../../assets/breakpoint=Tablet, icon=external-link.png';
 import { useNavigate } from 'react-router-dom'; 
 
 const projects = [
@@ -35,7 +35,9 @@ export default function WorkPage() {
             {projects.map((project, index) => (
               <div
                 key={index}
-                onClick={() => navigate(`/project/${encodeURIComponent(project.title)}`)} 
+                // onClick={() => navigate(`/project/${encodeURIComponent(project.title)}`)} 
+                                onClick={() => navigate(`/work/projectdetails`)} 
+
                 className="hover-animated-card relative w-full max-w-[600px] mx-auto rounded-[2rem] p-6 md:p-8 text-left cursor-pointer group transition-all duration-[800ms]"
               >
                 <img

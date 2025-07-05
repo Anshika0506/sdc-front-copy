@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import backgroundImage from '../components/img.png';
-import projectImage from '../components/project.png';
-import icon from '../components/Icons.png';
+import backgroundImage from '../../../assets/mesh-gradient.webp';
+import projectImage from '../../../assets/project.png';
+import icon from '../../../assets/icons.png';
 
 export default function ProjectDetails() {
   const { title } = useParams();
