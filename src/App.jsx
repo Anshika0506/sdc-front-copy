@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import './index.css';
 
+
 const LayoutWrapper = () => {
   const location = useLocation();
 
