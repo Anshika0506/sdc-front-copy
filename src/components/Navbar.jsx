@@ -5,7 +5,7 @@ import header from "/header.png";
 import BG from "/mesh-gradient.webp";
 
 const navItems = [
-  { label: "Home", path: "/home" },
+  { label: "Home", path: "/" },
   { label: "About", path: "/about" },
   { label: "Services", path: "/services" },
   { label: "Work", path: "/work" },

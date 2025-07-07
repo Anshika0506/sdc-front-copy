@@ -4,7 +4,7 @@ import mail from "../assets/mail.png";
 import phone from "../assets/phone.png";
 import linkeldin from "../assets/linkeldin.png";
 import location from "../assets/location.png";
-import instagram from "../assets/instagram.png";
+import instagram from "../assets/instagram.webp";
 
 const Footer = () => {
   return (
