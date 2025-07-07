@@ -1,7 +1,7 @@
 import React from "react";
 import backgroundImage from '../../../assets/mesh-gradient.webp';
-import projectImage from '../../../assets/laptopimg.svg';
-import externalLinkIcon from '../../../assets/breakpoint=desktop, icon=external-link.svg';
+import projectImage from '../../../assets/project.png';
+import externalLinkIcon from '../../../assets/breakpoint=Tablet, icon=external-link.png';
 import { useNavigate } from 'react-router-dom'; 
 
 const projects = [
@@ -22,7 +22,7 @@ export default function WorkPage() {
 
   return (
     <div
-      className="w-full min-h-screen mt-20 pt-0 pr-2 pb-4 pl-2 bg-cover bg-center bg-no-repeat bg-fixed"
+      className="w-full min-h-screen pt-0 pr-2 pb-4 pl-2 bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="max-w-[1420px] mx-auto px-3">
@@ -35,7 +35,9 @@ export default function WorkPage() {
             {projects.map((project, index) => (
               <div
                 key={index}
-                onClick={() => navigate(`/work/project/${encodeURIComponent(project.title)}`)}
+                // onClick={() => navigate(`/project/${encodeURIComponent(project.title)}`)} 
+                                onClick={() => navigate(`/work/projectdetails`)} 
+
                 className="hover-animated-card relative w-full max-w-[600px] mx-auto rounded-[2rem] p-6 md:p-8 text-left cursor-pointer group transition-all duration-[800ms]"
               >
                 <img
@@ -48,7 +50,7 @@ export default function WorkPage() {
                     {project.title}
                   </h2>
                   <span
-                    className="min-w-[180px] h-[52px] rounded-[2.5rem] px-[20px] py-[12px] text-[16px] leading-[24px] font-normal font-sans text-center shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)]"
+                    className="min-w-[180px] h-[52px] rounded-[2.5rem] px-[20px] py-[12px] text-[16px] leading-[24px] font-normal font-sans text-center shadow-[2px_2px_4px_0px_#00000040,_inset_2px_2px_6px_0px_#FFFFFF80]"
                     style={{
                       backgroundColor: 'transparent',
                       color: project.status === 'In Progress' ? '#00FF26' : '#FFF600'

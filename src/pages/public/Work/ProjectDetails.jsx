@@ -1,8 +1,8 @@
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
-// import backgroundImage from '../../../assets/mesh-gradient.webp';
-import projectImage from "../../../assets/laptopimg.svg";
-import icon from "../../../assets/leftarrow.svg";
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import backgroundImage from '../../../assets/mesh-gradient.webp';
+import projectImage from '../../../assets/project.png';
+import icon from '../../../assets/icons.png';
 
 export default function ProjectDetails() {
   const { title } = useParams();
@@ -12,14 +12,15 @@ export default function ProjectDetails() {
     <div
       className="min-h-screen p-2"
       style={{
-        // backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       {/* Main Content Wrapper - Ensures all content aligns centrally */}
-      <div className="max-w-[1420px] mt-8 mx-auto py-6 pr-8 md:px-20 lg:px-24">
+      <div className="max-w-[1420px] mx-auto py-6 pr-8 md:px-20 lg:px-24"> 
+
         {/* Title Section with Back Icon */}
         <div className="flex items-center text-white py-6 mb-8 ml-[-12]">
           {/* Back Icon */}
@@ -34,66 +35,40 @@ export default function ProjectDetails() {
           </h2>
         </div>
 
+        
         <div className="mb-16 ml-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[589px_1fr] gap-x-12 items-start">
-          <div className="relative w-full h-auto">
-            <img
-              src={projectImage}
-              alt="Project Preview"
-              className="w-full h-auto opacity-100 rounded-xl"
-            />
+            <div className="relative w-full h-auto">
+                <img
+                    src={projectImage}
+                    alt="Project Preview"
+                    className="w-full h-auto opacity-100 rounded-xl"
+                />
 
-            {/* Mobile View Live Button*/}
-            <button
-              className="absolute bottom-4 right-4
-                                   w-fit px-8 py-3 opacity-100 rounded-full shadow-[2px_2px_4px_0px_#00000040,inset_2px_2px_6px_0px#FFFFFF80] text-center
-                                   md:hidden cursor-pointer"
-            >
-              <span className="text-base leading-6 font-normal text-[#00FF26]">
-                View Live
-              </span>
-            </button>
-          </div>
+                {/* Mobile View Live Button*/}
+                <button className="absolute bottom-4 right-4
+                                   w-fit px-8 py-3 opacity-100 rounded-full shadow-[2px_2px_4px_0px_#00000040,_inset_2px_2px_6px_0px_#FFFFFF80] text-center
+                                   md:hidden cursor-pointer"> 
+                    <span className="text-base leading-6 font-normal text-[#00FF26]">
+                        View Live
+                    </span>
+                </button>
+            </div>
 
-          {/* Desktop/Tablet View Live Button Container */}
-          <div className="hidden md:flex justify-left items-end h-full">
-            <button
-              className="w-full md:w-fit px-8 py-3 opacity-100 rounded-full shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] text-center 
-                                    lg:w-[167px] lg:h-[52px] cursor-pointer"
-            >
-              <span className="text-base leading-6 font-normal text-[#00FF26]">
-                View Live
-              </span>
-            </button>
-          </div>
+            {/* Desktop/Tablet View Live Button Container */}
+            <div className="hidden md:flex justify-left items-end h-full"> 
+                 <button className="w-full md:w-fit px-8 py-3 opacity-100 rounded-full shadow-[2px_2px_4px_0px_#00000040,_inset_2px_2px_6px_0px_#FFFFFF80] text-center 
+                                    lg:w-[167px] lg:h-[52px] cursor-pointer">
+                    <span className="text-base leading-6 font-normal text-[#00FF26]">
+                        View Live
+                    </span>
+                 </button>
+            </div>
         </div>
 
         {/* Project Description */}
         <div className="pt-3 pb-16 ml-14 justify-center">
           <p className="font-sans text-base leading-relaxed text-justify text-[#D2D2D2]">
-            Potter ipsum wand elf parchment wingardium. Hats slytherin’s blubber
-            leviosa half-giant match jinxes holyhead knight-bus hippogriffs.
-            Whomping dittany keeper hand wand where where. Lady eeylops
-            leprechaun turban cup diadem professor gillywater bathrooms
-            rock-cake. Detention feather gillyweed robes boggarts. Unwilling
-            thestral hungarian witch ravenclaw’s do bred potter feast. Potter
-            ipsum wand elf parchment wingardium. Hats slytherin’s blubber
-            leviosa half-giant match jinxes holyhead knight-bus hippogriffs.
-            Whomping dittany keeper hand wand where where. Lady eeylops
-            leprechaun turban cup diadem professor gillywater bathrooms
-            rock-cake. Detention feather gillyweed robes boggarts. Unwilling
-            thestral hungarian witch ravenclaw’s do bred potter feast. Potter
-            ipsum wand elf parchment wingardium. Hats slytherin’s blubber
-            leviosa half-giant match jinxes holyhead knight-bus hippogriffs.
-            Whomping dittany keeper hand wand where where. Lady eeylops
-            leprechaun turban cup diadem professor gillywater bathrooms
-            rock-cake. Detention feather gillyweed robes boggarts. Unwilling
-            thestral hungarian witch ravenclaw’s do bred potter feast. Potter
-            ipsum wand elf parchment wingardium. Hats slytherin’s blubber
-            leviosa half-giant match jinxes holyhead knight-bus hippogriffs.
-            Whomping dittany keeper hand wand where where. Lady eeylops
-            leprechaun turban cup diadem professor gillywater bathrooms
-            rock-cake. Detention feather gillyweed robes boggarts. Unwilling
-            thestral hungarian witch ravenclaw’s do bred potter feast.
+            Potter ipsum wand elf parchment wingardium. Hats slytherin’s blubber leviosa half-giant match jinxes holyhead knight-bus hippogriffs. Whomping dittany keeper hand wand where where. Lady eeylops leprechaun turban cup diadem professor gillywater bathrooms rock-cake. Detention feather gillyweed robes boggarts. Unwilling thestral hungarian witch ravenclaw’s do bred potter feast. Potter ipsum wand elf parchment wingardium. Hats slytherin’s blubber leviosa half-giant match jinxes holyhead knight-bus hippogriffs. Whomping dittany keeper hand wand where where. Lady eeylops leprechaun turban cup diadem professor gillywater bathrooms rock-cake. Detention feather gillyweed robes boggarts. Unwilling thestral hungarian witch ravenclaw’s do bred potter feast. Potter ipsum wand elf parchment wingardium. Hats slytherin’s blubber leviosa half-giant match jinxes holyhead knight-bus hippogriffs. Whomping dittany keeper hand wand where where. Lady eeylops leprechaun turban cup diadem professor gillywater bathrooms rock-cake. Detention feather gillyweed robes boggarts. Unwilling thestral hungarian witch ravenclaw’s do bred potter feast. Potter ipsum wand elf parchment wingardium. Hats slytherin’s blubber leviosa half-giant match jinxes holyhead knight-bus hippogriffs. Whomping dittany keeper hand wand where where. Lady eeylops leprechaun turban cup diadem professor gillywater bathrooms rock-cake. Detention feather gillyweed robes boggarts. Unwilling thestral hungarian witch ravenclaw’s do bred potter feast.
           </p>
         </div>
 
