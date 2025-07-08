@@ -1,16 +1,16 @@
-// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { AuthProvider } from './auth/AuthContext';
 import AppRoutes from './routes/AppRoutes';
 
-import './index.css';
-
-const App = () => {
+function App() {
   return (
-    <Router>
-      <AppRoutes />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
   );
-};
+}
 
 export default App;
