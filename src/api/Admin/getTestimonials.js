@@ -6,6 +6,6 @@ export const getTestimonials = async () => {
     return res.data;
   } catch (error) {
     console.error('Error fetching testimonials:', error.response?.data || error.message);
-    throw error;
+    return [];
   }
 };

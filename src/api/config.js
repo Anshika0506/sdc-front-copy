@@ -1,44 +1,34 @@
 import axios from 'axios';
 
-// Create axios instance with default config
 const api = axios.create({
   baseURL: 'http://localhost:9015',
   timeout: 10000,
 });
 
-// Add request interceptor to include auth token
 api.interceptors.request.use(
   (config) => {
-    // Get token from localStorage, sessionStorage, or wherever you store it
     const token = localStorage.getItem('authToken') || 
                   sessionStorage.getItem('authToken') || 
                   localStorage.getItem('token') || 
                   sessionStorage.getItem('token');
-    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Add response interceptor to handle auth errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 403 || error.response?.status === 401) {
-      // Clear invalid token
-      localStorage.removeItem('authToken');
-      sessionStorage.removeItem('authToken');
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
-      
-      // Redirect to login or show login modal
-      window.location.href = '/login'; // Adjust based on your routing
+    const status = error.response?.status;
+    if (status === 401 || status === 403) {
+      // Optional: Prevent redirect during test/dev phase
+      console.warn("Unauthorized access - redirecting to login");
+
+      // Comment the redirect below if you don’t want forced login
+      // window.location.href = '/login';
     }
     return Promise.reject(error);
   }
