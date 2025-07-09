@@ -10,10 +10,10 @@ import deletei from "../../assets/delete.png";
 import cross from "../../assets/group.svg";
 import pencil from "../../assets/pencil.png";
 
-import { getTestimonials } from '../../api/Admin/getTestimonials';
-import { addTestimonial } from '../../api/Admin/addTestimonial';
-import { updateTestimonial } from '../../api/Admin/updateTestimonial';
-import { deleteTestimonial } from '../../api/Admin/deleteTestimonial';
+import { getTestimonials } from '../../api/Admin/Testimonial/getTestimonials';
+import { addTestimonial } from '../../api/Admin/Testimonial/addTestimonial';
+import { updateTestimonial } from '../../api/Admin/Testimonial/updateTestimonial';
+import { deleteTestimonial } from '../../api/Admin/Testimonial/deleteTestimonial';
 
 const HomePage = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -70,7 +70,7 @@ const HomePage = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const updated = testimonials.map((t, i) => 
-          i === idx ? { ...t, image: reader.result } : t
+          i === idx ? { ...t, imageBase64: reader.result } : t
         );
         setTestimonials(updated);
       };
@@ -84,11 +84,11 @@ const HomePage = () => {
       setLoading(true);
       setError(null);
       
-      for (const [index, t] of testimonials.entries()) {
+      for (const [ t] of testimonials.entries()) {
         const testimonialData = {
-          name: t.name,
-          message: t.message,
-          imageFile: imageFiles[index] || null
+          clientName: t.clientName,
+          des: t.des,
+          imageBase64: imageBase64 || null
         };
         
         if (t.id) {
@@ -245,7 +245,7 @@ const HomePage = () => {
                     <div className='w-[186px] h-[130px] gap-[10px] py-4 px-3 flex flex-col items-center'>
                       <label htmlFor={`file-upload-${idx}`} className="cursor-pointer relative">
                         <img
-                          src={item.image || '/placeholder-image.png'}
+                          src={item.imageBase64 || '/placeholder-image.png'}
                           alt=""
                           className="h-[100px] w-[100px] rounded mb-2 opacity-20 transition-opacity duration-200"
                         />
@@ -266,10 +266,10 @@ const HomePage = () => {
                       <label className="block text-sm text-gray-300 mb-1">TITLE</label>
                       <input
                         type="text"
-                        value={item.name || ''}
+                        value={item.clientName || ''}
                         placeholder='Client Name'
                         onChange={e => {
-                          const updated = testimonials.map((t, i) => i === idx ? { ...t, name: e.target.value } : t);
+                          const updated = testimonials.map((t, i) => i === idx ? { ...t, clientName: e.target.value } : t);
                           setTestimonials(updated);
                         }}
                         className="w-[549px] font-mono px-3 py-2 rounded-md text-white bg-gray-800 border border-gray-600"
@@ -277,9 +277,9 @@ const HomePage = () => {
                       
                       <label className="block text-sm text-gray-300 mt-2">CONTENT</label>
                       <textarea
-                        value={item.message || ''}
+                        value={item.des || ''}
                         onChange={e => {
-                          const updated = testimonials.map((t, i) => i === idx ? { ...t, message: e.target.value } : t);
+                          const updated = testimonials.map((t, i) => i === idx ? { ...t, des: e.target.value } : t);
                           setTestimonials(updated);
                         }}
                         placeholder="Enter testimonial content..."
@@ -327,9 +327,9 @@ const HomePage = () => {
                   setTestimonials([
                     ...testimonials,
                     {
-                      name: '',
-                      image: '',
-                      message: '',
+                      clientName: '',
+                      imageBase64: '',
+                      des: '',
                     },
                   ]);
                 }}

@@ -1,10 +1,10 @@
-import api from '../config';
+import api from '../../config';
 
-export const addTestimonial = async ({ name, message, imageFile }) => {
+export const addTestimonial = async ({ clientName, des, imageBase64 }) => {
   const formData = new FormData();
-  formData.append('name', name);
-  formData.append('message', message);
-  if (imageFile) formData.append('image', imageFile);
+  formData.append('name', clientName);
+  formData.append('message', des);
+  if (imageBase64) formData.append('image', imageBase64);
 
   try {
     const res = await api.post('/admin/testimonials/add', formData, {
