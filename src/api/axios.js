@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:9015', // Spring Boot backend URL
+  baseURL: 'import.meta.env.VITE_API_BASE_URL', // Spring Boot backend URL
   withCredentials: true, // optional: if you're using cookies/auth
 });
 

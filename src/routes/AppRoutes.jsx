@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route,Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import MainLayout from '../layout/MainLayout';
 import AdminLayout from '../layout/AdminLayout';
@@ -13,9 +13,8 @@ import Work from '../pages/public/Work/Work';
 import ProjectDetails from '../pages/public/Work/ProjectDetails';
 
 import AdminLogin from '../pages/admin/Login';
-import Dashboard from '../pages/admin/Dashboard';
-
 import PrivateRoute from '../auth/PrivateRoute';
+import HomePage from '../pages/admin/Hompage';
 
 const AppRoutes = () => {
   return (
@@ -31,7 +30,7 @@ const AppRoutes = () => {
         <Route path="/contact" element={<Contact />} />
       </Route>
 
-      {/* ✅ Admin Login (no layout) */}
+      {/* ✅ Admin Login */}
       <Route path="/login" element={<AdminLogin />} />
 
       {/* ✅ Protected Admin Routes */}
@@ -43,12 +42,10 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       >
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route index element={<Navigate to="manage-home" replace />} />
+        <Route path="manage-home" element={<HomePage />} />
         {/* Add more admin routes here */}
       </Route>
-
-      {/* ✅ Redirect /admin to /admin/dashboard */}
-      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
     </Routes>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import meshGradient from '../../assets/mesh-gradient.webp';
 import { useNavigate } from 'react-router-dom';
-import { loginAdmin } from '../../api/adminApi';
+import { loginAdmin } from '../../api/Admin/GetLoginAPi';
 import { useAuth } from '../../auth/AuthContext';
 
 export default function LoginPage() {
@@ -18,7 +18,7 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/admin/dashboard');
+      navigate('/admin');
     }
   }, [isAuthenticated, navigate]);
 
