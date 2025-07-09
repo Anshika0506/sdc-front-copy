@@ -28,8 +28,9 @@ const HomePage = () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await getTestimonials();
-        console.log('Fetched testimonials:', data);
+        const response = await getTestimonials();
+        console.log('Fetched testimonials:', response.data);
+        const data = response.data;
         // Ensure data is an array
         if (Array.isArray(data)) {
           
@@ -155,8 +156,8 @@ const HomePage = () => {
               <div key={item.id || index} className="flex items-start gap-4">
                 <div className='h-[188px] rounded-[4.4068px] w-[186px]'>
                   <img
-                    src={item.image || '/placeholder-image.png'}
-                    alt={item.name || 'Testimonial'}
+                    src={item.imageBase64 || '/placeholder-image.png'}
+                    alt={item.clientName || 'Testimonial'}
                     className="w-[130px] h-[130px] px-1 py-1 mt-6 ml-12 object-cover bg-[#FFFFFF] rounded-[4.4068px]"
                     onError={(e) => {
                       e.target.src = '/placeholder-image.png';
@@ -165,8 +166,8 @@ const HomePage = () => {
                 </div>
 
                 <div className="flex-1 py-3 px-7 w-[892px] h-[120px] text-justify">
-                  <p className="text-white font-semibold mb-1 font-mono" style={{ fontWeight: 600, fontSize: 16 }}>{item.name || 'Anonymous'}</p>
-                  <p className="text-gray-300 font-mono" style={{ fontWeight: 400, fontSize: 16 }}>{item.message || 'No message'}</p>
+                  <p className="text-white font-semibold mb-1 font-mono" style={{ fontWeight: 600, fontSize: 16 }}>{item.clientName || 'Anonymous'}</p>
+                  <p className="text-gray-300 font-mono" style={{ fontWeight: 400, fontSize: 16 }}>{item.des || 'No message'}</p>
                 </div>
                 
                 <button
