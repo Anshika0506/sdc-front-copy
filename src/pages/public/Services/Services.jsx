@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Mail from '../../../assets/mail.png'; // if it's your own component
 
 
@@ -12,6 +13,7 @@ const services = [
 ];
 
 const Services = () => {
+    const navigate = useNavigate();
     return(
 <div className=" text-white px-6 sm:px-10 lg:px-20 py-6 font-sans">
           {/* Header */}
@@ -74,7 +76,7 @@ const Services = () => {
           {/* Responsive Contact Button */}
           <div className="flex justify-center mb-10">
             <button
-              onClick={() => console.log("Contact Us clicked")}
+              onClick={() => navigate("/contact")}
               style={{
                 boxShadow: "0px 6px 30px rgba(255, 255, 255, 0.1)",
               }}

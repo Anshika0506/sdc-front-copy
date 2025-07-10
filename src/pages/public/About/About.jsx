@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import img2 from "../../../assets/img2.svg";
 import img1 from "../../../assets/img1.svg";
 import img3 from "../../../assets/img3.svg";
@@ -10,6 +10,195 @@ import alumni2 from "../../../assets/alumni2.svg";
 import alumni3 from "../../../assets/alumni3.svg";
 import partner1 from "../../../assets/partner1.svg";
 import partner2 from "../../../assets/partner2.svg";
+
+const SlidingCards = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState('right');
+  
+  // Sample event data - replace with your actual data
+  const events = [
+    {
+      id: 1,
+      name: "Tech Workshop 2024",
+      image: img1,
+      date: "Jan 15, 2024",
+      description: "An intensive workshop on modern web development technologies"
+    },
+    {
+      id: 2,
+      name: "Hackathon Championship",
+      image: img2,
+      date: "Feb 20, 2024",
+      description: "48-hour coding marathon with exciting prizes"
+    },
+    {
+      id: 3,
+      name: "AI & Machine Learning Summit",
+      image: img3,
+      date: "Mar 10, 2024",
+      description: "Exploring the future of artificial intelligence"
+    },
+    {
+      id: 4,
+      name: "Developer Conference",
+      image: img4,
+      date: "Apr 5, 2024",
+      description: "Annual gathering of developers and tech enthusiasts"
+    },
+    {
+      id: 5,
+      name: "Innovation Showcase",
+      image: alumni1,
+      date: "May 12, 2024",
+      description: "Presenting groundbreaking student projects"
+    },
+    {
+      id: 6,
+      name: "Coding Bootcamp",
+      image: alumni2,
+      date: "Jun 8, 2024",
+      description: "Intensive programming training for beginners"
+    }
+  ];
+
+  const cardsToShow = 3;
+  const totalCards = events.length;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex(prev => {
+        if (direction === 'right') {
+          if (prev >= totalCards - cardsToShow) {
+            setDirection('left');
+            return prev - 1;
+          }
+          return prev + 1;
+        } else {
+          if (prev <= 0) {
+            setDirection('right');
+            return prev + 1;
+          }
+          return prev - 1;
+        }
+      });
+    }, 3000); // Change slide every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [direction, totalCards, cardsToShow]);
+
+  const handleViewAll = () => {
+    // Redirect to gallery page
+    window.location.href = '/gallery'; // Replace with your actual gallery route
+  };
+
+  return (
+    <section className="text-white py-16 px-4 max-w-6xl mx-auto">
+      <h2
+        className="text-4xl font-bold text-center mb-12"
+        style={{
+          fontFamily: "Inter",
+          fontWeight: 600,
+          fontSize: 48,
+        }}
+      >
+        Glimpses of SDC
+      </h2>
+      
+      <div className="relative overflow-hidden">
+        <div 
+          className="flex transition-transform duration-500 ease-in-out"
+          style={{
+            transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)`
+          }}
+        >
+          {events.map((event, index) => (
+            <div
+              key={event.id}
+              className="flex-shrink-0 px-3"
+              style={{ width: `${100 / cardsToShow}%` }}
+            >
+              <div
+                className="bg-white/10 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300"
+                style={{
+                  boxShadow: "2px 2px 4px 0px #00000040, inset 2px 2px 6px 0px #FFFFFF80",
+                }}
+              >
+                <div className="relative">
+                  <img
+                    src={event.image}
+                    alt={event.name}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3
+                      className="text-xl font-semibold mb-1"
+                      style={{
+                        fontFamily: "Inter",
+                        fontWeight: 600,
+                        fontSize: 20,
+                      }}
+                    >
+                      {event.name}
+                    </h3>
+                    <p
+                      className="text-sm text-gray-300 mb-2"
+                      style={{
+                        fontWeight: 400,
+                        fontSize: 12,
+                      }}
+                    >
+                      {event.date}
+                    </p>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <p
+                    className="text-sm font-mono text-gray-300"
+                    style={{
+                      fontWeight: 400,
+                      fontSize: 14,
+                    }}
+                  >
+                    {event.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Slide Indicators */}
+      <div className="flex justify-center space-x-2 mt-8">
+        {Array.from({ length: totalCards - cardsToShow + 1 }).map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+              index === currentIndex ? 'bg-white' : 'bg-white/30'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* View All Button */}
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={handleViewAll}
+          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
+          style={{
+            fontFamily: "Inter",
+            fontWeight: 600,
+            fontSize: 16,
+          }}
+        >
+          VIEW ALL
+        </button>
+      </div>
+    </section>
+  );
+};
 
 const about = () => {
   const alumni = [
@@ -33,6 +222,7 @@ const about = () => {
     },
   ];
   const images = [img1, img2, img3, img4];
+  
   return (
     <div>
       <section
@@ -48,7 +238,6 @@ const about = () => {
             fontFamily: "Inter",
             fontWeight: 600,
             fontSize: 48,
-            // lineHeight:,
           }}
         >
           Overview
@@ -102,7 +291,7 @@ const about = () => {
               fontSize: 16,
             }}
           >
-            Potter ipsum wand elf parchment wingardium. Hats slytherin’s
+            Potter ipsum wand elf parchment wingardium. Hats slytherin's
           </p>
         </div>
         <p
@@ -148,13 +337,13 @@ const about = () => {
             Potter ipsum wand elf parchment wingardium. Ludo glory house
             peruvian-night-powder crush dobby last wand. Order azkaban umbrella
             elder hunt knight-bus lion. Floor head map carriages giant out
-            slytherin’s. Hexed mrs memory of peg-leg great dress catherine floo.
+            slytherin's. Hexed mrs memory of peg-leg great dress catherine floo.
             Downfall easy is sticking this hair 10 azkaban.
           </p>
         </div>
         <div
           style={{
-            boxShadow: "", // LEFT shadow only
+            boxShadow: "",
           }}
           className=" -ml-10 mt-[1rem] z-0 rounded-xl w-[300px] h-[300px] flex items-center justify-center"
         >
@@ -166,7 +355,7 @@ const about = () => {
         </div>
         <div
           style={{
-            boxShadow: "", // LEFT shadow only
+            boxShadow: "",
           }}
           className="-ml-15 mt-[1rem] z-0 rounded-2xl w-[300px] h-[300px] flex items-center justify-center"
         >
@@ -240,7 +429,6 @@ const about = () => {
                   fontSize: 16,
                 }}
               >
-                {" "}
                 Potter ipsum wand elf parchment wingardium. Ludo glory house
                 peruvian-night-powder crush dobby last wand. Order azkaban
                 umbrella elder hunt knight-bus lion.
@@ -249,6 +437,9 @@ const about = () => {
           ))}
         </div>
       </section>
+
+      {/* Sliding Cards Section - Added above Our Partners */}
+      <SlidingCards />
 
       {/* Our Partners */}
       <section className="text-white py-16 px-4 max-w-6xl mx-auto">
@@ -288,12 +479,12 @@ const about = () => {
                 fontSize: 16,
               }}
             >
-              Potter ipsum wand elf parchment wingardium. Hats slytherin’s
+              Potter ipsum wand elf parchment wingardium. Hats slytherin's
               blubber leviosa half-giant match jinxes holyhead knight-bus
               hippogriffs. Whomping dittany keeper hand wand where where. Lady
               eeylops leprechaun turban cup diadem professor gillywater
               bathrooms rock-cake. Detention feather gillyweed robes boggarts.
-              Unwilling thestral hungarian witch ravenclaw’s do bred potter
+              Unwilling thestral hungarian witch ravenclaw's do bred potter
               feast.
             </p>
           </div>
@@ -324,12 +515,12 @@ const about = () => {
                 fontSize: 16,
               }}
             >
-              Potter ipsum wand elf parchment wingardium. Hats slytherin’s
+              Potter ipsum wand elf parchment wingardium. Hats slytherin's
               blubber leviosa half-giant match jinxes holyhead knight-bus
               hippogriffs. Whomping dittany keeper hand wand where where. Lady
               eeylops leprechaun turban cup diadem professor gillywater
               bathrooms rock-cake. Detention feather gillyweed robes boggarts.
-              Unwilling thestral hungarian witch ravenclaw’s do bred potter
+              Unwilling thestral hungarian witch ravenclaw's do bred potter
               feast.
             </p>
           </div>

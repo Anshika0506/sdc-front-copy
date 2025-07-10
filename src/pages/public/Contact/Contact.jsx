@@ -1,10 +1,8 @@
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import meshGradient from "../../../assets/mesh-gradient.webp";
-import map from "../../../assets/map.svg";
-import instaIcon from "../../../assets/instagram.webp";
-import linkedinIcon from "../../../assets/linkeldin.png";
-
+import instagramIcon from "../../../assets/Contact/instagramIcon.svg"
+import linkedinIcon from "../../../assets/Contact/linkedinIcon.svg"
 const faqs = [
   {
     question: "Quality services provided at affordable rates?",
@@ -13,7 +11,7 @@ const faqs = [
   {
     question: "Minimum prices for the maximum output advertise anything?",
     answer:
-      "Potter ipsum wand elf parchment wingardium. Ludo glory house peruvian-night-powder crush dobby last wand. Order azkaban umbrella elder hunt knight-bus lion. Floor head map carriages giant out slytherin’s. Hexed mrs memory of peg-leg great dress catherine floo. Downfall easy is sticking this hair 10 azkaban.",
+      "Potter ipsum wand elf parchment wingardium. Ludo glory house peruvian-night-powder crush dobby last wand. Order azkaban umbrella elder hunt knight-bus lion. Floor head map carriages giant out slytherin's. Hexed mrs memory of peg-leg great dress catherine floo. Downfall easy is sticking this hair 10 azkaban.",
   },
   {
     question:
@@ -42,7 +40,31 @@ const navLinks = [
 ];
 
 const Contact = () => {
-  const [openFaq, setOpenFaq] = useState(1);
+  const [openFaq, setOpenFaq] = useState(-1);
+  const [isQueryOpen, setIsQueryOpen] = useState(false);
+  const [selectedQuery, setSelectedQuery] = useState("");
+  const queryRef = useRef(null);
+
+  const queries = [
+    "Application Development",
+    "Software Development",
+    "Website Development",
+    "Join Our Team",
+    "Other",
+  ];
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (queryRef.current && !queryRef.current.contains(event.target)) {
+        setIsQueryOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div
@@ -56,27 +78,29 @@ const Contact = () => {
       }}
     >
       {/* Outer Glass Card */}
-      <div className="relative w-full max-w-[1200px] rounded-3xl shadow-[2px_2px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col items-center gap-12 px-8 py-16 md:px-16 md:py-16">
+      <div className="relative w-full max-w-[1600px] rounded-3xl shadow-[2px_2px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col items-center gap-12 px-8 py-16 md:px-16 md:py-16">
         {/* Outer Glass Overlay */}
-        <div className="absolute w-[1769.14px] h-[1083.81px] left-[-196.57px] top-[-263.5px] bg-white/5 backdrop-blur-[3px] z-0" />
-        {/* Heading & Subheading */}
+        <div className="absolute inset-0 bg-white/5 backdrop-blur-[3px] z-0" />
+
         <div className="relative z-10 flex flex-col items-center gap-3.5">
           <div className="inline-flex justify-center items-center gap-2.5">
             <div className="text-white text-[40px] md:text-[64px] font-bold font-inter leading-[48px] md:leading-[72px] text-center">
-              Let’s Build the Future, Together.
+              Let's Build the Future, Together.
             </div>
           </div>
           <div className="inline-flex justify-center items-center gap-2.5">
             <div className="max-w-[758px] text-center text-[#D2D2D2] text-[22px] md:text-[28px] font-medium font-inter leading-8 md:leading-9">
-              Have a vision? We’re here to help you code it into reality. Reach
+              Have a vision? We're here to help you code it into reality. Reach
               out — innovation starts with a conversation.
             </div>
           </div>
         </div>
+
         {/* Info Card */}
         <div className="relative w-full max-w-[980px] h-auto md:h-56 px-4 md:px-7 py-5 rounded-3xl shadow-[2px_2px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden flex justify-center items-center gap-2.5">
           {/* Inner Glass Overlay */}
           <div className="absolute w-[1260px] h-[435.08px] left-[-140px] top-[-105.78px] bg-white/5 backdrop-blur-[3px] z-0" />
+
           <div className="relative z-10 w-full flex flex-col md:flex-row justify-center items-center gap-10">
             {/* Contact */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-start gap-3">
@@ -104,8 +128,10 @@ const Contact = () => {
                 </div>
               </div>
             </div>
+
             {/* Divider */}
-            <div className="hidden md:block w-20 h-0 origin-top-left -rotate-90 outline-1 outline-offset-[-0.5px] outline-white"></div>
+            <div className="hidden md:block w-0 h-20 outline outline-1 outline-white outline-offset-[-0.5px]"></div>
+
             {/* Social Media */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-center gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
@@ -119,10 +145,8 @@ const Contact = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-5 py-2.5 bg-[#AA1E6B] rounded-lg shadow-[0px_0px_25px_0px_rgba(142,45,226,0.25)] flex items-center gap-2"
-                  
-                  src={instaIcon}
                 >
-                  <FaInstagram className="w-5 h-5" />
+                  <img src={instagramIcon} alt="Instagram" className="w-5 h-5 object-contain" />
                   <span className="text-white text-xs font-semibold font-inter uppercase tracking-tight">
                     Instagram
                   </span>
@@ -132,18 +156,18 @@ const Contact = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-5 py-2.5 bg-[#AA1E6B] rounded-lg shadow-[0px_0px_25px_0px_rgba(142,45,226,0.25)] flex items-center gap-2"
-                  
-                  src={linkedinIcon}
                 >
-                  <FaLinkedin className="w-5 h-5" />
+                  <img src={linkedinIcon} alt="LinkedIn" className="w-5 h-5 object-contain" />
                   <span className="text-white text-xs font-semibold font-inter uppercase tracking-tight">
-                    Linked in
+                    LinkedIn
                   </span>
                 </a>
               </div>
             </div>
+
             {/* Divider */}
-            <div className="hidden md:block w-20 h-0 origin-top-left -rotate-90 outline-1 outline-offset-[-0.5px] outline-white"></div>
+            <div className="hidden md:block w-0 h-20 outline outline-1 outline-white outline-offset-[-0.5px]"></div>
+
             {/* Operating Hour */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-start gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
@@ -160,8 +184,10 @@ const Contact = () => {
                 </div>
               </div>
             </div>
+
             {/* Divider */}
-            <div className="hidden md:block w-20 h-0 origin-top-left -rotate-90 outline-1 outline-offset-[-0.5px] outline-white"></div>
+            <div className="hidden md:block w-0 h-20 outline outline-1 outline-white outline-offset-[-0.5px]"></div>
+
             {/* Office Address */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-start gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
@@ -180,15 +206,24 @@ const Contact = () => {
           </div>
         </div>
       </div>
+
       {/* Contact Form Section */}
       <div className="w-full max-w-[1440px] py-16 flex flex-col items-center">
         <div className="flex flex-col md:flex-row justify-center items-center gap-6 w-full">
           {/* Indore Map Image on the left */}
-          <img
-            className="w-[320px] md:w-[586px] h-[260px] md:h-[474px] p-2.5 rounded-2xl object-cover"
-            src={map}
-            alt="Indore Map"
-          />
+          <div className="w-[320px] md:w-[586px] h-[260px] md:h-[474px] rounded-2xl overflow-hidden shadow-lg">
+            <iframe
+              title="Medi-Caps University Map"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3682.8782186897715!2d75.80101577603034!3d22.621022379457248!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3962f958dcb7169d%3A0xd877c12078e50f0f!2sMedicaps%20University!5e0!3m2!1sen!2sin!4v1752045912743!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+
           {/* Contact Form on the right */}
           <form className="w-full max-w-[586px] flex flex-col justify-between items-center gap-4">
             <div className="w-full flex flex-col gap-3.5">
@@ -206,6 +241,7 @@ const Contact = () => {
                   />
                 </div>
               </div>
+
               {/* Contact & Query */}
               <div className="flex flex-col md:flex-row gap-2.5 w-full">
                 {/* Contact */}
@@ -222,32 +258,73 @@ const Contact = () => {
                     />
                   </div>
                 </div>
-                {/* Query */}
-                <div className="flex-1 flex flex-col gap-1.5">
+
+                {/* Query - Custom Dropdown */}
+                {/* Query - Custom Dropdown */}
+                <div
+                  className="flex-1 flex flex-col gap-1.5 relative"
+                  ref={queryRef}
+                >
                   <label className="text-white text-sm font-semibold font-inter uppercase tracking-wide">
                     Query
                   </label>
-                  <div className="relative h-12 flex items-center rounded-[10px] shadow-[inset_2px_2px_6px_0px_rgba(255,255,255,0.50)] overflow-hidden px-4 py-3">
-                    <div className="absolute w-96 h-24 left-[-41.14px] top-[-22.67px] bg-white/5 backdrop-blur-[3px]" />
-                    <select className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2]">
-                      <option value="" className="text-black">
-                        Select query
-                      </option>
-                      <option value="general" className="text-black">
-                        General
-                      </option>
-                      <option value="partnership" className="text-black">
-                        Partnership
-                      </option>
-                      <option value="support" className="text-black">
-                        Support
-                      </option>
-                    </select>
+                  <div
+                    className="w-full px-4 py-3 relative rounded-[10px] shadow-[2px_2px_4px_0px_rgba(0,0,0,0.25)] shadow-[inset_2px_2px_6px_0px_rgba(255,255,255,0.50)] flex flex-col justify-start items-start gap-2.5 cursor-pointer"
+                    onClick={() => setIsQueryOpen(!isQueryOpen)}
+                  >
+                    {/* Selected or placeholder */}
+                    <div className="relative z-10 w-full flex justify-between items-center">
+                      <span className="text-white text-base font-normal font-ibmplexmono">
+                        {selectedQuery || "Select query"}
+                      </span>
+                      <svg
+                        className={`w-4 h-4 text-white transition-transform ${
+                          isQueryOpen ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
                   </div>
+
+                  {/* Dropdown options - positioned absolutely with solid background */}
+                  {isQueryOpen && (
+                    <div className="absolute z-30 w-full top-full mt-1 bg-[#1A1A1A] rounded-[10px] shadow-lg border border-[#333333] overflow-hidden">
+                      {queries.map((query, index) => (
+                        <div key={index}>
+                          {index > 0 && (
+                            <div className="h-px bg-[#333333]"></div>
+                          )}
+                          <div
+                            className="w-full py-3 px-4 hover:bg-[#2A2A2A] transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedQuery(query);
+                              setIsQueryOpen(false);
+                            }}
+                          >
+                            <div className="text-white text-base font-normal font-ibmplexmono">
+                              {query}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
+
               {/* Mail */}
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1.5 mt-2.5">
                 <label className="text-white text-sm font-semibold font-inter uppercase tracking-wide">
                   Mail
                 </label>
@@ -260,6 +337,7 @@ const Contact = () => {
                   />
                 </div>
               </div>
+
               {/* Message */}
               <div className="flex flex-col gap-1.5 flex-1">
                 <label className="text-white text-sm font-semibold font-inter uppercase tracking-wide">
@@ -274,6 +352,7 @@ const Contact = () => {
                 </div>
               </div>
             </div>
+
             {/* Submit Button */}
             <button
               type="submit"
@@ -295,6 +374,8 @@ const Contact = () => {
             FAQ
           </div>
         </div>
+
+        {/* FAQ Items */}
         <div className="w-full flex flex-col items-center pb-16">
           <div className="flex flex-col items-center gap-6">
             <div className="flex flex-col items-center gap-5">
@@ -307,28 +388,34 @@ const Contact = () => {
                   data-faq-number={`faq ${idx + 1}`}
                   data-state={openFaq === idx ? "open" : "closed"}
                 >
+                  {/* Question + Toggle Button */}
                   <div className="self-stretch inline-flex justify-between items-center">
                     <div className="flex-1 text-black text-base font-normal font-ibmplexmono leading-normal">
                       {faq.question}
                     </div>
                     <button
                       onClick={() => setOpenFaq(openFaq === idx ? -1 : idx)}
-                      className="w-5 h-5 flex items-center justify-center relative"
+                      className="w-6 h-6 flex items-center justify-center"
                       aria-label={openFaq === idx ? "Close" : "Open"}
                     >
-                      {/* Plus/Minus icon */}
-                      <span
-                        className={`block w-0.5 h-4 bg-black rounded absolute left-2 top-0 transition-all duration-200 ${
-                          openFaq === idx ? "opacity-0" : "opacity-100"
+                      <div
+                        className={`w-6 h-6 transform transition-transform duration-300 ease-in-out ${
+                          openFaq === idx ? "rotate-45" : "rotate-0"
                         }`}
-                      />
-                      <span
-                        className={`block w-0.5 h-4 bg-black rounded absolute left-2 top-0 transition-all duration-200 ${
-                          openFaq === idx ? "opacity-0" : "opacity-100"
-                        }`}
+                        dangerouslySetInnerHTML={{
+                          __html: `
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path d="M13.8333 6.33333C13.6017 6.33333 11.7942 6.33333 9.66667 6.33333C9.66667 4.20583 9.66667 2.39833 9.66667 2.16667C9.66667 1.24583 8.92083 0.5 8 0.5C7.07917 0.5 6.33333 1.24583 6.33333 2.16667C6.33333 2.39833 6.33333 4.20583 6.33333 6.33333C4.20583 6.33333 2.39833 6.33333 2.16667 6.33333C1.24583 6.33333 0.5 7.07917 0.5 8C0.5 8.92083 1.24583 9.66667 2.16667 9.66667C2.23417 9.66667 4.1075 9.66667 6.33333 9.66667C6.33333 11.7942 6.33333 13.6017 6.33333 13.8333C6.33333 14.7542 7.07917 15.5 8 15.5C8.92083 15.5 9.66667 14.7542 9.66667 13.8333C9.66667 13.6017 9.66667 11.7942 9.66667 9.66667C11.8925 9.66667 13.7658 9.66667 13.8333 9.66667C14.7542 9.66667 15.5 8.92083 15.5 8C15.5 7.07917 14.7542 6.33333 13.8333 6.33333Z"
+                                fill="#000000" />
+                            </svg>
+                          `,
+                        }}
                       />
                     </button>
                   </div>
+
+                  {/* Answer */}
                   {openFaq === idx && faq.answer && (
                     <div className="self-stretch flex justify-start items-center gap-2.5">
                       <div className="flex-1 text-zinc-500 text-sm font-normal font-ibmplexmono leading-tight">
@@ -341,8 +428,6 @@ const Contact = () => {
             </div>
           </div>
         </div>
-
-        {/* Glassmorphic Contact Details Card */}
       </div>
     </div>
   );

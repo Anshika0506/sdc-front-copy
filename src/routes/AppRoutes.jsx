@@ -6,8 +6,10 @@ import AdminLayout from '../layout/AdminLayout';
 
 import Home from '../pages/public/Home/HomeLayout';
 import About from '../pages/public/About/About';
+import Gallery from '../pages/public/Gallery/Gallery';
 import Career from '../pages/public/Career/Career';
 import Services from '../pages/public/Services/Services';
+import People from '../pages/public/People/PeopleLayout';
 import Contact from '../pages/public/Contact/Contact';
 import Work from '../pages/public/Work/Work';
 import ProjectDetails from '../pages/public/Work/ProjectDetails';
@@ -24,10 +26,12 @@ const AppRoutes = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/gallery" element={<Gallery />} />
         <Route path="/work" element={<Work />} />
         <Route path="/career" element={<Career />} />
         <Route path="/services" element={<Services />} />
         <Route path="/work/projectdetails" element={<ProjectDetails />} />
+        <Route path="/people" element={<People />} />
         <Route path="/contact" element={<Contact />} />
       </Route>
 

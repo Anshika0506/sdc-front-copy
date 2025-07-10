@@ -21,9 +21,11 @@ const HeroSection = () => {
 
         {/* Title */}
         <h1 className="text-center text-[7vw] sm:text-[4vw] font-bold leading-snug z-20 mt-4 sm:mt-0">
-          <span className="text-blue-300">Empowering IDEAS</span>
+          <span className="text-transparent bg-clip-text bg-[linear-gradient(180deg,var(--Colors-Text-Primary,#FFF)_0%,var(--inputFileds-placeholderColour-Focus,#2B88A8)_200%)]">
+            Empowering IDEAS
+          </span>
           <br />
-          <span className="text-cyan-400">Through CODE</span>
+          <span className="text-transparent bg-clip-text bg-[linear-gradient(180deg,var(--Colors-Text-Primary,#FFF)_0%,var(--inputFileds-placeholderColour-Focus,#2B88A8)_100%)]">Through CODE</span>
         </h1>
 
         {/* Stats Box */}
@@ -55,11 +57,11 @@ const HeroSection = () => {
           {Array.from({ length: 30 }).map((_, idx) => (
             <div
               key={idx}
-              className="flex-1 bg-white/5"
+              className="flex-1 bg-black/20"
               style={{
-                backdropFilter: "blur(30px)",
+                backdropFilter: "blur(90px)",
                 borderLeft:
-                  idx !== 0 ? "1px solid rgba(255,255,255,0.4)" : "none",
+                  idx !== 0 ? "0px solid rgba(255,255,255,0.4)" : "none",
                 boxShadow: "inset 0px 2px 4px rgba(255,255,255,0.5)",
               }}
             />

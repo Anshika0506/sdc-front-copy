@@ -9,9 +9,9 @@ const IgniteIdeaSection = () => {
         <div className="absolute w-[1600px] h-[400px] -top-[100px] -left-[200px] backdrop-blur-sm pointer-events-none -z-10" />
 
         {/* Main Content */}
-        <div className="flex flex-col gap-6 text-white">
+        <div className="flex flex-col gap-4 text-white">
           {/* Heading */}
-          <h2 className="text-2xl md:text-3xl font-semibold leading-tight">
+          <h2 className="text-2xl md:text-4xl font-semibold leading-tight">
             Your Vision, Our Mission.
           </h2>
 
@@ -21,7 +21,7 @@ const IgniteIdeaSection = () => {
           </p>
 
           {/* CTA Button */}
-          <div className="w-[200px] h-[52px] py-4 bg-pink-700 rounded-[10px] shadow-[0px_0px_25px_0px_rgba(142,45,226,0.25)] inline-flex justify-center items-center gap-4">
+          <div className="w-[180px] h-[42px] py-4 bg-pink-700/90 rounded-[10px] shadow-[0px_0px_25px_0px_rgba(142,45,226,0.25)] inline-flex justify-center items-center gap-2">
             <div
               data-breakpoint="desktop"
               data-icon="idea"
@@ -29,7 +29,7 @@ const IgniteIdeaSection = () => {
             >
                 <img src={icon} alt="" />
             </div>
-            <div className="justify-start text-Colors-Text-Primary text-base font-semibold font-['Inter'] uppercase tracking-tight">
+            <div className="justify-start text-Colors-Text-Primary text-sm font-semibold font-['Inter'] uppercase tracking-tight">
               Ignite the Idea
             </div>
           </div>
