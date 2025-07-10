@@ -1,13 +1,13 @@
 import api from '../../config';
 
-export const updateTestimonial = async (id, { clientName, des, imageBase64 }) => {
+export const updateTestimonial = async (testId, { clientName, des, imageBase64 }) => {
   const formData = new FormData();
   formData.append('name', clientName);
   formData.append('message', des);
   if (imageBase64) formData.append('image', imageBase64);
 
   try {
-    const res = await api.put(`/admin/testimonials/update/${id}`, formData, {
+    const res = await api.put(`/admin/testimonials/update/${testId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data;

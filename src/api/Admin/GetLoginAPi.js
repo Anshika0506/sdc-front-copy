@@ -55,34 +55,40 @@ export const loginAdmin = async (email, password) => {
     }
 
     // Handle different response structures
+    let token = null;
+    let adminData = null;
     // Case 1: Response has success field
     if (response.data.hasOwnProperty('success')) {
       if (response.data.success === true) {
-        console.log('✅ Login successful (success: true)');
-        return response.data.data || response.data;
+        adminData = response.data.data || response.data;
+        token = adminData.token || adminData.accessToken || null;
       } else {
         console.log('❌ Login failed (success: false)');
         throw new Error(response.data.message || 'Login failed');
       }
     }
-    
     // Case 2: Response has direct data with token
     else if (response.data.token) {
-      console.log('✅ Login successful (direct token)');
-      return response.data;
+      adminData = response.data;
+      token = response.data.token;
     }
-    
     // Case 3: Response has nested data with token
     else if (response.data.data && response.data.data.token) {
-      console.log('✅ Login successful (nested token)');
-      return response.data.data;
+      adminData = response.data.data;
+      token = response.data.data.token;
     }
-    
     // Case 4: HTTP 200 but no token - treat as error
     else {
       console.log('❌ No token in response');
       throw new Error('No authentication token received');
     }
+
+    // Store token in both 'token' and 'authToken' for compatibility
+    if (token) {
+      localStorage.setItem('token', token);
+      localStorage.setItem('authToken', token);
+    }
+    return adminData;
 
   } catch (error) {
     console.error('🚨 Login API Error:', error);

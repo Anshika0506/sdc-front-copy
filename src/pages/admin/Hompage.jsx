@@ -1,4 +1,11 @@
-import React, { useEffect, useState } from 'react';
+
+
+
+
+
+
+
+import React, { useState } from 'react';
 import profile1 from "../../assets/alumni1.svg";
 import profile2 from "../../assets/alumni1.svg";
 import profile3 from "../../assets/alumni1.svg";
@@ -10,129 +17,29 @@ import deletei from "../../assets/delete.png";
 import cross from "../../assets/group.svg";
 import pencil from "../../assets/pencil.png";
 
-import { getTestimonials } from '../../api/Admin/Testimonial/getTestimonials';
-import { addTestimonial } from '../../api/Admin/Testimonial/addTestimonial';
-import { updateTestimonial } from '../../api/Admin/Testimonial/updateTestimonial';
-import { deleteTestimonial } from '../../api/Admin/Testimonial/deleteTestimonial';
+const Main = () => {
+  const initialData = [
+    {
+      name: "Client Name",
+      image: profile1,
+      message:
+        "Creature die potter knickerbocker elf treats ravenclaw witch splinched. Weasley lily crossbow tell grayback bagman seek betrayal. Wronski betrayal floor seven keeper petrificus again.",
+    },
+ 
+  ];
 
-const HomePage = () => {
-  const [testimonials, setTestimonials] = useState([]);
-  const [imageFiles, setImageFiles] = useState({});
+  const [testimonials, setTestimonials] = useState(initialData);
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [currentEdit, setCurrentEdit] = useState({ index: null, name: '', message: '', image: null });
 
-  // Fetch testimonials on page load
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await getTestimonials();
-        console.log('Fetched testimonials:', response.data);
-        const data = response.data;
-        // Ensure data is an array
-        if (Array.isArray(data)) {
-          
-          // Directly set testimonials if data is an array
-          setTestimonials(data);
-        } else if (data && Array.isArray(data.data)) {
-          // Handle case where API returns { data: [...] }
-          setTestimonials(data.data);
-        } else if (data && Array.isArray(data.testimonials)) {
-          // Handle case where API returns { testimonials: [...] }
-          setTestimonials(data.testimonials);
-        } else {
-          console.warn('Unexpected data structure:', data);
-          setTestimonials([]);
-        }
-      } catch (err) {
-        console.error('Failed to fetch testimonials:', err);
-        setTestimonials([]);
-        setError('Failed to load testimonials');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  // Handle file upload
-  const handleFileChange = (idx, file) => {
-    if (file) {
-      // Store the file for upload
-      setImageFiles(prev => ({
-        ...prev,
-        [idx]: file
-      }));
-      
-      // Create preview for display
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const updated = testimonials.map((t, i) => 
-          i === idx ? { ...t, imageBase64: reader.result } : t
-        );
-        setTestimonials(updated);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Handle save with proper error handling
-  const handleSave = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      for (const [ t] of testimonials.entries()) {
-        const testimonialData = {
-          clientName: t.clientName,
-          des: t.des,
-          imageBase64: imageBase64 || null
-        };
-        
-        if (t.id) {
-          await updateTestimonial(t.id, testimonialData);
-        } else {
-          await addTestimonial(testimonialData);
-        }
-      }
-      
-      const updated = await getTestimonials();
-      const updatedData = Array.isArray(updated) ? updated : 
-                         Array.isArray(updated?.data) ? updated.data : 
-                         Array.isArray(updated?.testimonials) ? updated.testimonials : [];
-      setTestimonials(updatedData);
-      setImageFiles({});
-      setIsEditing(false);
-    } catch (err) {
-      console.error('Failed to save testimonials:', err);
-      setError('Failed to save testimonials. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (index) => {
+    const updated = testimonials.filter((_, i) => i !== index);
+    setTestimonials(updated);
   };
 
   return (
-    <div className='w-[1136px] min-h-screen pt-6 pl-7 bg-transparent'>
-      {/* Show error message if any */}
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      {/* Show loading state */}
-      {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-lg">
-            <p>Loading...</p>
-          </div>
-        </div>
-      )}
-
-      {/* Header */}
-      <div className='w-[1136px] h-[60px] flex justify-between px-7 py-2 bg-[#8E8E8E] rounded-t-xl mb-0'>
+    <div className='w-[1136px] h-[856px] pb-[159px] pt-10 pl-7'>
+      <div className='w-[1136px] h-[60px] flex justify-between px-7 py-2 bg-[#8E8E8E] rounded-t-xl'>
         <h1 className="font-semibold text-[#333333] py-1" style={{ fontFamily: "Inter", fontSize: 24, fontWeight: 600 }}>Testimonials</h1>
         <div className='flex gap-4'>
           <p className='py-2.5 font-mono' style={{ fontWeight: 400, fontSize: 16 }}>Page</p>
@@ -144,60 +51,44 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Testimonial Section */}
-      <div className="bg-[#1a1a1a] w-[1136px] h-[637px] text-white font-sans rounded-b flex flex-col justify-between mt-0"
+      <div
+        className="bg-[#1a1a1a] w-[1136px] text-white font-sans rounded-b"
         style={{
           boxShadow: '4px 4px 8px rgba(255, 255, 255, 0.2)',
-        }}>
-        {/* Testimonial Cards */}
-        <div className="flex-1 overflow-y-auto" style={{ maxHeight: 500, minHeight: 500 }}>
-          {Array.isArray(testimonials) && testimonials.length > 0 ? (
-            testimonials.map((item, index) => (
-              <div key={item.id || index} className="flex items-start gap-4">
-                <div className='h-[188px] rounded-[4.4068px] w-[186px]'>
-                  <img
-                    src={item.imageBase64 || '/placeholder-image.png'}
-                    alt={item.clientName || 'Testimonial'}
-                    className="w-[130px] h-[130px] px-1 py-1 mt-6 ml-12 object-cover bg-[#FFFFFF] rounded-[4.4068px]"
-                    onError={(e) => {
-                      e.target.src = '/placeholder-image.png';
-                    }}
-                  />
-                </div>
-
-                <div className="flex-1 py-3 px-7 w-[892px] h-[120px] text-justify">
-                  <p className="text-white font-semibold mb-1 font-mono" style={{ fontWeight: 600, fontSize: 16 }}>{item.clientName || 'Anonymous'}</p>
-                  <p className="text-gray-300 font-mono" style={{ fontWeight: 400, fontSize: 16 }}>{item.des || 'No message'}</p>
-                </div>
-                
-                <button
-                  onClick={async () => {
-                    try {
-                      await deleteTestimonial(item.id);
-                      setTestimonials(prev => prev.filter(t => t.id !== item.id));
-                    } catch (err) {
-                      setError('Failed to delete testimonial');
-                    }
-                  }}
-                  className='ml-2 mt-8 h-[40px] w-[40px] flex items-center justify-center rounded bg-[#ACACAC40]/60'>
-                  <img src={deletei} alt="delete" className='h-[20px] w-[20px]' />
-                </button>
+          maxheight: 470,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {/* Testimonial Cards */}
+          {testimonials.map((item, index) => (
+            <div key={index} className="flex items-start gap-4">
+              <div className='h-[188px] rounded-[4.4068px] w-[186px]'>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-[130px] h-[130px] px-1 py-1 mt-6 ml-12 object-cover bg-[#FFFFFF] rounded-[4.4068px]"
+                />
               </div>
-            ))
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-gray-400 text-lg">No testimonials available</p>
-            </div>
-          )}
-        </div>
 
-        {/* Footer Controls */}
+              <div className="flex-1 py-3 px-7 w-[892px]  text-justify">
+                <p className="text-white font-semibold mb-1 font-mono" style={{ fontWeight: 600, fontSize: 16 }}>{item.name}</p>
+                <p className="text-gray-300 font-mono" style={{ fontWeight: 400, fontSize: 16,maxHeight: 150,
+    overflowY: 'auto',
+    whiteSpace: 'pre-line' }}>{item.message}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Footer buttons yahin rahe */}
         <div className='w-[1136px] h-[73px] flex justify-between px-7 bg-[#30303099]/60' style={{ fontSize: 16, fontWeight: 600 }}>
           <div>
-            <button className='font-mono my-3 [box-shadow:inset_3px_3px_8px_rgba(255,255,255,0.3)] w-[105px] h-[45px] rounded-xl border-[2px] bg-[#ACACAC40]/60 border-[#FFFFFF] text-white flex py-2 gap-2 px-4'>
+            {/* <button className='font-mono my-3 [box-shadow:inset_3px_3px_8px_rgba(255,255,255,0.3)] w-[105px] h-[45px] rounded-xl border-[2px] bg-[#ACACAC40]/60 border-[#FFFFFF] text-white flex py-2 gap-2 px-4'>
               <img src={hide} alt="" className='h-[25px] w-[25px]' />
               <p>HIDE</p>
-            </button>
+            </button> */}
           </div>
           <div className="flex justify-end gap-5 mt-3">
             <button
@@ -205,7 +96,7 @@ const HomePage = () => {
               onClick={() => setIsEditing(true)}
             >
               <img src={edit} alt="edit" className='h-[25px] w-[25px]' />
-              <p>EDIT</p>
+              <p>EDIT </p>
             </button>
             <button
               onClick={() => setTestimonials([])}
@@ -218,13 +109,21 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Edit Modal */}
+
+
+      {/* Modal for editing all testimonials */}
       {isEditing && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-          <div className="bg-[#1a1a1a] w-[900px] max-h-[70vh] rounded-xl shadow-lg border border-[#5a5a5a] flex flex-col">
-            {/* Modal Header */}
+          <div
+            className="bg-[#1a1a1a] w-[900px] max-h-[70vh] rounded-xl shadow-lg border border-[#5a5a5a] flex flex-col"
+            style={{ boxShadow: '4px 4px 8px rgba(255, 255, 255, 0.2)' }}
+          >
+            {/* Fixed Header */}
             <div className="h-[60px] w-full flex justify-between items-center px-7 bg-[#8E8E8E] rounded-t-xl shrink-0">
-              <h2 className="text-[#333333]" style={{ fontFamily: 'Inter', fontSize: 22, fontWeight: 600 }}>
+              <h2
+                className="text-[#333333]"
+                style={{ fontFamily: 'Inter', fontSize: 22, fontWeight: 600 }}
+              >
                 Edit Testimonials
               </h2>
               <div className="h-[32px] w-[32px] rounded-sm p-1.5 bg-[#333333] cursor-pointer">
@@ -237,113 +136,135 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* Modal Content */}
-            <div className="overflow-y-auto px-6 py-4 flex-1">
-              {Array.isArray(testimonials) && testimonials.length > 0 ? (
-                testimonials.map((item, idx) => (
-                  <div key={idx} className="flex mb-5">
-                    <div className='w-[186px] h-[130px] gap-[10px] py-4 px-3 flex flex-col items-center'>
-                      <label htmlFor={`file-upload-${idx}`} className="cursor-pointer relative">
-                        <img
-                          src={item.imageBase64 || '/placeholder-image.png'}
-                          alt=""
-                          className="h-[100px] w-[100px] rounded mb-2 opacity-20 transition-opacity duration-200"
-                        />
-                        <span className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-100 flex items-center justify-center">
-                          <img src={pencil} alt="" className='w-[30px] h-[30px]'/>
-                        </span>
-                      </label>
-                      <input
-                        id={`file-upload-${idx}`}
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={e => handleFileChange(idx, e.target.files[0])}
+            {/* Scrollable Content for all testimonials */}
+            <div className="overflow-y-auto px-6 py-4 flex-1" style={{ maxHeight: '70vh' }}>
+              {testimonials.map((item, idx) => (
+                <div key={idx} className="flex mb-5">
+                  <div className='w-[186px] h-[130px] gap-[10px] py-4 px-3 flex flex-col items-center'>
+                    <label htmlFor={`file-upload-${idx}`} className="cursor-pointer relative">
+                      <img
+                        src={item.image}
+                        alt=""
+                        // Remove group-hover, keep opacity and overlay always ON
+                        className="h-[100px] w-[100px] rounded mb-2 opacity-20 transition-opacity duration-200"
                       />
-                    </div>
-                    
-                    <div className='flex-1 py-3 px-7 gap-1'>
-                      <label className="block text-sm text-gray-300 mb-1">TITLE</label>
-                      <input
-                        type="text"
-                        value={item.clientName || ''}
-                        placeholder='Client Name'
-                        onChange={e => {
-                          const updated = testimonials.map((t, i) => i === idx ? { ...t, clientName: e.target.value } : t);
-                          setTestimonials(updated);
-                        }}
-                        className="w-[549px] font-mono px-3 py-2 rounded-md text-white bg-gray-800 border border-gray-600"
-                      />
+                      <span className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-100 flex items-center justify-center">
+                        <img src={pencil} alt="" className='w-[30px] h-[30px]'/>
+                      </span>
+                    </label>
+                    <input
+                      id={`file-upload-${idx}`}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        const file = e.target.files && e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            const updated = testimonials.map((t, i) => i === idx ? { ...t, image: reader.result } : t);
+                            setTestimonials(updated);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor={`file-upload-${idx}`}
+                      className="cursor-pointer  px-3 py-1 rounded text-sm mt-1"
+                    >
                       
-                      <label className="block text-sm text-gray-300 mt-2">CONTENT</label>
-                      <textarea
-                        value={item.des || ''}
-                        onChange={e => {
-                          const updated = testimonials.map((t, i) => i === idx ? { ...t, des: e.target.value } : t);
-                          setTestimonials(updated);
-                        }}
-                        placeholder="Enter testimonial content..."
-                        className="w-[559px] mt-1 h-[150px] px-3 py-2 rounded-md font-mono text-white bg-gray-800 border border-gray-600"
-                      />
-                    </div>
-                    
-                    <div className="flex flex-col justify-center">
-                      <button
-                        onClick={async () => {
-                          try {
-                            await deleteTestimonial(item.id);
-                            setTestimonials(prev => prev.filter(t => t.id !== item.id));
-                          } catch (err) {
-                            setError('Failed to delete testimonial');
-                          }
-                        }}
-                        className='font-mono w-[40px] h-[40px] rounded-xl bg-[#ACACAC40]/60 text-white flex items-center justify-center mb-40'
-                      >
-                        <img src={deletei} alt="delete" className='h-[20px] w-[20px]' />
-                      </button>
-                    </div>
+                    </label>
                   </div>
-                ))
-              ) : (
-                <div className="flex items-center justify-center h-32">
-                  <p className="text-gray-400">No testimonials to edit</p>
+                  <div className='flex-1 py-3 px-7 gap-1'>
+                    <label className="block text-sm text-gray-300 mb-1" style={{fontFamily:"Inter",fontWeight:600,fontSize:14}}>TITLE</label>
+                    <input
+                      type="text"
+                      value={item.name}
+                      placeholder='Client Name'
+                      onChange={e => {
+                        const updated = testimonials.map((t, i) => i === idx ? { ...t, name: e.target.value } : t);
+                        setTestimonials(updated);
+                      }}
+                      className="w-[549px] font-mono px-3 py-2 rounded-md text-white [box-shadow:inset_3px_3px_8px_rgba(255,255,255,0.3)]"
+                    />
+                    <label className=" block text-sm text-gray-300 mt-2" style={{fontFamily:"Inter",fontWeight:600,fontSize:14}}>CONTENT</label>
+                    <textarea
+                      value={item.message}
+                      onChange={e => {
+                        const updated = testimonials.map((t, i) => i === idx ? { ...t, message: e.target.value } : t);
+                        setTestimonials(updated);
+                      }}
+                      placeholder="Enter testimonial here..."
+                      className="w-[559px] mt-1 h-[150px] px-3 py-2 rounded-md font-mono text-white [box-shadow:inset_3px_3px_8px_rgba(255,255,255,0.3)]"
+                    ></textarea>
+                  </div>
+                  <div className="flex flex-col justify-center ">
+                    <button
+                      onClick={() => {
+                        const updated = testimonials.filter((_, i) => i !== idx);
+                        setTestimonials(updated);
+                      }}
+                      className='font-mono w-[40px] h-[40px] rounded-xl bg-[#ACACAC40]/60  text-white flex items-center justify-center mb-40 '
+                    >
+                      <img src={deletei} alt="delete" className='h-[20px] w-[20px]' />
+                    </button>
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
 
-            {/* Modal Footer */}
+            {/* Sticky Footer */}
             <div className="h-[73px] flex justify-end gap-3 px-6 py-1 bg-[#30303099]/30 rounded-b-xl border-t border-[#5a5a5a] shrink-0">
               <button
-                onClick={handleSave}
-                disabled={loading}
-                className='font-mono my-3 w-[105px] h-[45px] rounded-xl border-[2px] bg-[#ACACAC40]/60 border-[#FFFFFF] text-white flex py-2.5 gap-2 px-4 disabled:opacity-50'
+                onClick={() => {
+    // Check if any testimonial is blank
+    const hasBlank = testimonials.some(
+      t => !t.name.trim() || !t.message.trim() 
+    );
+    if (hasBlank) {
+      alert("Please fill all fields (name, image, content) before saving.");
+      return;
+    }
+    setIsEditing(false);
+  }}
+                className='font-mono my-3 [box-shadow:inset_3px_3px_8px_rgba(255,255,255,0.3)] w-[105px] h-[45px] rounded-xl border-[2px] bg-[#ACACAC40]/60 border-[#FFFFFF] text-white flex py-2.5 gap-2 px-4'
               >
                 <img src={save} alt="" className='h-[25px] w-[25px]' />
-                <p>{loading ? 'SAVING...' : 'SAVE'}</p>
+                <p>SAVE</p>
               </button>
-              
               <button
+                className='font-mono my-3 [box-shadow:inset_3px_3px_8px_rgba(255,255,255,0.3)] w-[135px] h-[45px] rounded-xl border-[2px] bg-[#ACACAC40]/60 border-[#FFFFFF] text-white flex py-2.5 gap-2 px-4'
                 onClick={() => {
+                  // Check if any testimonial is blank
+                  const hasBlank = testimonials.some(
+                    t => !t.name.trim() || !t.message.trim() 
+                  );
+                  if (hasBlank) {
+                    alert("Please fill all fields (name, image, content) before adding a new testimonial.");
+                    return;
+                  }
                   setTestimonials([
-                    ...testimonials,
                     {
-                      clientName: '',
-                      imageBase64: '',
-                      des: '',
+                      name: '',
+                      image: '',
+                      message: '',
                     },
+                    ...testimonials,
                   ]);
                 }}
-                className='font-mono my-3 w-[135px] h-[45px] rounded-xl border-[2px] bg-[#ACACAC40]/60 border-[#FFFFFF] text-white flex py-2.5 gap-2 px-4'
               >
                 <img src={add} alt="" />
-                <p>ADD NEW</p>
+                <p> ADD NEW</p>
               </button>
             </div>
           </div>
         </div>
       )}
+
+
     </div>
   );
 };
 
-export default HomePage;
+export default Main;
