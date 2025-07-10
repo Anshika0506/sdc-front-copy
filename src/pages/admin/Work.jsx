@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import project from "../../assets/project.png";
-import hide from "../../assets/hide.png";
 import edit from "../../assets/edit.png";
 import trash from "../../assets/delete.png";
 import cross from "../../assets/cross.svg";
@@ -76,16 +75,21 @@ const WorkPage = () => {
   const handleCreateNewProject = () => {
     const newProjectId =
       projects.length > 0 ? Math.max(...projects.map((p) => p.id)) + 1 : 1;
+
     const newProject = {
       id: newProjectId,
       isVisible: true,
       projectName: "New Project Title",
       projectLink: "www.newprojectlink.com",
       projectImage: project, // Default image
-      projectDescription: "This is a description for your new project. It can be as long or short as you need it to be, and the box will adjust.",
+      projectDescription:
+        "This is a description for your new project. It can be as long or short as you need it to be, and the box will adjust.",
       teamMembers: "New Member - Role\nAnother Member - Another Role",
     };
-    setProjects([...projects, newProject]);
+
+    setProjects([newProject, ...projects]);
+    setCurrentProject(newProject);
+    setIsEditing(true);
   };
 
   return (
@@ -121,12 +125,7 @@ const WorkPage = () => {
         `}</style>
 
         <div className="flex justify-center">
-          {/* This inner div helps center your content, give right margin, and limit its max-width */}
-          {/* pt-[5px] provides initial top spacing from the scrollable div's top edge */}
           <div className="w-full max-w-[1136px] space-y-[20px] px-[30px] pt-[5px] pb-[10px] mr-[50px]">
-
-            {/* STICKY BAR FOR CREATE NEW BUTTON */}
-            {/* Added sticky, top-0, z-10 */}
             <div className="sticky top-0 z-10 w-full flex justify-end items-center px-[30px] py-[10px] bg-[#1E1E1E]">
               <button
                 onClick={handleCreateNewProject}
@@ -138,8 +137,7 @@ const WorkPage = () => {
                 </span>
               </button>
             </div>
-
-            {/* Project boxes will now scroll below the sticky bar */}
+    {/* Project boxes will now scroll below the sticky bar */}
             {projects.map(
               (proj) =>
                 proj.isVisible && (
@@ -388,5 +386,4 @@ const WorkPage = () => {
     </div>
   );
 };
-
 export default WorkPage;

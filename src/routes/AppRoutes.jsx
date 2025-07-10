@@ -18,6 +18,7 @@ import AdminLogin from '../pages/admin/Login';
 import PrivateRoute from '../auth/PrivateRoute';
 import HomePage from '../pages/admin/Hompage';
 import AdminWork from '../pages/admin/Work';
+import AdminServices from '../pages/admin/Services';
 
 const AppRoutes = () => {
   return (
@@ -50,7 +51,7 @@ const AppRoutes = () => {
         <Route index element={<Navigate to="manage-home" replace />} />
         <Route path="manage-home" element={<HomePage />} />
         <Route path="manage-work" element={<AdminWork />} />
-
+        <Route path="manage-services" element={<AdminServices />} />
         {/* Add more admin routes here */}
       </Route>
     </Routes>
