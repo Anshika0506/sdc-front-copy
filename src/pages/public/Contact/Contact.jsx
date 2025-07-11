@@ -22,8 +22,8 @@ const Contact = () => {
   const [selectedQuery, setSelectedQuery] = useState("");
   const queryRef = useRef(null);
   const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
-  const [mail, setMail] = useState("");
+  const [contactNo, setContactNo] = useState("");
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
@@ -59,8 +59,16 @@ const Contact = () => {
       setFaqsLoading(true);
       setFaqsError("");
       try {
-        const data = await getFaqs();
-        setFaqs(Array.isArray(data) ? data : []);
+        const res = await getFAQs();
+        // Map backend fields 'ques' and 'ans' to 'question' and 'answer'
+        const mappedFaqs = Array.isArray(res.data)
+          ? res.data.map(faq => ({
+              question: faq.ques,
+              answer: faq.ans,
+              _id: faq._id // preserve _id if present
+            }))
+          : [];
+        setFaqs(mappedFaqs);
       } catch (err) {
         setFaqsError("Failed to load FAQs. Please try again later.");
       } finally {
@@ -78,16 +86,16 @@ const Contact = () => {
     try {
       await postContact({
         name,
-        contact,
+        contactNo,
         query: selectedQuery,
-        mail,
+        email,
         message,
       });
       setSuccess("Your message has been sent successfully!");
       setName("");
-      setContact("");
+      setContactNo("");
       setSelectedQuery("");
-      setMail("");
+      setEmail("");
       setMessage("");
     } catch (err) {
       setError("Failed to send message. Please try again later.");
@@ -135,33 +143,34 @@ const Contact = () => {
             {/* Contact */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-start gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
-                <div className="text-white text-2xl font-semibold font-inter leading-[32px]">
-                  Contact
-                </div>
+                <input
+                  type="text"
+                  placeholder="Enter phone no."
+                  className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
+                  value={contactNo}
+                  onChange={e => setContactNo(e.target.value)}
+                  required
+                />
               </div>
-              <div className="flex flex-col gap-2">
-                <div className="p-0.5 flex flex-col gap-1">
-                  <div className="text-white text-base font-normal font-ibmplexmono leading-6">
-                    Phone No.
-                  </div>
-                  <div className="text-[#D2D2D2] text-sm font-normal font-ibmplexmono leading-5">
-                    +91-07313111500
-                  </div>
-                </div>
-                <div className="self-stretch p-0.5 flex flex-col gap-1">
-                  <div className="text-white text-base font-normal font-ibmplexmono leading-6">
-                    Email ID
-                  </div>
-                  <div className="text-[#D2D2D2] text-sm font-normal font-ibmplexmono leading-5">
-                    sdc@medicaps.ac.in
-                  </div>
-                </div>
+              <div className="text-[#D2D2D2] text-sm font-normal font-ibmplexmono leading-5">
+                +91-07313111500
               </div>
             </div>
-
-            {/* Divider */}
-            <div className="hidden md:block w-0 h-20 outline outline-1 outline-white outline-offset-[-0.5px]"></div>
-
+            <div className="self-stretch p-0.5 flex flex-col gap-1">
+              <div className="text-white text-base font-normal font-ibmplexmono leading-6">
+                Email ID
+              </div>
+              <div className="text-[#D2D2D2] text-sm font-normal font-ibmplexmono leading-5">
+                <input
+                  type="email"
+                  placeholder="Enter Gmail id"
+                  className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
             {/* Social Media */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-center gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
@@ -194,10 +203,8 @@ const Contact = () => {
                 </a>
               </div>
             </div>
-
             {/* Divider */}
             <div className="hidden md:block w-0 h-20 outline outline-1 outline-white outline-offset-[-0.5px]"></div>
-
             {/* Operating Hour */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-start gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
@@ -214,10 +221,8 @@ const Contact = () => {
                 </div>
               </div>
             </div>
-
             {/* Divider */}
             <div className="hidden md:block w-0 h-20 outline outline-1 outline-white outline-offset-[-0.5px]"></div>
-
             {/* Office Address */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-start gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
@@ -288,8 +293,8 @@ const Contact = () => {
                       type="text"
                       placeholder="Enter phone no."
                       className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
-                      value={contact}
-                      onChange={e => setContact(e.target.value)}
+                      value={contactNo}
+                      onChange={e => setContactNo(e.target.value)}
                       required
                     />
                   </div>
@@ -369,8 +374,8 @@ const Contact = () => {
                     type="email"
                     placeholder="Enter Gmail id"
                     className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
-                    value={mail}
-                    onChange={e => setMail(e.target.value)}
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -475,6 +480,6 @@ const Contact = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Contact;

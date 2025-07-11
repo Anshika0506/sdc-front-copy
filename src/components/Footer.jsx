@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import logo from "../assets/LogoWhite.png";
 import mail from "../assets/mail.png";
 import phone from "../assets/phone.png";
@@ -22,14 +23,14 @@ const Footer = () => {
       />
 
       <div className="mt-12 text-white flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm sm:text-base">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#work">Work</a>
-        <a href="#people">People</a>
-        <a href="#careers">Careers</a>
-        <a href="#contact">Contact</a>
-        <a href="#admin">Admin</a>
+        <Link to="/" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>Home</Link>
+        <Link to="/about" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>About</Link>
+        <Link to="/services" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>Services</Link>
+        <Link to="/work" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>Work</Link>
+        <Link to="/people" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>People</Link>
+        <Link to="/career" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>Career</Link>
+        <Link to="/contact" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>Contact</Link>
+        <Link to="/admin" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>Admin</Link>
       </div>
 
       <div

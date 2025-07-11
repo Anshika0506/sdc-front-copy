@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import icon from "../../../assets/icon.svg";
 
 const IgniteIdeaSection = () => {
@@ -21,7 +22,7 @@ const IgniteIdeaSection = () => {
           </p>
 
           {/* CTA Button */}
-          <div className="w-[180px] h-[42px] py-4 bg-pink-700/90 rounded-[10px] shadow-[0px_0px_25px_0px_rgba(142,45,226,0.25)] inline-flex justify-center items-center gap-2">
+          <Link to="/contact" className="w-[180px] h-[42px] py-4 bg-pink-700/90 rounded-[10px] shadow-[0px_0px_25px_0px_rgba(142,45,226,0.25)] inline-flex justify-center items-center gap-2 cursor-pointer">
             <div
               data-breakpoint="desktop"
               data-icon="idea"
@@ -32,7 +33,7 @@ const IgniteIdeaSection = () => {
             <div className="justify-start text-Colors-Text-Primary text-sm font-semibold font-['Inter'] uppercase tracking-tight">
               Ignite the Idea
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </div>

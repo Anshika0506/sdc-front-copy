@@ -1,32 +1,45 @@
 import React, { useEffect, useState } from "react";
-import img from "../../../assets/laptopimg.svg";
 import arrowleft from "../../../assets/leftarrow.svg";
 import arrowRight from "../../../assets/rightarrow.svg";
-
-const projects = [
-  {
-    title: "Medgel Website",
-    description: "It is a website developed for Medgel Pharmaceuticals.",
-    status: "Deployed",
-    imageUrl: img,
-  },
-  {
-    title: "Mentor Mentee Portal",
-    description:
-      "It is a web based application developed for Medicaps University.",
-    status: "In Development",
-    imageUrl: img,
-  },
-  {
-    title: "Alumni Portal",
-    description: "A platform to connect alumni with current students.",
-    status: "Development",
-    imageUrl: img,
-  },
-];
+import { getProject } from '../../../api/Admin/Project/getProject';
+import imgFallback from "../../../assets/laptopimg.svg";
 
 const FeaturedProjects = () => {
+  const [projects, setProjects] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const data = await getProject();
+        // Map backend fields to frontend expected fields
+        const mapped = Array.isArray(data)
+          ? data.map(p => ({
+              title: p.projectName,
+              description: p.description,
+              status: p.status,
+              imageUrl: p.imageUrl || imgFallback,
+            }))
+          : [];
+        setProjects(mapped);
+      } catch (err) {
+        setError("Failed to load projects.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    if (projects.length === 0) return;
+    const interval = setInterval(goToNext, 5000);
+    return () => clearInterval(interval);
+  }, [projects]);
 
   const goToNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % projects.length);
@@ -38,16 +51,21 @@ const FeaturedProjects = () => {
     );
   };
 
-  useEffect(() => {
-    const interval = setInterval(goToNext, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   const getCardAt = (offset) => {
-    return projects[
-      (currentIndex + offset + projects.length) % projects.length
-    ];
+    return projects.length > 0
+      ? projects[(currentIndex + offset + projects.length) % projects.length]
+      : null;
   };
+
+  if (loading) {
+    return <div className="w-full text-center py-20 text-white">Loading projects...</div>;
+  }
+  if (error) {
+    return <div className="w-full text-center py-20 text-red-400">{error}</div>;
+  }
+  if (projects.length === 0) {
+    return <div className="w-full text-center py-20 text-white">No projects found.</div>;
+  }
 
   return (
     <section className="py-12 text-white">
@@ -59,7 +77,7 @@ const FeaturedProjects = () => {
         {/* Left Button */}
         <button
           onClick={goToPrev}
-          className="absolute w-15 h-15 left-4 md:left-34 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl"
+          className="absolute w-15 h-15 left-4 md:left-34 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl cursor-pointer"
         >
           <img src={arrowleft} alt="left" className="w-full h-full" />
         </button>
@@ -67,6 +85,7 @@ const FeaturedProjects = () => {
         {/* Cards */}
         <div className="flex -space-x-16 md:-space-x-20 items-center overflow-x-visible">
           {[getCardAt(-1), getCardAt(0), getCardAt(1)].map((project, index) => {
+            if (!project) return null;
             const scale =
               index === 1
                 ? "scale-100 z-20"
@@ -75,7 +94,7 @@ const FeaturedProjects = () => {
             return (
               <div
                 key={project.title}
-                className={`w-[85%] sm:w-[70%] md:w-full h-[365px] md:h-full rounded-2xl transition-all duration-500 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] ${scale}`}
+                className={`w-[85%] sm:w-[70%] md:w-full h-full md:h-full rounded-2xl transition-all duration-500 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] ${scale}`}
               >
                 <div className="p-4 flex flex-col gap-4 h-full">
                   <img
@@ -103,7 +122,7 @@ const FeaturedProjects = () => {
         {/* Right Button */}
         <button
           onClick={goToNext}
-          className="absolute w-15 h-15 right-4 md:right-34 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl"
+          className="absolute w-15 h-15 right-4 md:right-34 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl cursor-pointer"
         >
           <img src={arrowRight} alt="right" className="w-full h-full" />
         </button>

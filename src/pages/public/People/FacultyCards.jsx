@@ -45,9 +45,9 @@ const positions = ["Member", "Lead", "Coordinator"];
 
 const ProfileCard = ({ name, role, position, image }) => {
   return (
-    <div className="w-full min-h-[200px] gap-[20px] p-4 rounded-xl shadow-[2px_2px_4px_0px_#00000040,inset_2px_2px_6px_0px#FFFFFF80] text-white flex flex-row items-center">
-      {/* Image on the left */}
-      <div className="w-[121px] h-[168px] rounded-lg overflow-hidden">
+    <div className="w-full min-h-[200px] gap-[20px] p-4 rounded-xl shadow-[2px_2px_4px_0px_#00000040,inset_2px_2px_6px_0px_#FFFFFF80] text-white flex flex-row items-center">
+      {/* Image on the left - always visible, even on mobile */}
+      <div className="w-[121px] h-[168px] rounded-lg overflow-hidden block">
         <img
           src={alumni3}
           alt={name}
@@ -166,7 +166,7 @@ const People = () => {
           {mentors.map((mentor, idx) => (
             <div
               key={idx}
-              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl flex flex-col items-center p-6 w-[320px] md:w-[340px] transition-transform hover:scale-105"
+              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl flex flex-col items-center p-6 w-[320px] md:w-[340px] transition-transform hover:scale-105 shadow-[2px_2px_4px_0px_#00000040,inset_2px_2px_6px_0px_#FFFFFF80]"
             >
               <div className="w-full h-[380px] rounded-2xl overflow-hidden mb-4 flex items-center justify-center bg-gray-900/10">
                 <img
@@ -447,7 +447,7 @@ const People = () => {
                         <Listbox.Options
                           style={{
                             boxShadow:
-                              "2px 2px 4px #00000040, inset 2px 2px 6px #ffffff80",
+                              "2px 2px 4px 0px #00000040, inset 2px 2px 6px #ffffff80",
                           }}
                           className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-xl bg-black/10 text-white shadow-lg backdrop-blur border border-white/30"
                         >
