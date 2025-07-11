@@ -17,6 +17,7 @@ import ProjectDetails from '../pages/public/Work/ProjectDetails';
 import AdminLogin from '../pages/admin/Login';
 import PrivateRoute from '../auth/PrivateRoute';
 import HomePage from '../pages/admin/Homepage';
+import AdminAbout from '../pages/admin/AboutPage';
 import AdminWork from '../pages/admin/Work';
 import AdminServices from '../pages/admin/Services';
 import FAQSection from '../pages/admin/FAQSection';
@@ -50,8 +51,9 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       >
-        <Route index element={<Navigate to="manage-home" replace />} />
-        <Route path="manage-home" element={<HomePage />} />
+        <Route index element={<Navigate to="manage-testimonials" replace />} />
+        <Route path="manage-testimonials" element={<HomePage />} />
+        <Route path="manage-about" element={<AdminAbout />} />
         <Route path="manage-work" element={<AdminWork />} />
         <Route path="manage-services" element={<AdminServices />} />
                 <Route path="manage-faqs" element={<FAQSection />} />

@@ -1,45 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import project from "../../assets/project.png";
 import edit from "../../assets/edit.png";
 import trash from "../../assets/delete.png";
 import cross from "../../assets/cross.svg";
 import save from "../../assets/save.png";
 import plus from "../../assets/add.png";
+import { addProject } from '../../api/Admin/Project/addProject';
+import { getProject } from '../../api/Admin/Project/getProject';
+import { updateProject } from '../../api/Admin/Project/updateProject';
+import { deleteProject } from '../../api/Admin/Project/deleteProject';
 
 const WorkPage = () => {
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      isVisible: true,
-      projectName: "Mentor Mentee Portal - A Comprehensive Platform for Student-Faculty Interaction and Academic Guidance",
-      projectLink: "www.mentormenteeportal.medicaps.ac.in/thisisaverylonglinkthatshouldwrapanddemonstratetheautomaticexpansionofitscontainer",
-      projectImage: project,
-      projectDescription:
-        "Potter ipsum wand elf parchment wingardium. Hats slytherin's house points will be awarded for this amazing project that demonstrates excellent magical coding abilities and a deep understanding of React spells and incantations. This project focuses on fostering better communication and academic support between mentors and mentees within the university setting. It includes features like progress tracking, resource sharing, and schedule management. This description is intentionally made quite a bit longer to truly showcase the dynamic expansion of the project box when there's a lot of content.",
-      teamMembers:
-        "Student Name One - Project Manager and Lead Architect for System Design and Integration\nStudent Name Two - Senior Frontend Developer and UI/UX Specialist for User Interface and Experience Design\nStudent Name Three - Backend Developer and Database Administrator Responsible for Server-Side Logic and Data Management\nStudent Name Four - Quality Assurance Engineer and Documentation Specialist Ensuring Software Reliability and Comprehensive Project Records\nStudent Name Five - Content Creator and Community Manager Overseeing Platform Content and User Engagement Initiatives",
-    },
-    {
-      id: 2,
-      isVisible: true,
-      projectName: "Another Project - An Innovative Solution for Global Challenges in Sustainable Development and Renewable Energy Sources",
-      projectLink: "www.anotherproject.com/thisisalsoaverylonglinkthatneedstobreakproperlyandshowthecontaineradjusting",
-      projectImage: project,
-      projectDescription:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. This description is intentionally made longer to demonstrate wrapping functionality.",
-      teamMembers: "Team Member A - Lead Researcher\nTeam Member B - Data Scientist\nTeam Member C - Environmental Consultant",
-    },
-  ]);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(false);
+  // Fetch projects from backend on mount
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
+      const res = await getProject();
+      // Map backend fields to frontend state
+      const data = Array.isArray(res) ? res : (Array.isArray(res.data) ? res.data : []);
+      setProjects(data.map(p => ({
+        id: p.projectID,
+        isVisible: true,
+        projectName: p.title,
+        projectLink: p.link,
+        projectImage: p.imageBase64 ? `data:image/jpeg;base64,${p.imageBase64}` : project,
+        projectDescription: p.description,
+        teamMembers: p.teamMembers ? p.teamMembers.map(m => m.name + (m.position ? ' - ' + m.position : '')).join('\n') : '',
+      })));
+    } catch (err) {
+      alert('Failed to fetch projects: ' + (err.message || 'Unknown error'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [isEditing, setIsEditing] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
 
-  const handleDelete = (id) => {
-    setProjects(
-      projects.map((proj) =>
-        proj.id === id ? { ...proj, isVisible: false } : proj
-      )
-    );
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this project?')) return;
+    try {
+      await deleteProject(id);
+      setProjects(projects.filter(proj => proj.id !== id));
+    } catch (err) {
+      alert('Failed to delete project: ' + (err.message || 'Unknown error'));
+    }
   };
 
   const handleEdit = (projectToEdit) => {
@@ -47,14 +58,31 @@ const WorkPage = () => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setProjects(
-      projects.map((proj) =>
-        proj.id === currentProject.id ? currentProject : proj
-      )
-    );
-    setIsEditing(false);
-    setCurrentProject(null);
+  const handleSave = async () => {
+    // Prepare data for API
+    const payload = {
+      title: currentProject.projectName,
+      description: currentProject.projectDescription,
+      link: currentProject.projectLink,
+      imageBase64: currentProject.projectImage,
+      teamMembers: currentProject.teamMembers
+        .split('\n')
+        .map(m => m.replace(/^•\s?/, '').trim())
+        .filter(Boolean)
+        .join(','),
+    };
+    try {
+      if (currentProject.id && projects.some(p => p.id === currentProject.id)) {
+        await updateProject(currentProject.id, payload);
+      } else {
+        await addProject(payload);
+      }
+      await fetchProjects();
+      setIsEditing(false);
+      setCurrentProject(null);
+    } catch (err) {
+      alert('Failed to save project: ' + (err.message || 'Unknown error'));
+    }
   };
 
   const handleImageChange = (e) => {
@@ -73,11 +101,8 @@ const WorkPage = () => {
   };
 
   const handleCreateNewProject = () => {
-    const newProjectId =
-      projects.length > 0 ? Math.max(...projects.map((p) => p.id)) + 1 : 1;
-
     const newProject = {
-      id: newProjectId,
+      id: null,
       isVisible: true,
       projectName: "New Project Title",
       projectLink: "www.newprojectlink.com",
@@ -86,8 +111,6 @@ const WorkPage = () => {
         "This is a description for your new project. It can be as long or short as you need it to be, and the box will adjust.",
       teamMembers: "New Member - Role\nAnother Member - Another Role",
     };
-
-    setProjects([newProject, ...projects]);
     setCurrentProject(newProject);
     setIsEditing(true);
   };
@@ -138,9 +161,13 @@ const WorkPage = () => {
               </button>
             </div>
     {/* Project boxes will now scroll below the sticky bar */}
-            {projects.map(
+            {loading ? (
+              <div className="text-white text-center py-10">Loading projects...</div>
+            ) : projects.length === 0 ? (
+              <div className="text-white text-center py-10">No projects found.</div>
+            ) : projects.map(
               (proj) =>
-                proj.isVisible && (
+                proj.isVisible !== false && (
                   <div
                     key={proj.id}
                     className="w-full min-h-[460px] bg-[#141414] rounded-xl shadow-[2px_2px_6px_0px_#FFFFFF26] flex flex-col"

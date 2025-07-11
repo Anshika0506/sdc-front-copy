@@ -1,6 +1,6 @@
 import api from '../../config';
 
-export const updateProject = async (projectID, { title, description, link, imageBase64, teamMembers }) => {
+export const addProject = async ({ title, description, link, imageBase64, teamMembers }) => {
   const formData = new FormData();
   formData.append('title', title);
   formData.append('description', description);
@@ -22,15 +22,16 @@ export const updateProject = async (projectID, { title, description, link, image
     }
   }
   if (teamMembers) {
+    // teamMembers as comma-separated string
     formData.append('teamMembers', teamMembers);
   }
   try {
-    const res = await api.put(`/auth/projects/update/${projectID}`, formData, {
+    const res = await api.post('/auth/projects/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data;
   } catch (error) {
-    console.error('Error updating project:', error.response?.data || error.message);
+    console.error('Error adding project:', error.response?.data || error.message);
     throw error;
   }
 };

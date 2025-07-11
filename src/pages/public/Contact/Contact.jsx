@@ -3,31 +3,8 @@ import { useState, useRef, useEffect } from "react";
 import meshGradient from "../../../assets/mesh-gradient.webp";
 import instagramIcon from "../../../assets/Contact/instagramIcon.svg"
 import linkedinIcon from "../../../assets/Contact/linkedinIcon.svg"
-const faqs = [
-  {
-    question: "Quality services provided at affordable rates?",
-    answer: "",
-  },
-  {
-    question: "Minimum prices for the maximum output advertise anything?",
-    answer:
-      "Potter ipsum wand elf parchment wingardium. Ludo glory house peruvian-night-powder crush dobby last wand. Order azkaban umbrella elder hunt knight-bus lion. Floor head map carriages giant out slytherin's. Hexed mrs memory of peg-leg great dress catherine floo. Downfall easy is sticking this hair 10 azkaban.",
-  },
-  {
-    question:
-      "Advertising that makes all the difference leaping over boundaries?",
-    answer: "",
-  },
-  {
-    question: "Minimum prices for the maximum output advertise anything?",
-    answer: "",
-  },
-  {
-    question: "Quality services provided at affordable rates?",
-    answer: "",
-  },
-];
-
+import { postContact } from '../../../api/Public/postContact';
+import { getFAQs } from '../../../api/Admin/FAQSection/getFAQs';
 const navLinks = [
   "Home",
   "About",
@@ -44,6 +21,16 @@ const Contact = () => {
   const [isQueryOpen, setIsQueryOpen] = useState(false);
   const [selectedQuery, setSelectedQuery] = useState("");
   const queryRef = useRef(null);
+  const [name, setName] = useState("");
+  const [contact, setContact] = useState("");
+  const [mail, setMail] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [faqs, setFaqs] = useState([]);
+  const [faqsLoading, setFaqsLoading] = useState(true);
+  const [faqsError, setFaqsError] = useState("");
 
   const queries = [
     "Application Development",
@@ -65,6 +52,49 @@ const Contact = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    // Fetch FAQs from backend
+    const fetchFaqs = async () => {
+      setFaqsLoading(true);
+      setFaqsError("");
+      try {
+        const data = await getFaqs();
+        setFaqs(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setFaqsError("Failed to load FAQs. Please try again later.");
+      } finally {
+        setFaqsLoading(false);
+      }
+    };
+    fetchFaqs();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess("");
+    setError("");
+    try {
+      await postContact({
+        name,
+        contact,
+        query: selectedQuery,
+        mail,
+        message,
+      });
+      setSuccess("Your message has been sent successfully!");
+      setName("");
+      setContact("");
+      setSelectedQuery("");
+      setMail("");
+      setMessage("");
+    } catch (err) {
+      setError("Failed to send message. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -225,7 +255,7 @@ const Contact = () => {
           </div>
 
           {/* Contact Form on the right */}
-          <form className="w-full max-w-[586px] flex flex-col justify-between items-center gap-4">
+          <form className="w-full max-w-[586px] flex flex-col justify-between items-center gap-4" onSubmit={handleSubmit}>
             <div className="w-full flex flex-col gap-3.5">
               {/* Name */}
               <div className="flex flex-col gap-1.5">
@@ -238,6 +268,9 @@ const Contact = () => {
                     type="text"
                     placeholder="Enter your name"
                     className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -255,11 +288,13 @@ const Contact = () => {
                       type="text"
                       placeholder="Enter phone no."
                       className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
+                      value={contact}
+                      onChange={e => setContact(e.target.value)}
+                      required
                     />
                   </div>
                 </div>
 
-                {/* Query - Custom Dropdown */}
                 {/* Query - Custom Dropdown */}
                 <div
                   className="flex-1 flex flex-col gap-1.5 relative"
@@ -334,6 +369,9 @@ const Contact = () => {
                     type="email"
                     placeholder="Enter Gmail id"
                     className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
+                    value={mail}
+                    onChange={e => setMail(e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -348,18 +386,24 @@ const Contact = () => {
                   <textarea
                     placeholder="Describe your query"
                     className="relative z-10 bg-transparent outline-none border-none w-full h-24 resize-none text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                    required
                   />
                 </div>
               </div>
             </div>
-
+            {/* Success/Error Messages */}
+            {success && <div className="w-full text-green-400 text-center font-semibold">{success}</div>}
+            {error && <div className="w-full text-red-400 text-center font-semibold">{error}</div>}
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full px-8 py-4 bg-pink-700 rounded-[10px] shadow-[0px_0px_25px_0px_rgba(142,45,226,0.25)] flex justify-center items-center gap-4 mt-2"
+              className="w-full px-8 py-4 bg-pink-700 rounded-[10px] shadow-[0px_0px_25px_0px_rgba(142,45,226,0.25)] flex justify-center items-center gap-4 mt-2 disabled:opacity-60"
+              disabled={loading}
             >
               <span className="text-white text-base font-semibold font-inter uppercase tracking-tight">
-                Submit
+                {loading ? "Submitting..." : "Submit"}
               </span>
             </button>
           </form>
@@ -374,59 +418,59 @@ const Contact = () => {
             FAQ
           </div>
         </div>
-
         {/* FAQ Items */}
         <div className="w-full flex flex-col items-center pb-16">
-          <div className="flex flex-col items-center gap-6">
-            <div className="flex flex-col items-center gap-5">
-              {faqs.map((faq, idx) => (
-                <div
-                  key={idx}
-                  className={`w-[95vw] max-w-[952px] p-6 bg-white rounded-[10px] flex flex-col justify-center items-center gap-4 overflow-hidden transition-all duration-300 ${
-                    openFaq === idx ? "" : ""
-                  }`}
-                  data-faq-number={`faq ${idx + 1}`}
-                  data-state={openFaq === idx ? "open" : "closed"}
-                >
-                  {/* Question + Toggle Button */}
-                  <div className="self-stretch inline-flex justify-between items-center">
-                    <div className="flex-1 text-black text-base font-normal font-ibmplexmono leading-normal">
-                      {faq.question}
-                    </div>
-                    <button
-                      onClick={() => setOpenFaq(openFaq === idx ? -1 : idx)}
-                      className="w-6 h-6 flex items-center justify-center"
-                      aria-label={openFaq === idx ? "Close" : "Open"}
-                    >
-                      <div
-                        className={`w-6 h-6 transform transition-transform duration-300 ease-in-out ${
-                          openFaq === idx ? "rotate-45" : "rotate-0"
-                        }`}
-                        dangerouslySetInnerHTML={{
-                          __html: `
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <path d="M13.8333 6.33333C13.6017 6.33333 11.7942 6.33333 9.66667 6.33333C9.66667 4.20583 9.66667 2.39833 9.66667 2.16667C9.66667 1.24583 8.92083 0.5 8 0.5C7.07917 0.5 6.33333 1.24583 6.33333 2.16667C6.33333 2.39833 6.33333 4.20583 6.33333 6.33333C4.20583 6.33333 2.39833 6.33333 2.16667 6.33333C1.24583 6.33333 0.5 7.07917 0.5 8C0.5 8.92083 1.24583 9.66667 2.16667 9.66667C2.23417 9.66667 4.1075 9.66667 6.33333 9.66667C6.33333 11.7942 6.33333 13.6017 6.33333 13.8333C6.33333 14.7542 7.07917 15.5 8 15.5C8.92083 15.5 9.66667 14.7542 9.66667 13.8333C9.66667 13.6017 9.66667 11.7942 9.66667 9.66667C11.8925 9.66667 13.7658 9.66667 13.8333 9.66667C14.7542 9.66667 15.5 8.92083 15.5 8C15.5 7.07917 14.7542 6.33333 13.8333 6.33333Z"
-                                fill="#000000" />
-                            </svg>
-                          `,
-                        }}
-                      />
-                    </button>
-                  </div>
-
-                  {/* Answer */}
-                  {openFaq === idx && faq.answer && (
-                    <div className="self-stretch flex justify-start items-center gap-2.5">
-                      <div className="flex-1 text-zinc-500 text-sm font-normal font-ibmplexmono leading-tight">
-                        {faq.answer}
+          {faqsLoading ? (
+            <div className="text-white text-lg">Loading FAQs...</div>
+          ) : faqsError ? (
+            <div className="text-red-400 text-lg">{faqsError}</div>
+          ) : (
+            <div className="flex flex-col items-center gap-6">
+              <div className="flex flex-col items-center gap-5">
+                {faqs.map((faq, idx) => (
+                  <div
+                    key={faq._id || idx}
+                    className={`w-[95vw] max-w-[952px] p-6 bg-white rounded-[10px] flex flex-col justify-center items-center gap-4 overflow-hidden transition-all duration-300 ${openFaq === idx ? "" : ""}`}
+                    data-faq-number={`faq ${idx + 1}`}
+                    data-state={openFaq === idx ? "open" : "closed"}
+                  >
+                    {/* Question + Toggle Button */}
+                    <div className="self-stretch inline-flex justify-between items-center">
+                      <div className="flex-1 text-black text-base font-normal font-ibmplexmono leading-normal">
+                        {faq.question}
                       </div>
+                      <button
+                        onClick={() => setOpenFaq(openFaq === idx ? -1 : idx)}
+                        className="w-6 h-6 flex items-center justify-center"
+                        aria-label={openFaq === idx ? "Close" : "Open"}
+                      >
+                        <div
+                          className={`w-6 h-6 transform transition-transform duration-300 ease-in-out ${openFaq === idx ? "rotate-45" : "rotate-0"}`}
+                          dangerouslySetInnerHTML={{
+                            __html: `
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.8333 6.33333C13.6017 6.33333 11.7942 6.33333 9.66667 6.33333C9.66667 4.20583 9.66667 2.39833 9.66667 2.16667C9.66667 1.24583 8.92083 0.5 8 0.5C7.07917 0.5 6.33333 1.24583 6.33333 2.16667C6.33333 2.39833 6.33333 4.20583 6.33333 6.33333C4.20583 6.33333 2.39833 6.33333 2.16667 6.33333C1.24583 6.33333 0.5 7.07917 0.5 8C0.5 8.92083 1.24583 9.66667 2.16667 9.66667C2.23417 9.66667 4.1075 9.66667 6.33333 9.66667C6.33333 11.7942 6.33333 13.6017 6.33333 13.8333C6.33333 14.7542 7.07917 15.5 8 15.5C8.92083 15.5 9.66667 14.7542 9.66667 13.8333C9.66667 13.6017 9.66667 11.7942 9.66667 9.66667C11.8925 9.66667 13.7658 9.66667 13.8333 9.66667C14.7542 9.66667 15.5 8.92083 15.5 8C15.5 7.07917 14.7542 6.33333 13.8333 6.33333Z"
+                                  fill="#000000" />
+                              </svg>
+                            `,
+                          }}
+                        />
+                      </button>
                     </div>
-                  )}
-                </div>
-              ))}
+                    {/* Answer */}
+                    {openFaq === idx && faq.answer && (
+                      <div className="self-stretch flex justify-start items-center gap-2.5">
+                        <div className="flex-1 text-zinc-500 text-sm font-normal font-ibmplexmono leading-tight">
+                          {faq.answer}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

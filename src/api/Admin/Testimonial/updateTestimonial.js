@@ -2,9 +2,21 @@ import api from '../../config';
 
 export const updateTestimonial = async (testId, { clientName, des, imageBase64 }) => {
   const formData = new FormData();
-  formData.append('name', clientName);
-  formData.append('message', des);
-  if (imageBase64) formData.append('image', imageBase64);
+  formData.append('clientName', clientName);
+  formData.append('des', des);
+  if (imageBase64) {
+    // Convert base64 to File
+    const arr = imageBase64.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    const file = new File([u8arr], 'testimonial-image.jpg', { type: mime });
+    formData.append('image', file);
+  }
 
   try {
     const res = await api.put(`/admin/testimonials/update/${testId}`, formData, {
