@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import meshGradient from '../../assets/mesh-gradient.webp';
 import { useNavigate } from 'react-router-dom';
-import { loginAdmin } from '../../api/Admin/GetLoginAPi';
+import { loginAdmin } from '../../api/Admin/login';
 import { useAuth } from '../../auth/AuthContext';
 
 export default function LoginPage() {

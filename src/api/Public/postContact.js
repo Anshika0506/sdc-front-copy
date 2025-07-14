@@ -1,4 +1,4 @@
-import api from '../config';
+import api from '../axios';
 
 export const postContact = async (formData) => {
   try {

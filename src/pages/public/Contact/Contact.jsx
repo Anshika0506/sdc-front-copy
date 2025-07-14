@@ -4,7 +4,7 @@ import meshGradient from "../../../assets/mesh-gradient.webp";
 import instagramIcon from "../../../assets/Contact/instagramIcon.svg"
 import linkedinIcon from "../../../assets/Contact/linkedinIcon.svg"
 import { postContact } from '../../../api/Public/postContact';
-import { getFAQs } from '../../../api/Admin/FAQSection/getFAQs';
+import { getFAQs } from '../../../api/Public/faq'; // ✅ public API
 const navLinks = [
   "Home",
   "About",

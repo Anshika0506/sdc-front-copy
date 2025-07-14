@@ -1,53 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllApplications, deleteApplicationById } from "../../api/Admin/ApplicationForm.js";
 
-// Your custom icons (update these with actual imports)
 import ViewIcon from "../../assets/resumeIcon.svg";
 import DeleteIcon from "../../assets/deleteIcon.svg";
 import ExportIcon from "../../assets/ExportIcon.svg";
 
-// Dummy data array
-const dummyApplications = [
-  {
-    date: "07/07/2025",
-    name: "Berozgar Aadmi",
-    contact: "1234567890",
-    email: "berozgaraadmi@fakemail.com",
-    year: "4th Year",
-    branch: "CS- core",
-    enrollment: "EN22CS3000000",
-    position: "Social Media Manager",
-    experience: "No Experience",
-    resumeUrl: "#",
-  },
-  {
-    date: "07/07/2025",
-    name: "Berozgar Aadmi",
-    contact: "1234567890",
-    email: "berozgaraadmi@fakemail.com",
-    year: "4th Year",
-    branch: "CS- core",
-    enrollment: "EN22CS3000000",
-    position: "Social Media Manager",
-    experience: "No Experience",
-    resumeUrl: "#",
-  },
-];
-
 export default function JoiningApplications() {
-  const [applications, setApplications] = useState(dummyApplications);
+  const [applications, setApplications] = useState([]);
 
-  const handleDelete = (index) => {
-    const updated = applications.filter((_, i) => i !== index);
-    setApplications(updated);
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  const fetchApplications = async () => {
+    try {
+      const res = await getAllApplications();
+      setApplications(res.data || []);
+    } catch (err) {
+      console.error("Error fetching applications:", err);
+    }
   };
 
-  // Export applications as CSV
+  const handleDelete = async (id) => {
+    try {
+      await deleteApplicationById(id);
+      setApplications((prev) => prev.filter((app) => app.id !== id));
+    } catch (err) {
+      console.error("Error deleting application:", err);
+    }
+  };
+
   const handleExport = () => {
     if (applications.length === 0) return;
+
     const header = Object.keys(applications[0]).filter((key) => key !== "resumeUrl");
     const csvRows = [
       header.join(","),
-      ...applications.map((app) => header.map((field) => `"${(app[field] || "").replace(/"/g, '""')}"`).join(",")),
+      ...applications.map((app) =>
+        header.map((field) => `"${(app[field] || "").replace(/"/g, '""')}"`).join(",")
+      ),
     ];
     const csvContent = csvRows.join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -82,71 +73,49 @@ export default function JoiningApplications() {
           msOverflowStyle: "none",
         }}
       >
-        {/* Hide scrollbar for Webkit browsers */}
-        <style>{`
-          .scrollbar-hide::-webkit-scrollbar { display: none; }
-        `}</style>
-        {applications.map((app, index) => (
-          <div
-            key={index}
-            className="bg-black border-t border-gray-700 px-6 py-6 flex flex-col sm:flex-row sm:justify-between gap-4"
-          >
-            <div className="flex-1 text-sm space-y-1">
-              <p>
-                <strong className="text-gray-400">Date:</strong> {app.date}
-              </p>
-              <p>
-                <strong className="text-gray-400">Name:</strong> {app.name}
-              </p>
-              <p>
-                <strong className="text-gray-400">Contact Number:</strong>{" "}
-                <span className="font-semibold">{app.contact}</span>
-              </p>
-              <p>
-                <strong className="text-gray-400">Email:</strong>{" "}
-                <span className="text-sm">{app.email}</span>
-              </p>
-              <p>
-                <strong className="text-gray-400">Year:</strong>{" "}
-                <span className="font-semibold">{app.year}</span>
-              </p>
-              <p>
-                <strong className="text-gray-400">Branch:</strong> {app.branch}
-              </p>
-              <p>
-                <strong className="text-gray-400">Enrollment Number:</strong>{" "}
-                {app.enrollment}
-              </p>
-              <p>
-                <strong className="text-gray-400">Position:</strong>{" "}
-                {app.position}
-              </p>
-              <p>
-                <strong className="text-gray-400">Past Experiences:</strong>{" "}
-                {app.experience}
-              </p>
+        <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
 
-              <div className="flex gap-3 mt-4">
-                <a
-                  href={app.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all"
-                >
-                  <img src={ViewIcon} alt="View Resume" className="w-4 h-4" />
-                  VIEW RESUME
-                </a>
-                <button
-                  onClick={() => handleDelete(index)}
-                  className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white border border-gray-500 px-4 py-2 rounded-lg text-sm"
-                >
-                  <img src={DeleteIcon} alt="Delete" className="w-4 h-4" />
-                  DELETE
-                </button>
+        {applications.length === 0 ? (
+          <div className="px-6 py-6 text-gray-400">No applications found.</div>
+        ) : (
+          applications.map((app, index) => (
+            <div
+              key={app.id}
+              className="bg-black border-t border-gray-700 px-6 py-6 flex flex-col sm:flex-row sm:justify-between gap-4"
+            >
+              <div className="flex-1 text-sm space-y-1">
+                <p><strong className="text-gray-400">Date:</strong> {app.date}</p>
+                <p><strong className="text-gray-400">Name:</strong> {app.name}</p>
+                <p><strong className="text-gray-400">Contact Number:</strong> {app.contact}</p>
+                <p><strong className="text-gray-400">Email:</strong> {app.email}</p>
+                <p><strong className="text-gray-400">Year:</strong> {app.year}</p>
+                <p><strong className="text-gray-400">Branch:</strong> {app.branch}</p>
+                <p><strong className="text-gray-400">Enrollment Number:</strong> {app.enrollment}</p>
+                <p><strong className="text-gray-400">Position:</strong> {app.position}</p>
+                <p><strong className="text-gray-400">Past Experiences:</strong> {app.experience}</p>
+
+                <div className="flex gap-3 mt-4">
+                  <a
+                    href={app.resumeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all"
+                  >
+                    <img src={ViewIcon} alt="View Resume" className="w-4 h-4" />
+                    VIEW RESUME
+                  </a>
+                  <button
+                    onClick={() => handleDelete(app.id)}
+                    className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white border border-gray-500 px-4 py-2 rounded-lg text-sm"
+                  >
+                    <img src={DeleteIcon} alt="Delete" className="w-4 h-4" />
+                    DELETE
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       <div
