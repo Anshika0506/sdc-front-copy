@@ -483,7 +483,7 @@ const Main = () => {
               ))}
             </div>
 
-            {/* Sticky Footer */}
+            {/* Sticky Footer */} 
             <div className="h-[73px] flex justify-end gap-3 px-6 py-1 bg-[#30303099]/30 rounded-b-xl border-t border-[#5a5a5a] shrink-0">
               <button
                 onClick={handleSaveAll}

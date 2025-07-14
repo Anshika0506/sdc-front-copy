@@ -1,16 +1,16 @@
-import api from "../config"; // your Axios instance with auth
+import api from "../config"; // Axios instance with base URL & auth
 
-// Get all applications
+// ✅ Get all applications
 export const getAllApplications = async () => {
   return await api.get("/admin/application-form/getAll");
 };
 
-// Get application by ID
+// ✅ Get application by ID
 export const getApplicationById = async (id) => {
   return await api.get(`/admin/application-form/get/${id}`);
 };
 
-// Delete application by ID
+// ✅ Delete application by ID
 export const deleteApplicationById = async (id) => {
   return await api.delete(`/admin/application-form/delete/${id}`);
 };

@@ -14,6 +14,10 @@ const Header = () => {
     navigate('/login');
   };
 
+  const handleProfileClick = () => {
+    navigate('/admin/profile');
+  };
+
   return (
     <header
       className="w-full h-[101px] rounded-r-md border border-[#FFFFFF80]/50 backdrop-blur-lg flex justify-between items-center px-8"
@@ -43,8 +47,9 @@ const Header = () => {
           LOGOUT
         </button>
 
-        {/* Profile Icon (Optional: clickable or dropdown) */}
-        <div
+        {/* Profile Icon - Now clickable */}
+        <button
+          onClick={handleProfileClick}
           title={admin?.name || "Admin"}
           className="w-[45px] h-[45px] rounded-md p-2 border border-white shadow-[2px_4px_4px_rgba(0,0,0,0.25)]"
           style={{
@@ -53,7 +58,7 @@ const Header = () => {
           }}
         >
           <img src={profileIcon} alt="Profile" className="w-[28px] h-[28px]" />
-        </div>
+        </button>
       </div>
     </header>
   );

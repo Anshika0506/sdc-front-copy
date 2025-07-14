@@ -28,3 +28,4 @@ export const updateTestimonial = async (testId, { clientName, des, imageBase64 }
     throw error;
   }
 };
+

@@ -9,3 +9,4 @@ export const deleteTestimonial = async (testId) => {
     throw error;
   }
 };
+

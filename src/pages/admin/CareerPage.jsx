@@ -15,9 +15,18 @@ export default function JoiningApplications() {
   const fetchApplications = async () => {
     try {
       const res = await getAllApplications();
-      setApplications(res.data || []);
+      console.log("Response from API:", res.data);
+
+      const apps = Array.isArray(res.data)
+        ? res.data
+        : Array.isArray(res.data?.data)
+        ? res.data.data
+        : [];
+
+      setApplications(apps);
     } catch (err) {
       console.error("Error fetching applications:", err);
+      setApplications([]);
     }
   };
 
@@ -31,9 +40,9 @@ export default function JoiningApplications() {
   };
 
   const handleExport = () => {
-    if (applications.length === 0) return;
+    if (!Array.isArray(applications) || applications.length === 0) return;
 
-    const header = Object.keys(applications[0]).filter((key) => key !== "resumeUrl");
+    const header = Object.keys(applications[0]).filter((key) => key !== "resume_path");
     const csvRows = [
       header.join(","),
       ...applications.map((app) =>
@@ -64,39 +73,35 @@ export default function JoiningApplications() {
         </div>
       </div>
 
-      {/* Scrollable entries list */}
       <div
         className="flex-1 overflow-y-auto bg-black scrollbar-hide"
-        style={{
-          maxHeight: "60vh",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
+        style={{ maxHeight: "60vh", scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
 
-        {applications.length === 0 ? (
+        {!Array.isArray(applications) || applications.length === 0 ? (
           <div className="px-6 py-6 text-gray-400">No applications found.</div>
         ) : (
-          applications.map((app, index) => (
+          applications.map((app) => (
             <div
               key={app.id}
               className="bg-black border-t border-gray-700 px-6 py-6 flex flex-col sm:flex-row sm:justify-between gap-4"
             >
               <div className="flex-1 text-sm space-y-1">
-                <p><strong className="text-gray-400">Date:</strong> {app.date}</p>
+                {/* If you add submitted_at column in DB, uncomment this */}
+                {/* <p><strong className="text-gray-400">Date:</strong> {app.submitted_at}</p> */}
                 <p><strong className="text-gray-400">Name:</strong> {app.name}</p>
-                <p><strong className="text-gray-400">Contact Number:</strong> {app.contact}</p>
+                <p><strong className="text-gray-400">Contact Number:</strong> {app.contactNumber}</p>
                 <p><strong className="text-gray-400">Email:</strong> {app.email}</p>
                 <p><strong className="text-gray-400">Year:</strong> {app.year}</p>
                 <p><strong className="text-gray-400">Branch:</strong> {app.branch}</p>
-                <p><strong className="text-gray-400">Enrollment Number:</strong> {app.enrollment}</p>
+                <p><strong className="text-gray-400">Enrollment Number:</strong> {app.enrollmentNumber}</p>
                 <p><strong className="text-gray-400">Position:</strong> {app.position}</p>
-                <p><strong className="text-gray-400">Past Experiences:</strong> {app.experience}</p>
+                <p><strong className="text-gray-400">Past Experiences:</strong> {app.pastExperience}</p>
 
                 <div className="flex gap-3 mt-4">
                   <a
-                    href={app.resumeUrl}
+                    href={app.resume_path}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all"
