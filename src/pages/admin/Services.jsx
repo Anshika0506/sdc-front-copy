@@ -58,6 +58,20 @@ const ServicesPage = () => {
             placeholder="Work"
             className="w-[59px] h-[32px] bg-[#D2D2D2] placeholder-black text-center rounded-sm px-2 py-1 text-base"
           />
+    <div className="w-[1136px] h-[855px] absolute top-[132px] left-[272px] opacity-100 rotate-0 overflow-hidden">
+      <div className="w-[1136px] h-[60px] flex justify-between items-center px-[28px] py-[8px] bg-[#8E8E8E] opacity-100 rotate-0 rounded-t-2xl">
+        <h2 className="text-[#333333] font-semibold font-sans text-lg">
+          Contact Form Queries
+        </h2>
+        <div className="flex ml-auto space-x-4">
+          <input
+            placeholder="Page"
+            className="w-[48px] h-[32px] text-center rounded-sm px-1 py-1 text-base"
+          />
+          <input
+            placeholder="Work"
+            className="w-[59px] h-[32px] bg-[#D2D2D2] placeholder-black text-center rounded-sm px-2 py-1 text-base"
+          />
         </div>
       </div>
 
@@ -128,6 +142,10 @@ const ServicesPage = () => {
      
     </div>
   );
+};
+
+export default ServicesPage;
+
 };
 
 export default ServicesPage;
