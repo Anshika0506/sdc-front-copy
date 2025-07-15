@@ -58,43 +58,93 @@ const WorkPage = () => {
     setIsEditing(true);
   };
 
-  const handleSave = async () => {
+ const handleSave = async () => {
+  try {
+    // Prepare image data - ensure it's properly formatted
+    let imageData = null;
+    if (currentProject.projectImage && currentProject.projectImage !== project) {
+      // If it's already a base64 string, use it directly
+      if (typeof currentProject.projectImage === 'string' && currentProject.projectImage.startsWith('data:')) {
+        imageData = currentProject.projectImage;
+      } else if (currentProject.projectImage instanceof File) {
+        // If it's a File object, convert it to base64
+        imageData = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(currentProject.projectImage);
+        });
+      } else {
+        // If it's some other format, use it as is
+        imageData = currentProject.projectImage;
+      }
+    }
+
     // Prepare data for API
     const payload = {
       title: currentProject.projectName,
       description: currentProject.projectDescription,
       link: currentProject.projectLink,
-      imageBase64: currentProject.projectImage,
+      imageBase64: imageData, // This will be null, base64 string, or File object
       teamMembers: currentProject.teamMembers
         .split('\n')
         .map(m => m.replace(/^•\s?/, '').trim())
         .filter(Boolean)
         .join(','),
     };
-    try {
-      if (currentProject.id && projects.some(p => p.id === currentProject.id)) {
-        await updateProject(currentProject.id, payload);
-      } else {
-        await addProject(payload);
-      }
-      await fetchProjects();
-      setIsEditing(false);
-      setCurrentProject(null);
-    } catch (err) {
-      alert('Failed to save project: ' + (err.message || 'Unknown error'));
+
+    // Check if this is an update or add operation
+    if (currentProject.id && projects.some(p => p.id === currentProject.id)) {
+      // Update existing project
+      await updateProject(currentProject.id, payload);
+    } else {
+      // Add new project
+      await addProject(payload);
     }
-  };
+    
+    // Refresh the projects list
+    await fetchProjects();
+    
+    // Close the modal
+    setIsEditing(false);
+    setCurrentProject(null);
+    
+  } catch (err) {
+    console.error('Error saving project:', err);
+    alert('Failed to save project: ' + (err.response?.data?.message || err.message || 'Unknown error'));
+  }
+};
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCurrentProject({ ...currentProject, projectImage: reader.result });
-      };
-      reader.readAsDataURL(file);
+  const file = e.target.files[0];
+  if (file) {
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file.');
+      return;
     }
-  };
+    
+    // Validate file size (optional - limit to 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      alert('Please select an image smaller than 5MB.');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // Store the base64 string directly
+      setCurrentProject({ 
+        ...currentProject, 
+        projectImage: reader.result // This will be a base64 string
+      });
+    };
+    reader.onerror = () => {
+      alert('Error reading the image file. Please try again.');
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
   const triggerFileInput = () => {
     document.getElementById("project-image-upload").click();

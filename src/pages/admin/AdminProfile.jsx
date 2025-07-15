@@ -7,10 +7,13 @@ import edit from "../../assets/edit.png";
 import icons from "../../assets/icons.png";
 
 const AdminProfile = () => {
-  const [adminData, setAdminData] = useState(null);
+  const [adminData, setAdminData] = useState([]);
+  const [currentAdminId, setCurrentAdminId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showEditDetailsModal, setShowEditDetailsModal] = useState(false);
-  const [editDetails, setEditDetails] = useState({ name: "", contact_no: "", email: "" });
+  const [editDetails, setEditDetails] = useState({ name: "", contact_no: "", email: "", adminId: null });
   const [passwordFields, setPasswordFields] = useState({
     oldPassword: "",
     newPassword: "",
@@ -25,22 +28,59 @@ const AdminProfile = () => {
 
   const fetchProfile = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      console.log("Fetching admin profile...");
+      
       const data = await getAdminProfile();
-      setAdminData(data);
+      console.log("Received admin data:", data);
+      
+      // Handle the response format from your backend
+      let adminList;
+      if (data.data && Array.isArray(data.data)) {
+        adminList = data.data;
+      } else if (Array.isArray(data)) {
+        adminList = data;
+      } else {
+        adminList = [data];
+      }
+      
+      console.log("Processed admin list:", adminList);
+      setAdminData(adminList);
+      
+      // Get current admin ID from localStorage or auth context
+      // You'll need to set this when the admin logs in
+  const loggedInAdminId = localStorage.getItem('adminId');
+setCurrentAdminId(loggedInAdminId ? parseInt(loggedInAdminId) : null);
+      
     } catch (error) {
-      alert("Failed to fetch admin profile.");
+      console.error("Error fetching profile:", error);
+      setError(error.message || "Failed to fetch admin profile");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateAdminDetails(editDetails);
+      console.log("Updating admin details:", editDetails);
+      
+      // Make sure we include the adminId in the update
+      const updateData = {
+        adminId: editDetails.adminId,
+        name: editDetails.name,
+        contact_no: editDetails.contact_no,
+        email: editDetails.email
+      };
+      
+      await updateAdminDetails(updateData);
       alert("Admin details updated successfully!");
       closeEditDetailsModal();
       fetchProfile();
     } catch (error) {
-      alert("Failed to update admin details.");
+      console.error("Update error:", error);
+      alert("Failed to update admin details: " + (error.response?.data?.message || error.message));
     }
   };
 
@@ -51,26 +91,46 @@ const AdminProfile = () => {
       return;
     }
     try {
-      await changeAdminPassword(passwordFields.oldPassword, passwordFields.newPassword);
+      console.log("Changing password for admin ID:", currentAdminId);
+      
+      // Include adminId in password change request
+      await changeAdminPassword(passwordFields.oldPassword, passwordFields.newPassword, currentAdminId);
       alert("Password updated successfully!");
       closeChangePasswordModal();
       setPasswordFields({ oldPassword: "", newPassword: "", confirmPassword: "" });
     } catch (error) {
-      alert("Failed to change password.");
+      console.error("Password change error:", error);
+      alert("Failed to change password: " + (error.response?.data?.message || error.message));
     }
   };
 
-  const openEditDetailsModal = () => {
+  const openEditDetailsModal = (admin) => {
+    // Only allow editing if it's the current admin
+    if (admin.adminId !== currentAdminId) {
+      alert("You can only edit your own profile!");
+      return;
+    }
+    
     setEditDetails({
-      name: adminData?.name || "",
-      contact_no: adminData?.contact_no || "",
-      email: adminData?.email || "",
+      name: admin.name || "",
+      contact_no: admin.contact_no || "",
+      email: admin.email || "",
+      adminId: admin.adminId
     });
     setShowEditDetailsModal(true);
   };
 
+  const openChangePasswordModal = (admin) => {
+    // Only allow password change if it's the current admin
+    if (admin.adminId !== currentAdminId) {
+      alert("You can only change your own password!");
+      return;
+    }
+    
+    setShowChangePasswordModal(true);
+  };
+
   const closeEditDetailsModal = () => setShowEditDetailsModal(false);
-  const openChangePasswordModal = () => setShowChangePasswordModal(true);
   const closeChangePasswordModal = () => setShowChangePasswordModal(false);
 
   useEffect(() => {
@@ -85,8 +145,52 @@ const AdminProfile = () => {
     };
   }, [showChangePasswordModal, showEditDetailsModal]);
 
-  if (!adminData) {
-    return <div className="text-white p-10">Loading...</div>;
+  // Loading state
+  if (loading) {
+    return (
+      <div className="w-[1136px] h-[855px] absolute top-[132px] left-[272px]">
+        <div className="w-full h-[60px] flex justify-between items-center px-[28px] py-[8px] bg-[#8E8E8E] rounded-t-2xl">
+          <h2 className="text-[#333333] font-semibold text-2xl">Admin Details</h2>
+        </div>
+        <div className="w-full h-[722px] bg-[#141414] rounded-b-xl shadow-[2px_2px_6px_0px_#FFFFFF26] flex items-center justify-center">
+          <div className="text-white text-lg">Loading admin profile...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="w-[1136px] h-[855px] absolute top-[132px] left-[272px]">
+        <div className="w-full h-[60px] flex justify-between items-center px-[28px] py-[8px] bg-[#8E8E8E] rounded-t-2xl">
+          <h2 className="text-[#333333] font-semibold text-2xl">Admin Details</h2>
+        </div>
+        <div className="w-full h-[722px] bg-[#141414] rounded-b-xl shadow-[2px_2px_6px_0px_#FFFFFF26] flex flex-col items-center justify-center">
+          <div className="text-red-400 text-lg mb-4">Error: {error}</div>
+          <button 
+            onClick={fetchProfile}
+            className="bg-blue-600 px-4 py-2 rounded-md text-white"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No data state
+  if (!adminData || adminData.length === 0) {
+    return (
+      <div className="w-[1136px] h-[855px] absolute top-[132px] left-[272px]">
+        <div className="w-full h-[60px] flex justify-between items-center px-[28px] py-[8px] bg-[#8E8E8E] rounded-t-2xl">
+          <h2 className="text-[#333333] font-semibold text-2xl">Admin Details</h2>
+        </div>
+        <div className="w-full h-[722px] bg-[#141414] rounded-b-xl shadow-[2px_2px_6px_0px_#FFFFFF26] flex items-center justify-center">
+          <div className="text-white text-lg">No admin data available</div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -100,20 +204,41 @@ const AdminProfile = () => {
           ref={contentRef}
           className="flex-1 overflow-y-auto scroll-container relative text-white p-10"
         >
-          <p className="text-base p-1"><strong className="text-[#8E8E8E]">Name:</strong> {adminData.name}</p>
-          <p className="text-base p-1"><strong className="text-[#8E8E8E]">Email:</strong> {adminData.email}</p>
-          <p className="text-base p-1"><strong className="text-[#8E8E8E]">Contact:</strong> {adminData.contact_no}</p>
-
-          <div className="mt-10 flex flex-col gap-4">
-            <button onClick={openChangePasswordModal} className="bg-gray-700 px-4 py-2 rounded-md flex gap-2 items-center w-fit">
-              <img src={icons} className="w-5 h-5" alt="icon" />
-              CHANGE PASSWORD
-            </button>
-            <button onClick={openEditDetailsModal} className="bg-gray-600 px-4 py-2 rounded-md flex gap-2 items-center w-fit">
-              <img src={edit} className="w-6 h-6" alt="edit" />
-              EDIT DETAILS
-            </button>
-          </div>
+          {adminData.map((admin, index) => (
+            <div key={admin.adminId} className="mb-8 p-4 border border-gray-600 rounded-lg">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <p className="text-base p-1"><strong className="text-[#8E8E8E]">Name:</strong> {admin.name}</p>
+                  <p className="text-base p-1"><strong className="text-[#8E8E8E]">Email:</strong> {admin.email}</p>
+                  <p className="text-base p-1"><strong className="text-[#8E8E8E]">Contact:</strong> {admin.contact_no}</p>
+                  <p className="text-base p-1"><strong className="text-[#8E8E8E]">Admin ID:</strong> {admin.adminId}</p>
+                  {admin.adminId === currentAdminId && (
+                    <span className="text-green-400 text-sm font-semibold">(Current Admin)</span>
+                  )}
+                </div>
+                
+                {/* Show edit buttons only for current admin */}
+                {admin.adminId === currentAdminId && (
+                  <div className="flex flex-col gap-2">
+                    <button 
+                      onClick={() => openChangePasswordModal(admin)} 
+                      className="bg-gray-700 px-3 py-1 rounded-md flex gap-2 items-center text-sm"
+                    >
+                      <img src={icons} className="w-4 h-4" alt="icon" />
+                      CHANGE PASSWORD
+                    </button>
+                    <button 
+                      onClick={() => openEditDetailsModal(admin)} 
+                      className="bg-gray-600 px-3 py-1 rounded-md flex gap-2 items-center text-sm"
+                    >
+                      <img src={edit} className="w-4 h-4" alt="edit" />
+                      EDIT DETAILS
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

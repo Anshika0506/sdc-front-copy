@@ -16,7 +16,7 @@ export const adminApi = axios.create({
 
 adminApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       // console.log("Auth Header Set:", config.headers.Authorization);

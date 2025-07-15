@@ -21,7 +21,7 @@ export default function TestimonialsCarousel() {
           ? response.data.map((t) => ({
               name: t.clientName,
               text: t.des,
-              image: t.image,
+              image: t.imageBase64,
             }))
           : [];
         setTestimonials(mapped);

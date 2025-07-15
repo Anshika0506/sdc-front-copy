@@ -34,3 +34,4 @@ export const updateProject = async (projectID, { title, description, link, image
     throw error;
   }
 };
+

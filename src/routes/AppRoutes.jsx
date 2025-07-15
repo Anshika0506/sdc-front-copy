@@ -8,7 +8,7 @@ import AdminLayout from '../layout/AdminLayout';
 // Public Pages
 import Home from '../pages/public/Home/HomeLayout';
 import About from '../pages/public/About/About';
-import Gallery from '../pages/public/Gallery/Gallery';
+import PublicGallery from '../pages/public/Gallery/Gallery';
 import Career from '../pages/public/Career/Career';
 import Services from '../pages/public/Services/Services';
 import People from '../pages/public/People/PeopleLayout';
@@ -22,8 +22,8 @@ import AdminLogin from '../pages/admin/Login';
 import PrivateRoute from '../auth/PrivateRoute';
 
 // Admin Pages
-import HomePage from '../pages/admin/Homepage'; // Testimonials Management
-import AdminAbout from '../pages/admin/AboutPage';
+import Testimonial from '../pages/admin/Testimonial'; // Testimonials Management
+import Gallery from '../pages/admin/Gallery';
 import AdminWork from '../pages/admin/Work';
 import AdminServices from '../pages/admin/Services';
 import FAQSection from '../pages/admin/FAQSection';
@@ -39,7 +39,7 @@ const AppRoutes = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/gallery" element={<PublicGallery />} />
         <Route path="/career" element={<Career />} />
         <Route path="/services" element={<Services />} />
         <Route path="/work" element={<Work />} />
@@ -67,8 +67,8 @@ const AppRoutes = () => {
         <Route index element={<Navigate to="manage-testimonials" replace />} />
 
         {/* Admin Pages */}
-        <Route path="manage-testimonials" element={<HomePage />} />
-        <Route path="manage-about" element={<AdminAbout />} />
+        <Route path="manage-testimonials" element={<Testimonial />} />
+        <Route path="manage-about" element={<Gallery />} />
         <Route path="manage-work" element={<AdminWork />} />
         <Route path="manage-services" element={<AdminServices />} />
         <Route path="manage-faqs" element={<FAQSection />} />
@@ -77,7 +77,7 @@ const AppRoutes = () => {
         <Route path="profile" element={<Profile />} />
 
         {/* Fallback for unknown admin routes */}
-        <Route path="*" element={<HomePage />} />
+        <Route path="*" element={<Testimonial />} />
       </Route>
     </Routes>
   );

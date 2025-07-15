@@ -33,5 +33,5 @@ export const addProject = async ({ title, description, link, imageBase64, teamMe
   } catch (error) {
     console.error('Error adding project:', error.response?.data || error.message);
     throw error;
-  }
+  } 
 };

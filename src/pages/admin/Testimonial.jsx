@@ -52,7 +52,7 @@ const Main = () => {
       setTestimonials(data.map(t => ({
         id: t.testId,
         name: t.clientName || '',
-        image: t.imageBase64 || profile1,
+        image: t.imageBase64 ,
         message: t.des || '',
         isNew: false // Track if this is a new testimonial
       })));
@@ -65,84 +65,95 @@ const Main = () => {
   };
 
   // Add new testimonial to database
-  const handleAddTestimonial = async (testimonialData) => {
-    try {
-      console.log('🔄 Adding new testimonial to database...', testimonialData);
-      
-      // Prepare the data for API call
-      let imageData = null;
-      if (testimonialData.image && testimonialData.image !== profile1) {
-        // If it's a base64 string, convert to File object
-        if (testimonialData.image.startsWith('data:')) {
-          imageData = base64ToFile(testimonialData.image, 'testimonial-image.jpg');
-        } else {
-          imageData = testimonialData.image;
-        }
-      }
-      
-      const payload = {
-        clientName: testimonialData.name,
-        des: testimonialData.message,
-        imageBase64: imageData
-      };
-      
-      const response = await addTestimonial(payload);
-      
-      // Get the new testimonial ID from response
-      const newId = response.data?.testId || response.testId || response.id;
-      
-      return {
-        ...testimonialData,
-        id: newId,
-        isNew: false
-      };
-    } catch (err) {
-      console.error('Error adding testimonial:', err);
-      console.error('Error details:', err.response?.data || err.message);
-      console.error('Status code:', err.response?.status);
-      
-      // More specific error messages
-      if (err.response?.status === 403) {
-        throw new Error('Access denied. Please check your authentication or permissions.');
-      } else if (err.response?.status === 401) {
-        throw new Error('Authentication required. Please log in again.');
-      } else {
-        throw new Error('Failed to add testimonial to database: ' + (err.response?.data?.message || err.message));
+ const handleAddTestimonial = async (testimonialData) => {
+  try {
+    console.log('🔄 Adding new testimonial to database...', testimonialData);
+    
+    // Prepare the image data for API call
+    let imageBase64 = null;
+    if (testimonialData.image && testimonialData.image !== profile1) {
+      // If it's already a base64 string, use it directly
+      if (testimonialData.image.startsWith('data:')) {
+        imageBase64 = testimonialData.image;
+      } else if (testimonialData.image instanceof File) {
+        // If it's a File object, convert it to base64
+        imageBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(testimonialData.image);
+        });
       }
     }
-  };
+    
+    const payload = {
+      clientName: testimonialData.name,
+      des: testimonialData.message,
+      imageBase64: imageBase64 // Pass base64 string or null
+    };
+    
+    const response = await addTestimonial(payload);
+    
+    // Get the new testimonial ID from response
+    const newId = response.data?.testId || response.testId || response.id;
+    
+    return {
+      ...testimonialData,
+      id: newId,
+      isNew: false
+    };
+  } catch (err) {
+    console.error('Error adding testimonial:', err);
+    console.error('Error details:', err.response?.data || err.message);
+    console.error('Status code:', err.response?.status);
+    
+    // More specific error messages
+    if (err.response?.status === 403) {
+      throw new Error('Access denied. Please check your authentication or permissions.');
+    } else if (err.response?.status === 401) {
+      throw new Error('Authentication required. Please log in again.');
+    } else {
+      throw new Error('Failed to add testimonial to database: ' + (err.response?.data?.message || err.message));
+    }
+  }
+};
 
   // Update existing testimonial in database
-  const handleUpdateTestimonial = async (testimonialData) => {
-    try {
-      console.log('🔄 Updating testimonial in database...', testimonialData);
-      
-      // Prepare the image data for API call
-      let imageData = null;
-      if (testimonialData.image && testimonialData.image !== profile1) {
-        // If it's a base64 string, convert to File object
-        if (testimonialData.image.startsWith('data:')) {
-          imageData = base64ToFile(testimonialData.image, 'testimonial-image.jpg');
-        } else {
-          imageData = testimonialData.image;
-        }
+ const handleUpdateTestimonial = async (testimonialData) => {
+  try {
+    console.log('🔄 Updating testimonial in database...', testimonialData);
+    
+    // Prepare the image data for API call
+    let imageBase64 = null;
+    if (testimonialData.image && testimonialData.image !== profile1) {
+      // If it's already a base64 string, use it directly
+      if (testimonialData.image.startsWith('data:')) {
+        imageBase64 = testimonialData.image;
+      } else if (testimonialData.image instanceof File) {
+        // If it's a File object, convert it to base64
+        imageBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(testimonialData.image);
+        });
       }
-      
-      // Call update API with correct parameters: testId and data object
-      const response = await updateTestimonial(testimonialData.id, {
-        clientName: testimonialData.name,
-        des: testimonialData.message,
-        imageBase64: imageData
-      });
-      
-      return testimonialData;
-    } catch (err) {
-      console.error('Error updating testimonial:', err);
-      console.error('Testimonial data:', testimonialData);
-      throw new Error('Failed to update testimonial in database: ' + err.message);
     }
-  };
-
+    
+    // Call update API with correct parameters: testId and data object
+    const response = await updateTestimonial(testimonialData.id, {
+      clientName: testimonialData.name,
+      des: testimonialData.message,
+      imageBase64: imageBase64 // Pass base64 string or null
+    });
+    
+    return testimonialData;
+  } catch (err) {
+    console.error('Error updating testimonial:', err);
+    console.error('Testimonial data:', testimonialData);
+    throw new Error('Failed to update testimonial in database: ' + err.message);
+  }
+};
   // Delete testimonial from database
   const handleDeleteTestimonial = async (testimonialId) => {
     try {
