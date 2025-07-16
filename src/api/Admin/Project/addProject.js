@@ -26,7 +26,7 @@ export const addProject = async ({ title, description, link, imageBase64, teamMe
     formData.append('teamMembers', teamMembers);
   }
   try {
-    const res = await api.post('/auth/projects/upload', formData, {
+    const res = await api.post('/admin/projects/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data;

@@ -46,8 +46,7 @@ export const loginAdmin = async (email, password) => {
       pass: password,
     });
 
-    console.log('📥 Raw response:', response);
-    console.log('📦 Response data:', response.data);
+   
 
     // Check if response exists
     if (!response.data) {
@@ -63,7 +62,7 @@ export const loginAdmin = async (email, password) => {
         adminData = response.data.data || response.data;
         token = adminData.token || adminData.accessToken || null;
       } else {
-        console.log('❌ Login failed (success: false)');
+       
         throw new Error(response.data.message || 'Login failed');
       }
     }
@@ -79,7 +78,7 @@ export const loginAdmin = async (email, password) => {
     }
     // Case 4: HTTP 200 but no token - treat as error
     else {
-      console.log('❌ No token in response');
+     
       throw new Error('No authentication token received');
     }
 
@@ -91,13 +90,13 @@ export const loginAdmin = async (email, password) => {
     return adminData;
 
   } catch (error) {
-    console.error('🚨 Login API Error:', error);
+  
     
     // Handle axios errors
     if (error.response) {
       // Server responded with error status
       const { status, data } = error.response;
-      console.log(`❌ Server error ${status}:`, data);
+      
       
       if (data?.message) {
         throw new Error(data.message);
@@ -112,7 +111,7 @@ export const loginAdmin = async (email, password) => {
       }
     } else if (error.request) {
       // Request made but no response received
-      console.log('❌ No response received:', error.request);
+    
       throw new Error('Unable to connect to server. Please check your internet connection.');
     } else {
       // Something else happened
@@ -136,7 +135,7 @@ export const logoutAdmin = async () => {
     const response = await API.post('/auth/logout');
     return response.data;
   } catch (error) {
-    console.error('Logout API error:', error);
+ 
     // Don't throw error for logout - always clear local storage
     return { success: true };
   }

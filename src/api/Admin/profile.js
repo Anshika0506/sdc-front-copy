@@ -1,30 +1,28 @@
-// Updated API functions with better error handling and debugging
 
-import api from "../config"; // Make sure your axios instance is exported from config.js
 
-// Get current admin profile - FIXED
+import api from "../config"; 
+
+
 export const getAdminProfile = async () => {
   try {
     console.log("Fetching admin profile...");
     
-    // Try different endpoints based on your backend
+
     let response;
     
-    // Option 1: If you have a specific endpoint for current admin
     try {
-      response = await api.get("/admin/profile"); // or "/admin/current"
+      response = await api.get("/admin/profile"); 
       console.log("Admin profile response:", response.data);
       return response.data;
     } catch (error) {
       console.log("Primary endpoint failed, trying alternative...");
       
-      // Option 2: If you need to get from all-admins endpoint
+     
       response = await api.get("/admin/all-admins");
       console.log("All admins response:", response.data);
-      
-      // If response is an array, get the first admin or filter by current user
+     
       if (Array.isArray(response.data)) {
-        return response.data[0]; // or filter by current user ID
+        return response.data[0];
       }
       
       return response.data;

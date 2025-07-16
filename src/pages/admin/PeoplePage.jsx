@@ -10,7 +10,6 @@ import frame1 from "../../assets/profile1.jpg";
 import frame2 from "../../assets/profile1.jpg";
 import frame3 from "../../assets/profile1.jpg";
 import frame4 from "../../assets/profile1.jpg";
-
 const PeoplePage = () => {
   // Loading and error states
   const [loading, setLoading] = useState(true);
@@ -46,7 +45,7 @@ const PeoplePage = () => {
         // TODO: Replace with your actual API endpoints
         const [teamRes, alumniRes] = await Promise.all([
           axios.get('/api/team'), // <-- BACKEND: Fill in real endpoint
-          axios.get('/api/alumni'), // <-- BACKEND: Fill in real endpoint
+          axios.get('/public/getAll-Alumini'), // <-- BACKEND: Fill in real endpoint
         ]);
         setTeamData1(teamRes.data);
         setTeamData2(alumniRes.data);
@@ -119,7 +118,7 @@ const PeoplePage = () => {
     try {
       // TODO: Replace with your actual API endpoint
       const res = await axios.post(
-        currentEditingTeamId === 'team1' ? '/api/team' : '/api/alumni',
+        currentEditingTeamId === 'team1' ? '/api/team' : '/public/getAll-Alumini',
         newMember
       );
       setActiveTeamData([res.data, ...activeTeamData]);
@@ -137,7 +136,7 @@ const PeoplePage = () => {
       await axios.delete(
         currentEditingTeamId === 'team1'
           ? `/api/team/${member.id || member._id}`
-          : `/api/alumni/${member.id || member._id}`
+          : `/public/getAll-Alumini/${member.id || member._id}`
       );
       const updated = [...activeTeamData];
       updated.splice(index, 1);
@@ -157,7 +156,7 @@ const PeoplePage = () => {
           axios.delete(
             currentEditingTeamId === 'team1'
               ? `/api/team/${member.id || member._id}`
-              : `/api/alumni/${member.id || member._id}`
+              : `/public/getAll-Alumini/${member.id || member._id}`
           )
         )
       );
@@ -204,7 +203,7 @@ const PeoplePage = () => {
           axios.put(
             currentEditingTeamId === 'team1'
               ? `/api/team/${member.id || member._id}`
-              : `/api/alumni/${member.id || member._id}`,
+              : `/public/getAll-Alumini${member.id || member._id}`,
             member
           )
         )

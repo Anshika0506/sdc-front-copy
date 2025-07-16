@@ -25,7 +25,7 @@ export const updateProject = async (projectID, { title, description, link, image
     formData.append('teamMembers', teamMembers);
   }
   try {
-    const res = await api.put(`/auth/projects/update/${projectID}`, formData, {
+    const res = await api.put(`/admin/projects/update/${projectID}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data;

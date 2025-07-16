@@ -1,24 +1,94 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import backgroundImage from '../../../assets/mesh-gradient.webp';
 import projectImage from '../../../assets/project.png';
 import externalLinkIcon from '../../../assets/breakpoint=Tablet, icon=external-link.png';
 import { useNavigate } from 'react-router-dom'; 
-
-const projects = [
-  { title: "Note Sheet Website", status: "In Progress", color: "green", image: projectImage },
-  { title: "Greviance Website", status: "In Progress", color: "green", image: projectImage },
-  { title: "MII ERP Portal", status: "In Development", color: "yellow", image: projectImage },
-  { title: "Mentor Mentee Portal", status: "In Development", color: "yellow", image: projectImage },
-  { title: "Resume Shortlist Module", status: "In Development", color: "yellow", image: projectImage },
-  { title: "Employee Recruitment Module", status: "In Progress", color: "green", image: projectImage },
-  { title: "Tech Enabling Courses", status: "In Development", color: "yellow", image: projectImage },
-  { title: "LLM Module", status: "In Development", color: "yellow", image: projectImage },
-  { title: "Medgel Website", status: "In Progress", color: "green", image: projectImage },
-  { title: "SDC Website", status: "In Development", color: "yellow", image: projectImage },
-];
+import { getProject } from "../../../api/Public/getProjectDetails";
 
 export default function WorkPage() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const response = await getProject();
+        const mappedProjects = Array.isArray(response.data)
+          ? response.data.map((p) => ({
+              id: p.projectID || p.id,
+              title: p.title || p.projectName || "Untitled Project",
+              link: p.link || p.projectLink || "",
+              description: p.description || "No description available.",
+              image: p.imageBase64
+                ? `data:image/jpeg;base64,${p.imageBase64}`
+                : p.imagePath || projectImage,
+              teamMembers: p.teamMembers
+                ? Array.isArray(p.teamMembers)
+                  ? p.teamMembers
+                      .map((m) =>
+                        typeof m === "string"
+                          ? m
+                          : `${m.name || ""}${m.position ? " - " + m.position : ""}`
+                      )
+                      .join(", ")
+                  : p.teamMembers.toString()
+                : "",
+              status: p.status || "In Development",
+            }))
+          : [];
+
+        setProjects(mappedProjects);
+      } catch (err) {
+        console.error("Error fetching projects:", err);
+        setError("Failed to load projects");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const getStatusColor = (status) => {
+    const s = status?.toLowerCase();
+    if (s?.includes("progress") || s?.includes("deployed") || s?.includes("completed")) {
+      return "#00FF26";
+    }
+    return "#FFF600";
+  };
+
+  const getStatusDisplay = (status) => {
+    const s = status?.toLowerCase();
+    if (s?.includes("progress") || s?.includes("deployed") || s?.includes("completed")) {
+      return "Deployed";
+    }
+    return "In Development";
+  };
+
+  if (loading) {
+    return (
+      <div
+        className="w-full min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="text-white text-xl">Loading projects...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div
+        className="w-full min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="text-red-400 text-xl">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -27,55 +97,81 @@ export default function WorkPage() {
     >
       <div className="max-w-[1420px] mx-auto px-3">
         <div className="min-h-screen text-white">
-          <h2 className="font-sans font-semibold text-3xl leading-tight tracking-normal text-center mb-8">
+          <h2 className="font-sans font-semibold text-3xl text-center mb-8">
             Our Projects
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-0 gap-y-14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-14">
             {projects.map((project, index) => (
               <div
-                key={index}
-                // onClick={() => navigate(`/project/${encodeURIComponent(project.title)}`)} 
-                                onClick={() => navigate(`/work/projectdetails`)} 
-
+                key={project.id || index}
+                onClick={() =>
+                  navigate(`/work/projectdetails/${encodeURIComponent(project.title)}`)
+                }
                 className="hover-animated-card relative w-full max-w-[600px] mx-auto rounded-[2rem] p-6 md:p-8 text-left cursor-pointer group transition-all duration-[800ms]"
               >
                 <img
                   src={project.image}
-                  alt="project screenshot"
+                  alt={`${project.title} screenshot`}
                   className="w-full h-auto max-h-[443px] rounded-xl mb-4 object-cover"
+                  onError={(e) => {
+                    e.target.src = projectImage;
+                  }}
                 />
+
                 <div className="flex flex-wrap justify-between items-center w-full mb-2 gap-[10px] p-[10px]">
-                  <h2 className="flex-1 min-w-[200px] text-left text-white font-sans font-semibold text-[20px] leading-[28px] break-words">
+                  <h2 className="flex-1 min-w-[200px] text-left font-semibold text-[20px]">
                     {project.title}
                   </h2>
                   <span
-                    className="min-w-[180px] h-[52px] rounded-[2.5rem] px-[20px] py-[12px] text-[16px] leading-[24px] font-normal font-sans text-center shadow-[2px_2px_4px_0px_#00000040,_inset_2px_2px_6px_0px_#FFFFFF80]"
+                    className="min-w-[180px] h-[52px] rounded-[2.5rem] px-[20px] py-[12px] text-[16px] leading-[24px] text-center shadow-[2px_2px_4px_0px_#00000040,_inset_2px_2px_6px_0px_#FFFFFF80]"
                     style={{
-                      backgroundColor: 'transparent',
-                      color: project.status === 'In Progress' ? '#00FF26' : '#FFF600'
+                      backgroundColor: "transparent",
+                      color: getStatusColor(project.status),
                     }}
                   >
-                    {project.status === 'In Progress' ? 'Deployed' : 'In Development'}
+                    {getStatusDisplay(project.status)}
                   </span>
                 </div>
-                <p className="p-[10px] text-left text-white font-sans font-normal text-[16px] leading-[24px] tracking-[0.20rem] break-words">
-                  It is a web based application developed for Medicaps University.
+
+                <p className="p-[10px] text-left text-[16px] leading-[24px] tracking-[0.15rem] break-words">
+                  {project.description}
                 </p>
 
-                {/* Hover icon */}
-                <img
-                  src={externalLinkIcon}
-                  alt="External link"
-                  className="absolute bottom-6 right-6 w-15 h-15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 filter contrast-150"
-                />
+                {project.teamMembers && (
+                  <p className="p-[10px] text-sm text-gray-300 mt-2">
+                    <strong>Team:</strong> {project.teamMembers}
+                  </p>
+                )}
+
+                {project.link && (
+                  <a
+                    href={project.link}
+                    onClick={(e) => e.stopPropagation()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  >
+                    <img
+                      src={externalLinkIcon}
+                      alt="External link"
+                      className="w-6 h-6 filter contrast-150"
+                    />
+                  </a>
+                )}
               </div>
             ))}
           </div>
+
+          {projects.length === 0 && !loading && (
+            <div className="text-center text-white text-xl mt-10">
+              No projects found.
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Hover background + glow effect styles */}
+      {/* Hover + glow styles */}
       <style>{`
         @keyframes fadeBackground {
           0% { background-color: rgba(255, 255, 255, 0.05); }
@@ -87,7 +183,6 @@ export default function WorkPage() {
           background-color: rgba(255, 255, 255, 0.05);
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          box-shadow: none;
           transition: background-color 0.8s ease-in-out, box-shadow 0.8s ease-in-out;
         }
 

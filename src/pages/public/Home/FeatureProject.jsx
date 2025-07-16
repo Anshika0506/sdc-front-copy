@@ -11,30 +11,54 @@ const FeaturedProjects = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-   const fetchProjects = async () => {
-  setLoading(true);
-  setError("");
-  try {
-    const response = await getProject();  // 👈 This returns the full object
-    console.log("Fetched projects:", response);
+    const fetchProjects = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await getProject();
+        console.log("Fetched projects:", response);
 
-    const mapped = Array.isArray(response.data)
-      ? response.data.map((p) => ({
-          title: p.projectName,
-          description: p.description,
-          status: p.status,
-          imageUrl: p.imageUrl || imgFallback,
-        }))
-      : [];
+        const mappedProjects = Array.isArray(response.data)
+          ? response.data.map((p) => ({
+              id: p.projectID || p.id,
+              isVisible: true,
+              projectName: p.title || p.projectName || "Untitled Project",
+              projectLink: p.link || p.projectLink || "",
+              projectImage: p.imageBase64
+                ? `data:image/jpeg;base64,${p.imageBase64}`
+                : p.imagePath
+                ? p.imagePath
+                : imgFallback,
+              projectDescription:
+                p.description || p.projectDescription || "",
+              teamMembers: p.teamMembers
+                ? Array.isArray(p.teamMembers)
+                  ? p.teamMembers
+                      .map((m) =>
+                        typeof m === "string"
+                          ? m
+                          : `${m.name || ""}${
+                              m.position ? " - " + m.position : ""
+                            }`
+                      )
+                      .join("\n")
+                  : p.teamMembers.toString().replace(/,/g, "\n")
+                : "",
+            }))
+          : [];
 
-    setProjects(mapped);
-  } catch (err) {
-    console.error("Fetch error:", err);
-    setError("Failed to load projects.");
-  } finally {
-    setLoading(false);
-  } 
-};
+        setProjects(mappedProjects);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(
+          "Failed to fetch projects: " +
+            (err.response?.data?.message || err.message || "Unknown error")
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchProjects();
   }, []);
 
@@ -61,15 +85,25 @@ const FeaturedProjects = () => {
   };
 
   if (loading) {
-    return <div className="w-full text-center py-20 text-white">Loading projects...</div>;
+    return (
+      <div className="w-full text-center py-20 text-white">
+        Loading projects...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="w-full text-center py-20 text-red-400">{error}</div>;
+    return (
+      <div className="w-full text-center py-20 text-red-400">{error}</div>
+    );
   }
 
   if (projects.length === 0) {
-    return <div className="w-full text-center py-20 text-white">No projects found.</div>;
+    return (
+      <div className="w-full text-center py-20 text-white">
+        No projects found.
+      </div>
+    );
   }
 
   return (
@@ -93,16 +127,34 @@ const FeaturedProjects = () => {
         {projects.length === 1 ? (
           <div className="w-[90%] md:w-[60%] rounded-2xl shadow-lg bg-white/10 p-4">
             <img
-              src={projects[0].imageUrl}
-              alt={projects[0].title}
+              src={projects[0].projectImage}
+              alt={projects[0].projectName}
               className="rounded-xl object-cover w-full"
             />
             <div className="mt-4">
-              <h3 className="text-xl font-semibold">{projects[0].title}</h3>
-              <span className="inline-block mt-1 text-yellow-300 text-sm px-3 py-1 rounded-full bg-black/30">
-                {projects[0].status}
-              </span>
-              <p className="text-sm text-gray-300 mt-2">{projects[0].description}</p>
+              <h3 className="text-xl font-semibold">
+                {projects[0].projectName}
+              </h3>
+              <p className="text-sm text-gray-300 mt-2 whitespace-pre-wrap">
+                {projects[0].projectDescription}
+              </p>
+              {projects[0].teamMembers && (
+                <p className="text-xs text-gray-400 mt-2 whitespace-pre-wrap">
+                  <strong>Team:</strong>
+                  <br />
+                  {projects[0].teamMembers}
+                </p>
+              )}
+              {projects[0].projectLink && (
+                <a
+                  href={projects[0].projectLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-2 text-blue-400 underline text-sm"
+                >
+                  Visit Project
+                </a>
+              )}
             </div>
           </div>
         ) : (
@@ -115,22 +167,40 @@ const FeaturedProjects = () => {
                   : "scale-80 md:scale-80 z-10 opacity-30 md:opacity-40";
               return (
                 <div
-                  key={`${project.title}-${index}`}
-                  className={`w-[85%] sm:w-[70%] md:w-full h-full rounded-2xl transition-all duration-500 ${scale} shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)]`}
+                  key={`${project.projectName}-${index}`}
+                  className={`w-[85%] sm:w-[70%] md:w-full h-full rounded-2xl transition-all duration-500 ${scale} shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] bg-white/10`}
                 >
                   <div className="p-4 flex flex-col gap-4 h-full">
                     <img
-                      src={project.imageUrl}
-                      alt={project.title}
+                      src={project.projectImage}
+                      alt={project.projectName}
                       className="rounded-xl object-cover w-full"
                     />
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-sm md:text-xl font-semibold">{project.title}</h3>
-                      <span className="cursor-pointer inline-block text-yellow-300 text-[13px] md:text-[15px] px-3 py-1 rounded-full font-mono whitespace-nowrap shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)]">
-                        {project.status}
-                      </span>
+                      <h3 className="text-sm md:text-xl font-semibold">
+                        {project.projectName}
+                      </h3>
                     </div>
-                    <p className="text-sm text-gray-300">{project.description}</p>
+                    <p className="text-sm text-gray-300 whitespace-pre-wrap">
+                      {project.projectDescription}
+                    </p>
+                    {project.teamMembers && (
+                      <p className="text-xs text-gray-400 whitespace-pre-wrap">
+                        <strong>Team:</strong>
+                        <br />
+                        {project.teamMembers}
+                      </p>
+                    )}
+                    {project.projectLink && (
+                      <a
+                        href={project.projectLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block mt-2 text-blue-400 underline text-xs"
+                      >
+                        Visit Project
+                      </a>
+                    )}
                   </div>
                 </div>
               );
