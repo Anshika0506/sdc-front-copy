@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import hide from "../../assets/hide.png";
 import save from "../../assets/save.png";
 import attachicon from "../../assets/attachicon.png";
@@ -11,77 +12,17 @@ import frame3 from "../../assets/profile1.jpg";
 import frame4 from "../../assets/profile1.jpg";
 
 const PeoplePage = () => {
-  // State for the first team section (Team Members)
-  const [teamData1, setTeamData1] = useState([
-    {
-      name: "Eshaan Sharma (Team 1)",
-      branch: "CSE-CORE",
-      role: "DESIGN HEAD",
-      linkedin: "www.linkedin.com/eshaan1",
-      github: "www.github.com/eshaan1",
-      instagram: "www.instagram.com/eshaan1",
-      projects: ["Project Alpha", "Project Gamma"] // Keeping projects in state for pop-up
-    },
-    {
-      name: "Alice Smith (Team 1)",
-      branch: "ECE",
-      role: "SOFTWARE DEV",
-      linkedin: "www.linkedin.com/alice1",
-      github: "www.github.com/alice1",
-      instagram: "www.instagram.com/alice1",
-      projects: ["Project Beta"]
-    },
-    {
-      name: "Alice Smith (Team 1)",
-      branch: "ECE",
-      role: "SOFTWARE DEV",
-      linkedin: "www.linkedin.com/alice1",
-      github: "www.github.com/alice1",
-      instagram: "www.instagram.com/alice1",
-      projects: ["Project Beta"]
-    },
-    {
-      name: "Alice Smith (Team 1)",
-      branch: "ECE",
-      role: "SOFTWARE DEV",
-      linkedin: "www.linkedin.com/alice1",
-      github: "www.github.com/alice1",
-      instagram: "www.instagram.com/alice1",
-      projects: ["Project Beta"]
-    },
-  ]);
+  // Loading and error states
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // State for the first team section (Team Members)
+  const [teamData1, setTeamData1] = useState([]);
   // State for the second team section (Alumni)
-  const [teamData2, setTeamData2] = useState([
-    {
-      alumniName: "Bob Johnson (Alumni)",
-      companyName: "Tech Corp",
-      package: "15 LPA",
-      testimonial: "Great experience at college!",
-    },
-    {
-      alumniName: "Charlie Brown (Alumni)",
-      companyName: "Design Studio",
-      package: "12 LPA",
-      testimonial: "Learned so much here.",
-    },
-    {
-      alumniName: "Charlie Brown (Alumni)",
-      companyName: "Design Studio",
-      package: "12 LPA",
-      testimonial: "Learned so much here.",
-    },
-    {
-      alumniName: "Charlie Brown (Alumni)",
-      companyName: "Design Studio",
-      package: "12 LPA",
-      testimonial: "Learned so much here.",
-    },
-  ]);
+  const [teamData2, setTeamData2] = useState([]);
 
   const [isTeamEditing, setIsTeamEditing] = useState(false); // For Team Members modal
   const [isAlumniEditing, setIsAlumniEditing] = useState(false); // For Alumni modal
-
   const [currentEditingTeamId, setCurrentEditingTeamId] = useState(null); // 'team1' or 'team2'
 
   const [frame1Img, setFrame1Img] = useState(frame1);
@@ -95,6 +36,28 @@ const PeoplePage = () => {
     "Project Gamma",
     "Project Delta"
   ];
+
+  // Fetch data from backend API on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // TODO: Replace with your actual API endpoints
+        const [teamRes, alumniRes] = await Promise.all([
+          axios.get('/api/team'), // <-- BACKEND: Fill in real endpoint
+          axios.get('/api/alumni'), // <-- BACKEND: Fill in real endpoint
+        ]);
+        setTeamData1(teamRes.data);
+        setTeamData2(alumniRes.data);
+      } catch (err) {
+        setError('Failed to load data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   // Helper function to get the correct team data and setter based on currentEditingTeamId
   const getActiveTeamData = () => {
@@ -116,11 +79,8 @@ const PeoplePage = () => {
   const handleProjectSelection = (memberIndex, projectName) => {
     const [activeTeamData, setActiveTeamData] = getActiveTeamData();
     const updatedTeamData = [...activeTeamData];
-    // Ensure projects array exists before trying to access it, and create if it doesn't
     updatedTeamData[memberIndex].projects = updatedTeamData[memberIndex].projects || [];
-
     const memberProjects = updatedTeamData[memberIndex].projects;
-
     if (memberProjects.includes(projectName)) {
       updatedTeamData[memberIndex].projects = memberProjects.filter(
         (proj) => proj !== projectName
@@ -140,9 +100,9 @@ const PeoplePage = () => {
     }
   };
 
-  const handleAddNew = () => {
+  // Add new member/alumni (API call)
+  const handleAddNew = async () => {
     const [activeTeamData, setActiveTeamData] = getActiveTeamData();
-
     let newMember = {};
     if (currentEditingTeamId === 'team1') {
       newMember = {
@@ -155,64 +115,109 @@ const PeoplePage = () => {
         alumniName: '', companyName: '', package: '', testimonial: ''
       };
     }
-    // Directly add the new blank member without any prompt or condition
-    setActiveTeamData([newMember, ...activeTeamData]);
+    // Optimistically add to UI, but also send to backend
+    try {
+      // TODO: Replace with your actual API endpoint
+      const res = await axios.post(
+        currentEditingTeamId === 'team1' ? '/api/team' : '/api/alumni',
+        newMember
+      );
+      setActiveTeamData([res.data, ...activeTeamData]);
+    } catch (err) {
+      setError('Failed to add new member.');
+    }
   };
 
-
-  const handleDeleteMember = (index) => {
+  // Delete member/alumni (API call)
+  const handleDeleteMember = async (index) => {
     const [activeTeamData, setActiveTeamData] = getActiveTeamData();
-    const updated = [...activeTeamData];
-    updated.splice(index, 1);
-    setActiveTeamData(updated);
+    const member = activeTeamData[index];
+    try {
+      // TODO: Replace with your actual API endpoint and ID field
+      await axios.delete(
+        currentEditingTeamId === 'team1'
+          ? `/api/team/${member.id || member._id}`
+          : `/api/alumni/${member.id || member._id}`
+      );
+      const updated = [...activeTeamData];
+      updated.splice(index, 1);
+      setActiveTeamData(updated);
+    } catch (err) {
+      setError('Failed to delete member.');
+    }
   };
 
-  const handleDeleteAllMembers = () => {
-    const [, setActiveTeamData] = getActiveTeamData();
-    setActiveTeamData([]);
+  // Delete all members/alumni (API call)
+  const handleDeleteAllMembers = async () => {
+    const [activeTeamData, setActiveTeamData] = getActiveTeamData();
+    try {
+      // TODO: Replace with your actual API endpoint for bulk delete if available
+      await Promise.all(
+        activeTeamData.map(member =>
+          axios.delete(
+            currentEditingTeamId === 'team1'
+              ? `/api/team/${member.id || member._id}`
+              : `/api/alumni/${member.id || member._id}`
+          )
+        )
+      );
+      setActiveTeamData([]);
+    } catch (err) {
+      setError('Failed to delete all members.');
+    }
   };
 
   const handleEditClick = (teamId) => {
     setCurrentEditingTeamId(teamId);
     if (teamId === 'team1') {
       setIsTeamEditing(true);
-      setIsAlumniEditing(false); // Ensure other modal is closed
+      setIsAlumniEditing(false);
     } else if (teamId === 'team2') {
       setIsAlumniEditing(true);
-      setIsTeamEditing(false); // Ensure other modal is closed
+      setIsTeamEditing(false);
     }
   };
 
-  // Function to handle saving/closing the modal with validation
-  const handleSaveAndClose = () => {
+  // Save edits to backend (API call)
+  const handleSaveAndClose = async () => {
     const [activeTeamData] = getActiveTeamData();
-
     // Check if any card is completely empty
     const isEmptyCardPresent = activeTeamData.some(member => {
       if (currentEditingTeamId === 'team1') {
-        // For team members, check if name, branch, role, and all social links are empty
         return !member.name.trim() && !member.branch.trim() && !member.role.trim() &&
                !member.linkedin.trim() && !member.github.trim() && !member.instagram.trim();
       } else if (currentEditingTeamId === 'team2') {
-        // For alumni, check if alumniName, companyName, package, and testimonial are empty
         return !member.alumniName.trim() && !member.companyName.trim() &&
                !member.package.trim() && !member.testimonial.trim();
       }
-      return false; // Should not happen
+      return false;
     });
-
     if (isEmptyCardPresent) {
       alert("Please add details to any empty cards before saving.");
-    } else {
-      // If all cards have some details, close the modal
+      return;
+    }
+    // Save all edits to backend
+    try {
+      await Promise.all(
+        activeTeamData.map(member =>
+          // TODO: Replace with your actual API endpoint and ID field
+          axios.put(
+            currentEditingTeamId === 'team1'
+              ? `/api/team/${member.id || member._id}`
+              : `/api/alumni/${member.id || member._id}`,
+            member
+          )
+        )
+      );
       if (currentEditingTeamId === 'team1') {
         setIsTeamEditing(false);
       } else if (currentEditingTeamId === 'team2') {
         setIsAlumniEditing(false);
       }
+    } catch (err) {
+      setError('Failed to save changes.');
     }
   };
-
 
   const labelStyle = "text-white text-[14px] font-[600] font-inter uppercase tracking-[1.12px]";
   const inputStyle = "h-[48px] px-4 py-3 rounded-md opacity-100 shadow-[2px_2px_4px_0px_#00000040,inset_2px_2px_6px_0px_#FFFFFF80] bg-[#121212] text-white text-sm font-inter";
@@ -227,13 +232,12 @@ const PeoplePage = () => {
         </div>
       </div>
 
-      <div className={`relative bg-[#1a1a1a] w-full text-white font-sans rounded-b px-6 ${teamData.length > 0 ? 'pt-4 min-h-[280px]' : 'min-h-[73px]'} pb-[90px] overflow-hidden`} style={{ boxShadow: '4px 4px 8px rgba(255, 255, 255, 0.2)' }}>
+      <div className={`relative bg-[#1a1a1a] w-full text-white font-sans rounded-b px-6 ${Array.isArray(teamData) && teamData.length > 0 ? 'pt-4 min-h-[280px]' : 'min-h-[73px]'} pb-[90px] overflow-hidden`} style={{ boxShadow: '4px 4px 8px rgba(255, 255, 255, 0.2)' }}>
         <div className="scroll-container grid grid-cols-2 gap-6 overflow-y-auto max-h-[245px] pr-2">
-          {teamData.map((member, idx) => (
-            <div key={idx} className="flex p-3 rounded-lg items-center gap-4">
+          {Array.isArray(teamData) && teamData.map((member, idx) => (
+            <div key={member.id || member._id || idx} className="flex p-3 rounded-lg items-center gap-4">
               <img src={[frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]} alt="profile" className="w-[130px] h-[130px] rounded-lg object-cover" />
               <div className="text-white text-sm leading-relaxed font-mono">
-                {/* Conditionally render fields based on teamId */}
                 {teamId === 'team1' ? (
                   <>
                     <p className="font-semibold text-lg">{member.name}</p>
@@ -242,7 +246,6 @@ const PeoplePage = () => {
                     <p className="text-blue-400 underline cursor-pointer break-all">{member.linkedin}</p>
                     <p className="text-blue-400 underline cursor-pointer break-all">{member.github}</p>
                     <p className="text-blue-400 underline cursor-pointer break-all">{member.instagram}</p>
-                    {/* Projects array display is REMOVED from the main screen here. */}
                   </>
                 ) : (
                   <>
@@ -265,7 +268,7 @@ const PeoplePage = () => {
           <button
             className='font-mono w-[125px] h-[40px] rounded-xl border-2 bg-[#ACACAC40]/60 border-white text-white flex py-2 gap-2 px-3'
             onClick={() => {
-              setCurrentEditingTeamId(teamId); // Ensure correct team is selected for deletion
+              setCurrentEditingTeamId(teamId);
               handleDeleteAllMembers();
             }}
           >
@@ -280,6 +283,9 @@ const PeoplePage = () => {
   // Get active team data for rendering the modal content
   const [activeTeamData] = getActiveTeamData();
 
+  if (loading) return <div className="text-center text-white pt-10">Loading...</div>;
+  if (error) return <div className="text-center text-red-500 pt-10">{error}</div>;
+
   return (
     <div className='w-full min-h-screen flex justify-center items-start pt-10 px-4'>
       <div className='w-full max-w-[1136px] h-auto pb-[80px]'>
@@ -291,13 +297,13 @@ const PeoplePage = () => {
             <div className="bg-[#1a1a1a] w-[920px] max-h-[90vh] overflow-hidden rounded-xl shadow-lg border border-[#5a5a5a] flex flex-col">
               <div className="h-[65px] w-full flex justify-between items-center px-7 bg-[#8E8E8E] rounded-t-xl">
                 <h2 className="text-[#333] font-semibold text-[22px] font-inter">Edit Team Members</h2>
-                <img src={cross} alt="close" className="h-[20px] w-[20px] cursor-pointer" onClick={() => handleSaveAndClose()} /> {/* Use common handler */}
+                <img src={cross} alt="close" className="h-[20px] w-[20px] cursor-pointer" onClick={() => handleSaveAndClose()} />
               </div>
 
               <div className="flex flex-col max-h-[80vh]">
                 <div className="scroll-container overflow-y-auto px-6 pt-6 pb-2 flex flex-col gap-6" style={{ maxHeight: "calc(80vh - 130px)" }}>
                   {activeTeamData.map((member, idx) => (
-                    <div key={idx} className="flex gap-4 items-start p-4 rounded-lg">
+                    <div key={member.id || member._id || idx} className="flex gap-4 items-start p-4 rounded-lg">
                       <label className="relative min-w-[131px] w-[131px] h-[168px] shrink-0 cursor-pointer border-white border-2 rounded-xl">
                         <img src={[frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]} alt="" className='w-full h-full rounded-lg object-cover opacity-20' />
                         <span className="absolute inset-0 flex items-center justify-center">
@@ -331,7 +337,7 @@ const PeoplePage = () => {
                             <div key={projectIdx} className="flex items-center gap-2">
                               <input
                                 type="checkbox"
-                                id={`project-${idx}-${currentEditingTeamId}-${projectIdx}`} // Unique ID for checkbox
+                                id={`project-${idx}-${currentEditingTeamId}-${projectIdx}`}
                                 className="h-5 w-5 border-2 relative focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 checked={(member.projects || []).includes(projectName)}
                                 onChange={() => handleProjectSelection(idx, projectName)}
@@ -374,13 +380,13 @@ const PeoplePage = () => {
             <div className="bg-[#1a1a1a] w-[920px] max-h-[90vh] overflow-hidden rounded-xl shadow-lg border border-[#5a5a5a] flex flex-col">
               <div className="h-[65px] w-full flex justify-between items-center px-7 bg-[#8E8E8E] rounded-t-xl">
                 <h2 className="text-[#333] font-semibold text-[22px] font-inter">Edit Alumni</h2>
-                <img src={cross} alt="close" className="h-[20px] w-[20px] cursor-pointer" onClick={() => handleSaveAndClose()} /> {/* Use common handler */}
+                <img src={cross} alt="close" className="h-[20px] w-[20px] cursor-pointer" onClick={() => handleSaveAndClose()} />
               </div>
 
               <div className="flex flex-col max-h-[80vh]">
                 <div className="scroll-container overflow-y-auto px-6 pt-6 pb-2 flex flex-col gap-6" style={{ maxHeight: "calc(80vh - 130px)" }}>
-                  {activeTeamData.map((member, idx) => ( // Use activeTeamData (which will be teamData2 here)
-                    <div key={idx} className="flex gap-4 items-start p-4 rounded-lg">
+                  {activeTeamData.map((member, idx) => (
+                    <div key={member.id || member._id || idx} className="flex gap-4 items-start p-4 rounded-lg">
                       <label className="relative min-w-[131px] w-[131px] h-[168px] shrink-0 cursor-pointer border-white border-2 rounded-xl">
                         <img src={[frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]} alt="" className='w-full h-full rounded-lg object-cover opacity-20' />
                         <span className="absolute inset-0 flex items-center justify-center">
@@ -401,8 +407,6 @@ const PeoplePage = () => {
 
                         <label className={labelStyle}>Testimonial</label>
                         <input className={`${inputStyle} w-[620px]`} value={member.testimonial} onChange={e => handleChange(idx, 'testimonial', e.target.value)} placeholder="Testimonial" />
-                        
-                        {/* Removed Projects section from Alumni modal */}
                       </div>
 
                       <img
@@ -460,7 +464,6 @@ const PeoplePage = () => {
             transition: none;
             position: relative;
             background-color: #8E8E8E;
-            
           }
 
           input[type="checkbox"]:checked {
@@ -468,7 +471,6 @@ const PeoplePage = () => {
             border-color: #8E8E8E;
           }
 
-          /* Custom tick mark using pseudo-element */
           input[type="checkbox"]:checked::before {
             content: '✓';
             display: block;
