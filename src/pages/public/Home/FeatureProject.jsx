@@ -33,7 +33,7 @@ const FeaturedProjects = () => {
     setError("Failed to load projects.");
   } finally {
     setLoading(false);
-  }
+  } 
 };
     fetchProjects();
   }, []);

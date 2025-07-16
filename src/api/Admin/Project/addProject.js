@@ -9,7 +9,7 @@ export const addProject = async ({ title, description, link, imageBase64, teamMe
     if (typeof imageBase64 === 'string' && imageBase64.startsWith('data:')) {
       const arr = imageBase64.split(',');
       const mime = arr[0].match(/:(.*?);/)[1];
-      const bstr = atob(arr[1]);
+      const bstr = atob(arr[1]); 
       let n = bstr.length;
       const u8arr = new Uint8Array(n);
       while (n--) {

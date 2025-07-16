@@ -14,7 +14,7 @@ const WorkPage = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   // Fetch projects from backend on mount
-  useEffect(() => {
+  useEffect(() => { 
     fetchProjects();
   }, []);
 

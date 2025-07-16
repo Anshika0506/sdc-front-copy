@@ -7,7 +7,7 @@ import AdminLayout from '../layout/AdminLayout';
 
 // Public Pages
 import Home from '../pages/public/Home/HomeLayout';
-import About from '../pages/public/About/About';
+import About from '../pages/public/About/AboutLayout';
 import PublicGallery from '../pages/public/Gallery/Gallery';
 import Career from '../pages/public/Career/Career';
 import Services from '../pages/public/Services/Services';
@@ -24,7 +24,7 @@ import PrivateRoute from '../auth/PrivateRoute';
 // Admin Pages
 import Testimonial from '../pages/admin/Testimonial'; // Testimonials Management
 import Gallery from '../pages/admin/Gallery';
-import AdminWork from '../pages/admin/Work';
+import AdminWork from '../pages/admin/Project';
 import AdminServices from '../pages/admin/Services';
 import FAQSection from '../pages/admin/FAQSection';
 import CareerPage from '../pages/admin/CareerPage';

@@ -15,28 +15,45 @@ const AboutGalleryPage = () => {
   const [isEditingAbout, setIsEditingAbout] = useState(false);
   const [newImage, setNewImage] = useState(null);
   const [newTitle, setNewTitle] = useState("");
+const fetchImages = async () => {
+  try {
+    const data = await getAllGalleryImages();
+    const savedIds = JSON.parse(localStorage.getItem("aboutImageIds")) || [];
 
-  const fetchImages = async () => {
-    try {
-      const data = await getAllGalleryImages();
-      console.log("Fetched data:", data);
-      setGallery(data);
-      setAboutImages(data.slice(0, 4));
-    } catch (error) {
-      console.error("Error fetching images:", error);
-    }
-  };
+    // Reorder gallery so saved About images appear on top
+    const aboutImgs = [];
+    const restImgs = [];
+
+    data.forEach(img => {
+      if (savedIds.includes(img.id)) {
+        aboutImgs.push(img);
+      } else {
+        restImgs.push(img);
+      }
+    });
+
+    const combinedGallery = [...aboutImgs, ...restImgs];
+    setGallery(combinedGallery);
+    setAboutImages(combinedGallery.slice(0, 4));
+  } catch (error) {
+    console.error("Error fetching images:", error);
+  }
+};
 
   useEffect(() => {
     fetchImages();
   }, []);
 
-  const handleAboutChange = (id) => {
-    if (aboutImages.some((img) => img.id === id)) return;
-    const selectedImage = gallery.find((img) => img.id === id);
-    const updated = [selectedImage, ...aboutImages].slice(0, 4);
-    setAboutImages(updated);
-  };
+ const handleAboutChange = (id) => {
+  const selectedImage = gallery.find((img) => img.id === id);
+  const updatedGallery = [selectedImage, ...gallery.filter((img) => img.id !== id)];
+
+  const updatedAboutIds = updatedGallery.slice(0, 4).map(img => img.id);
+  localStorage.setItem("aboutImageIds", JSON.stringify(updatedAboutIds));
+
+  setGallery(updatedGallery);
+  setAboutImages(updatedGallery.slice(0, 4));
+};
 
   const handleAddImage = async () => {
     if (!newImage || !newTitle.trim()) {
