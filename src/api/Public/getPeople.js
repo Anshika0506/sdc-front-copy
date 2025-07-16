@@ -1,6 +1,6 @@
 import publicApi from '../axios'; // ✅ use the public Axios instance
 
-export const getAlumini = async () => {
+export const getPeople = async () => {
   try {
     const res = await publicApi.get('/public/teamMember/getAll');
     console.log('Alumni data fetched successfully:', res.data);

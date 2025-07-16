@@ -35,6 +35,7 @@ import Profile from '../pages/admin/AdminProfile';
 const AppRoutes = () => {
   return (
     <Routes>
+
       {/* ✅ PUBLIC ROUTES */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
@@ -46,6 +47,7 @@ const AppRoutes = () => {
         <Route path="/work/projectdetails" element={<ProjectDetails />} />
         <Route path="/people" element={<People />} />
         <Route path="/contact" element={<Contact />} />
+
 
         {/* Fallback for Public Pages */}
         <Route path="*" element={<Error404Page />} />

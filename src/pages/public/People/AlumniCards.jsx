@@ -9,21 +9,26 @@ export default function AlumniCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  useEffect(() => {
-    const fetchAlumni = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await getAlumini();
-        setAlumni(data);
-      } catch (err) {
-        setError("Failed to load alumni.");
-      } finally {
-        setLoading(false);
+ useEffect(() => {
+  const fetchAlumni = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getAlumini();
+      if (res.status && Array.isArray(res.data)) {
+        setAlumni(res.data); // ✅ this is the actual alumni array
+      } else {
+        setError("Failed to load alumni."); // ❌ if status false or data is invalid
       }
-    };
-    fetchAlumni();
-  }, []);
+    } catch (err) {
+      console.error("Error fetching alumni:", err);
+      setError("Failed to load alumni.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchAlumni();
+}, []);
   // Set currentIndex to center after alumni load
   useEffect(() => {
     if (alumni.length > 0) {
@@ -111,13 +116,14 @@ export default function AlumniCarousel() {
                     <div className="shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl overflow-hidden h-full">
                       <img
                         src={alum.image || alumni3}
-                        alt={alum.name}
+                        alt={alum.aluminiName}
                         className="w-full h-60 object-cover"
                       />
                       <div className="p-4">
-                        <h3 className="font-bold text-lg">{alum.name}</h3>
-                        <p className="text-sm text-gray-600">{alum.title || "Alumnus"}</p>
-                        <p className="text-sm mt-2">{alum.desc || "No description available."}</p>
+                        <h3 className="font-bold text-lg">{alum.aluminiName}</h3>
+                          <p className="text-sm text-gray-400 font-medium">{alum.companyName}</p>
+  <p className="text-sm mt-2 text-gray-300">{alum.content}</p>
+  <p className="text-sm mt-1 text-green-400 font-semibold">{alum.lpa}</p>
                       </div>
                     </div>
                   </div>
