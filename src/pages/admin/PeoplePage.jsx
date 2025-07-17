@@ -30,10 +30,10 @@ const PeoplePage = () => {
   const frame4Img = frame4;
 
   const availableProjects = [
-    "Project Alpha",
-    "Project Beta",
-    "Project Gamma",
-    "Project Delta"
+    { id: 1, name: "Project Alpha" },
+    { id: 2, name: "Project Beta" },
+    { id: 3, name: "Project Gamma" },
+    { id: 4, name: "Project Delta" }
   ];
 
   // Fetch data from backend API on mount
@@ -75,28 +75,29 @@ const PeoplePage = () => {
     setActiveTeamData(updated);
   };
 
-  const handleProjectSelection = (memberIndex, projectName) => {
+  const handleProjectSelection = (memberIndex, projectId) => {
     const [activeTeamData, setActiveTeamData] = getActiveTeamData();
     const updatedTeamData = [...activeTeamData];
-    updatedTeamData[memberIndex].projects = updatedTeamData[memberIndex].projects || [];
-    const memberProjects = updatedTeamData[memberIndex].projects;
-    if (memberProjects.includes(projectName)) {
-      updatedTeamData[memberIndex].projects = memberProjects.filter(
-        (proj) => proj !== projectName
+    updatedTeamData[memberIndex].projectIds = updatedTeamData[memberIndex].projectIds || [];
+    const memberProjectIds = updatedTeamData[memberIndex].projectIds;
+    if (memberProjectIds.includes(projectId)) {
+      updatedTeamData[memberIndex].projectIds = memberProjectIds.filter(
+        (id) => id !== projectId
       );
     } else {
-      updatedTeamData[memberIndex].projects = [...memberProjects, projectName];
+      updatedTeamData[memberIndex].projectIds = [...memberProjectIds, projectId];
     }
     setActiveTeamData(updatedTeamData);
   };
 
-  const handleImageChange = (e, setter) => {
+  // Store the selected image file in the member object
+  const handleImageChange = (e, idx) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setter(reader.result);
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    const [activeTeamData, setActiveTeamData] = getActiveTeamData();
+    const updated = [...activeTeamData];
+    updated[idx].image = file;
+    setActiveTeamData(updated);
   };
 
   // Add new member/alumni (API call)
@@ -105,21 +106,29 @@ const PeoplePage = () => {
     let newMember = {};
     if (currentEditingTeamId === 'team1') {
       newMember = {
-        name: '', branch: '', role: '',
-        linkedin: '', github: '', instagram: '',
-        projects: []
+        name: '', branch: '', position: '',
+        linkdin_url: '', github_url: '', insta_url: '',
+        image: null,
+        projectIds: []
       };
     } else if (currentEditingTeamId === 'team2') {
       newMember = {
-        alumniName: '', companyName: '', package: '', testimonial: ''
+        aluminiName: '', companyName: '', lpa: '', content: '', image: null
       };
     }
-    // Optimistically add to UI, but also send to backend
     try {
-      // TODO: Replace with your actual API endpoint
+      const formData = new FormData();
+      Object.entries(newMember).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((v) => formData.append(key, v));
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, value);
+        }
+      });
       const res = await axios.post(
         currentEditingTeamId === 'team1' ? '/api/team' : '/public/getAll-Alumini',
-        newMember
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
       setActiveTeamData([res.data, ...activeTeamData]);
     } catch (err) {
@@ -183,11 +192,11 @@ const PeoplePage = () => {
     // Check if any card is completely empty
     const isEmptyCardPresent = activeTeamData.some(member => {
       if (currentEditingTeamId === 'team1') {
-        return !member.name.trim() && !member.branch.trim() && !member.role.trim() &&
-               !member.linkedin.trim() && !member.github.trim() && !member.instagram.trim();
+        return !member.name.trim() && !member.branch.trim() && !member.position.trim() &&
+               !member.linkdin_url.trim() && !member.github_url.trim() && !member.insta_url.trim();
       } else if (currentEditingTeamId === 'team2') {
-        return !member.alumniName.trim() && !member.companyName.trim() &&
-               !member.package.trim() && !member.testimonial.trim();
+        return !member.aluminiName.trim() && !member.companyName.trim() &&
+               !member.lpa.trim() && !member.content.trim();
       }
       return false;
     });
@@ -195,18 +204,25 @@ const PeoplePage = () => {
       alert("Please add details to any empty cards before saving.");
       return;
     }
-    // Save all edits to backend
     try {
       await Promise.all(
-        activeTeamData.map(member =>
-          // TODO: Replace with your actual API endpoint and ID field
-          axios.put(
+        activeTeamData.map(async (member) => {
+          const formData = new FormData();
+          Object.entries(member).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+              value.forEach((v) => formData.append(key, v));
+            } else if (value !== null && value !== undefined) {
+              formData.append(key, value);
+            }
+          });
+          await axios.put(
             currentEditingTeamId === 'team1'
               ? `/api/team/${member.id || member._id}`
-              : `/public/getAll-Alumini${member.id || member._id}`,
-            member
-          )
-        )
+              : `/public/getAll-Alumini/${member.id || member._id}`,
+            formData,
+            { headers: { 'Content-Type': 'multipart/form-data' } }
+          );
+        })
       );
       if (currentEditingTeamId === 'team1') {
         setIsTeamEditing(false);
@@ -241,17 +257,17 @@ const PeoplePage = () => {
                   <>
                     <p className="font-semibold text-lg">{member.name}</p>
                     <p>{member.branch}</p>
-                    <p>{member.role}</p>
-                    <p className="text-blue-400 underline cursor-pointer break-all">{member.linkedin}</p>
-                    <p className="text-blue-400 underline cursor-pointer break-all">{member.github}</p>
-                    <p className="text-blue-400 underline cursor-pointer break-all">{member.instagram}</p>
+                    <p>{member.position}</p>
+                    <p className="text-blue-400 underline cursor-pointer break-all">{member.linkdin_url}</p>
+                    <p className="text-blue-400 underline cursor-pointer break-all">{member.github_url}</p>
+                    <p className="text-blue-400 underline cursor-pointer break-all">{member.insta_url}</p>
                   </>
                 ) : (
                   <>
-                    <p className="font-semibold text-lg">{member.alumniName}</p>
+                    <p className="font-semibold text-lg">{member.aluminiName}</p>
                     <p>Company: {member.companyName}</p>
-                    <p>Package: {member.package}</p>
-                    <p>Testimonial: {member.testimonial}</p>
+                    <p>LPA: {member.lpa}</p>
+                    <p>Content: {member.content}</p>
                   </>
                 )}
               </div>
@@ -308,7 +324,7 @@ const PeoplePage = () => {
                         <span className="absolute inset-0 flex items-center justify-center">
                           <img src={edit} alt="edit" className='w-[30px] h-[30px]' />
                         </span>
-                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageChange(e, [setFrame1Img, setFrame2Img, setFrame3Img, setFrame4Img][idx % 4])} />
+                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageChange(e, idx)} />
                       </label>
 
                       <div className="flex flex-col grow gap-[6px] px-[10px] py-[12px]">
@@ -319,30 +335,30 @@ const PeoplePage = () => {
                         <input className={`${inputStyle} w-[620px]`} value={member.branch} onChange={e => handleChange(idx, 'branch', e.target.value)} placeholder="Branch" />
 
                         <label className={labelStyle}>Position</label>
-                        <input className={`${inputStyle} w-[620px]`} value={member.role} onChange={e => handleChange(idx, 'role', e.target.value)} placeholder="Position" />
+                        <input className={`${inputStyle} w-[620px]`} value={member.position} onChange={e => handleChange(idx, 'position', e.target.value)} placeholder="Position" />
 
-                        <label className={labelStyle}>LinkedIn ID</label>
-                        <input className={`${inputStyle} w-[620px]`} value={member.linkedin} onChange={e => handleChange(idx, 'linkedin', e.target.value)} placeholder="LinkedIn" />
+                        <label className={labelStyle}>LinkedIn URL</label>
+                        <input className={`${inputStyle} w-[620px]`} value={member.linkdin_url} onChange={e => handleChange(idx, 'linkdin_url', e.target.value)} placeholder="LinkedIn" />
 
-                        <label className={labelStyle}>GitHub ID</label>
-                        <input className={`${inputStyle} w-[620px]`} value={member.github} onChange={e => handleChange(idx, 'github', e.target.value)} placeholder="GitHub" />
+                        <label className={labelStyle}>GitHub URL</label>
+                        <input className={`${inputStyle} w-[620px]`} value={member.github_url} onChange={e => handleChange(idx, 'github_url', e.target.value)} placeholder="GitHub" />
 
-                        <label className={labelStyle}>Instagram ID</label>
-                        <input className={`${inputStyle} w-[620px]`} value={member.instagram} onChange={e => handleChange(idx, 'instagram', e.target.value)} placeholder="Instagram" />
+                        <label className={labelStyle}>Instagram URL</label>
+                        <input className={`${inputStyle} w-[620px]`} value={member.insta_url} onChange={e => handleChange(idx, 'insta_url', e.target.value)} placeholder="Instagram" />
 
                         <label className={labelStyle}>Projects</label>
                         <div className="flex flex-col gap-2 p-4 rounded-md opacity-100 shadow-[2px_2px_4px_0px_#00000040,inset_2px_2px_6px_0px_#FFFFFF80] bg-[#121212]">
-                          {availableProjects.map((projectName, projectIdx) => (
-                            <div key={projectIdx} className="flex items-center gap-2">
+                          {availableProjects.map((project, projectIdx) => (
+                            <div key={project.id} className="flex items-center gap-2">
                               <input
                                 type="checkbox"
-                                id={`project-${idx}-${currentEditingTeamId}-${projectIdx}`}
+                                id={`project-${idx}-${currentEditingTeamId}-${project.id}`}
                                 className="h-5 w-5 border-2 relative focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                checked={(member.projects || []).includes(projectName)}
-                                onChange={() => handleProjectSelection(idx, projectName)}
+                                checked={(member.projectIds || []).includes(project.id)}
+                                onChange={() => handleProjectSelection(idx, project.id)}
                               />
-                              <label htmlFor={`project-${idx}-${currentEditingTeamId}-${projectIdx}`} className="text-white text-sm font-inter">
-                                {projectName}
+                              <label htmlFor={`project-${idx}-${currentEditingTeamId}-${project.id}`} className="text-white text-sm font-inter">
+                                {project.name}
                               </label>
                             </div>
                           ))}
@@ -391,21 +407,21 @@ const PeoplePage = () => {
                         <span className="absolute inset-0 flex items-center justify-center">
                           <img src={edit} alt="edit" className='w-[30px] h-[30px]' />
                         </span>
-                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageChange(e, [setFrame1Img, setFrame2Img, setFrame3Img, setFrame4Img][idx % 4])} />
+                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageChange(e, idx)} />
                       </label>
 
                       <div className="flex flex-col grow gap-[6px] px-[10px] py-[12px]">
                         <label className={labelStyle}>Alumni Name</label>
-                        <input className={`${inputStyle} w-[620px]`} value={member.alumniName} onChange={e => handleChange(idx, 'alumniName', e.target.value)} placeholder="Alumni Name" />
+                        <input className={`${inputStyle} w-[620px]`} value={member.aluminiName} onChange={e => handleChange(idx, 'aluminiName', e.target.value)} placeholder="Alumni Name" />
 
                         <label className={labelStyle}>Company Name</label>
                         <input className={`${inputStyle} w-[620px]`} value={member.companyName} onChange={e => handleChange(idx, 'companyName', e.target.value)} placeholder="Company Name" />
 
-                        <label className={labelStyle}>Package</label>
-                        <input className={`${inputStyle} w-[620px]`} value={member.package} onChange={e => handleChange(idx, 'package', e.target.value)} placeholder="Package" />
+                        <label className={labelStyle}>LPA</label>
+                        <input className={`${inputStyle} w-[620px]`} value={member.lpa} onChange={e => handleChange(idx, 'lpa', e.target.value)} placeholder="LPA" />
 
-                        <label className={labelStyle}>Testimonial</label>
-                        <input className={`${inputStyle} w-[620px]`} value={member.testimonial} onChange={e => handleChange(idx, 'testimonial', e.target.value)} placeholder="Testimonial" />
+                        <label className={labelStyle}>Content</label>
+                        <input className={`${inputStyle} w-[620px]`} value={member.content} onChange={e => handleChange(idx, 'content', e.target.value)} placeholder="Content" />
                       </div>
 
                       <img
