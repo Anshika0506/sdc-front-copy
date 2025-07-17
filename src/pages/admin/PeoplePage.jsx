@@ -10,6 +10,7 @@ import frame1 from "../../assets/profile1.jpg";
 import frame2 from "../../assets/profile1.jpg";
 import frame3 from "../../assets/profile1.jpg";
 import frame4 from "../../assets/profile1.jpg";
+import { getPeople, postPeople, updatePeople, deletePeople } from '../../api/Admin/People/getPeople';
 const PeoplePage = () => {
   // Loading and error states
   const [loading, setLoading] = useState(true);
@@ -42,12 +43,12 @@ const PeoplePage = () => {
       setLoading(true);
       setError(null);
       try {
-        // TODO: Replace with your actual API endpoints
+        // Use admin getPeople for team1
         const [teamRes, alumniRes] = await Promise.all([
-          axios.get('/api/team'), // <-- BACKEND: Fill in real endpoint
-          axios.get('/public/getAll-Alumini'), // <-- BACKEND: Fill in real endpoint
+          getPeople(),
+          axios.get('/public/getAll-Alumini'),
         ]);
-        setTeamData1(teamRes.data);
+        setTeamData1(teamRes);
         setTeamData2(alumniRes.data);
       } catch (err) {
         setError('Failed to load data.');
@@ -117,20 +118,26 @@ const PeoplePage = () => {
       };
     }
     try {
-      const formData = new FormData();
-      Object.entries(newMember).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          value.forEach((v) => formData.append(key, v));
-        } else if (value !== null && value !== undefined) {
-          formData.append(key, value);
-        }
-      });
-      const res = await axios.post(
-        currentEditingTeamId === 'team1' ? '/api/team' : '/public/getAll-Alumini',
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
-      setActiveTeamData([res.data, ...activeTeamData]);
+      if (currentEditingTeamId === 'team1') {
+        // Use admin postPeople for team1
+        const res = await postPeople(newMember);
+        setActiveTeamData([res, ...activeTeamData]);
+      } else {
+        const formData = new FormData();
+        Object.entries(newMember).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((v) => formData.append(key, v));
+          } else if (value !== null && value !== undefined) {
+            formData.append(key, value);
+          }
+        });
+        const res = await axios.post(
+          '/public/getAll-Alumini',
+          formData,
+          { headers: { 'Content-Type': 'multipart/form-data' } }
+        );
+        setActiveTeamData([res.data, ...activeTeamData]);
+      }
     } catch (err) {
       setError('Failed to add new member.');
     }
@@ -141,12 +148,12 @@ const PeoplePage = () => {
     const [activeTeamData, setActiveTeamData] = getActiveTeamData();
     const member = activeTeamData[index];
     try {
-      // TODO: Replace with your actual API endpoint and ID field
-      await axios.delete(
-        currentEditingTeamId === 'team1'
-          ? `/api/team/${member.id || member._id}`
-          : `/public/getAll-Alumini/${member.id || member._id}`
-      );
+      if (currentEditingTeamId === 'team1') {
+        // Use admin deletePeople for team1
+        await deletePeople(member.id || member._id);
+      } else {
+        await axios.delete(`/public/getAll-Alumini/${member.id || member._id}`);
+      }
       const updated = [...activeTeamData];
       updated.splice(index, 1);
       setActiveTeamData(updated);
@@ -159,16 +166,18 @@ const PeoplePage = () => {
   const handleDeleteAllMembers = async () => {
     const [activeTeamData, setActiveTeamData] = getActiveTeamData();
     try {
-      // TODO: Replace with your actual API endpoint for bulk delete if available
-      await Promise.all(
-        activeTeamData.map(member =>
-          axios.delete(
-            currentEditingTeamId === 'team1'
-              ? `/api/team/${member.id || member._id}`
-              : `/public/getAll-Alumini/${member.id || member._id}`
+      if (currentEditingTeamId === 'team1') {
+        // Use admin deletePeople for team1
+        await Promise.all(
+          activeTeamData.map(member => deletePeople(member.id || member._id))
+        );
+      } else {
+        await Promise.all(
+          activeTeamData.map(member =>
+            axios.delete(`/public/getAll-Alumini/${member.id || member._id}`)
           )
-        )
-      );
+        );
+      }
       setActiveTeamData([]);
     } catch (err) {
       setError('Failed to delete all members.');
@@ -205,28 +214,32 @@ const PeoplePage = () => {
       return;
     }
     try {
-      await Promise.all(
-        activeTeamData.map(async (member) => {
-          const formData = new FormData();
-          Object.entries(member).forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-              value.forEach((v) => formData.append(key, v));
-            } else if (value !== null && value !== undefined) {
-              formData.append(key, value);
-            }
-          });
-          await axios.put(
-            currentEditingTeamId === 'team1'
-              ? `/api/team/${member.id || member._id}`
-              : `/public/getAll-Alumini/${member.id || member._id}`,
-            formData,
-            { headers: { 'Content-Type': 'multipart/form-data' } }
-          );
-        })
-      );
       if (currentEditingTeamId === 'team1') {
+        // Use admin updatePeople for team1
+        await Promise.all(
+          activeTeamData.map(async (member) => {
+            await updatePeople(member.id || member._id, member);
+          })
+        );
         setIsTeamEditing(false);
-      } else if (currentEditingTeamId === 'team2') {
+      } else {
+        await Promise.all(
+          activeTeamData.map(async (member) => {
+            const formData = new FormData();
+            Object.entries(member).forEach(([key, value]) => {
+              if (Array.isArray(value)) {
+                value.forEach((v) => formData.append(key, v));
+              } else if (value !== null && value !== undefined) {
+                formData.append(key, value);
+              }
+            });
+            await axios.put(
+              `/public/getAll-Alumini/${member.id || member._id}`,
+              formData,
+              { headers: { 'Content-Type': 'multipart/form-data' } }
+            );
+          })
+        );
         setIsAlumniEditing(false);
       }
     } catch (err) {
