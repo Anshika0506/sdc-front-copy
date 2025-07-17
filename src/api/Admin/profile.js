@@ -38,12 +38,9 @@ export const getAdminProfile = async () => {
 export const updateAdminDetails = async (updatedData) => {
   try {
     console.log("Updating admin details:", updatedData);
-    
-    // Include adminId in the request body or URL parameter
-    const response = await api.post("/admin/updateAdmin", updatedData);
-    // Alternative if your backend expects adminId in URL:
-    // const response = await api.post(`/admin/updateAdmin/${updatedData.adminId}`, updatedData);
-    
+
+    const response = await api.put("/admin/updateAdmin", updatedData);
+
     console.log("Update response:", response.data);
     return response.data;
   } catch (error) {
@@ -52,15 +49,14 @@ export const updateAdminDetails = async (updatedData) => {
     throw error;
   }
 };
-
 // Change admin password
-export const changeAdminPassword = async (oldPassword, newPassword, adminId) => {
+export const changeAdminPassword = async (oldPassword, newPassword) => {
   try {
-    console.log("Changing admin password for ID:", adminId);
-    
-    const response = await api.post(`/admin/change-password/${adminId}`, {
+    console.log("Changing admin password");
+
+    const response = await api.put("/admin/change-password", {
       oldPassword,
-      newPassword
+      newPassword,
     });
 
     console.log("Password change response:", response.data);

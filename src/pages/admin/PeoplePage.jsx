@@ -10,7 +10,7 @@ import frame1 from "../../assets/profile1.jpg";
 import frame2 from "../../assets/profile1.jpg";
 import frame3 from "../../assets/profile1.jpg";
 import frame4 from "../../assets/profile1.jpg";
-import { getPeople, postPeople, updatePeople, deletePeople } from '../../api/Admin/People/getPeople';
+import { getPeople, postPeople, updatePeople, deletePeople } from '../../api/Admin/People';
 const PeoplePage = () => {
   // Loading and error states
   const [loading, setLoading] = useState(true);
