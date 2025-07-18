@@ -1,15 +1,8 @@
 import adminApi from '../../config';
 
-/**
- * Fetches people data from the backend.
- * @param {('teamMembers'|'alumni')} type - The type of people to fetch.
- *   - Use 'teamMembers' for Team Members
- *   - Use 'alumni' for Alumni
- * @returns {Promise<Array>} The list of people (team or alumni)
- */
 export const postPeople = async (type, data) => {
   try {
-    let url;
+    let url, payload;
     if (type === 'teamMembers') {
       url = '/admin/teamMember/add';
     } else if (type === 'alumni') {
@@ -17,7 +10,20 @@ export const postPeople = async (type, data) => {
     } else {
       throw new Error('Invalid type for postPeople');
     }
-    const response = await adminApi.post(url, data);
+
+    // Always use FormData
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => formData.append(key, v));
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+    payload = formData;
+
+    // No Content-Type header, let axios/browser handle it!
+    const response = await adminApi.post(url, payload);
     return response.data;
   } catch (error) {
     throw error;
