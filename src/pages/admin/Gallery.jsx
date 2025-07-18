@@ -131,7 +131,7 @@ const fetchImages = async () => {
   };
 
   return (
-    <div className="w-[1136px] min-h-screen pb-[159px] pt-10 pl-7 text-white font-sans">
+    <div className="w-[1136px] min-h-screen pt-10 pl-7 text-white font-sans">
       {/* About Header */}
       <div className="w-full h-[60px] flex justify-between px-7 py-2 bg-[#8E8E8E] rounded-t-xl">
         <h1 className="font-semibold text-[#333] text-[22px]">SDC Overview</h1>

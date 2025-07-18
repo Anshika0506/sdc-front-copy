@@ -70,7 +70,7 @@ export default function TestimonialsCarousel() {
         {/* Up Button */}
         <button
           onClick={prev}
-          className="absolute top-6 right-6 z-10 bg-white/10 p-4 rounded-2xl shadow cursor-pointer"
+          className="absolute top-20 right-6 z-20 bg-white/10 p-4 rounded-2xl shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] cursor-pointer"
         >
           <img src={upButton} alt="Up" className="w-6 h-6" />
         </button>
@@ -98,12 +98,12 @@ export default function TestimonialsCarousel() {
                   className={`object-cover transition-all duration-500 ease-in-out ${
                     i === 1
                       ? "w-30 h-30 md:w-38 md:h-40 sm:w-28 sm:h-28 rounded-2xl"
-                      : "w-20 h-20 md:w-30 md:h-30 sm:w-24 sm:h-24 rounded-full"
+                      : "w-20 h-20 md:w-30 md:h-30 sm:w-24 sm:h-24 rounded-2xl"
                   }`}
                 />
                 <div>
                   <h4 className="text-lg md:text-lg sm:text-xl font-semibold mb-1">{t.name}</h4>
-                  <p className="text-sm md:text-base sm:text-base text-white/80 max-w-xl text-justify">
+                  <p className="text-sm md:text-base sm:text-base text-white/80 max-w-xl text-justify" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     {displayText}
                     {showReadMore && !isExpanded && (
                       <button
@@ -123,7 +123,7 @@ export default function TestimonialsCarousel() {
         {/* Down Button */}
         <button
           onClick={next}
-          className="absolute bottom-6 right-6 z-10 bg-white/10 p-4 rounded-2xl shadow cursor-pointer"
+          className="absolute bottom-20 right-6 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] bg-white/10 p-4 rounded-2xl cursor-pointer"
         >
           <img src={downButton} alt="Down" className="w-6 h-6" />
         </button>

@@ -225,7 +225,7 @@ const WorkPage = () => {
   };
 
   return (
-    <div className="w-full h-[100vh]">
+    <div className="w-full">
       {/* Error Display */}
       {error && (
         <div className="fixed top-4 right-4 z-50 bg-red-600 text-white px-4 py-2 rounded-md shadow-lg">
@@ -271,7 +271,7 @@ const WorkPage = () => {
         <div className="flex justify-center">
           <div className="w-full max-w-[1136px] space-y-[20px] px-[30px] pt-[5px] pb-[10px] mr-[50px]">
             {/* Sticky header with Create New button */}
-            <div className="sticky top-0 z-10 w-full flex justify-end items-center px-[30px] py-[10px] bg-[#1E1E1E]">
+            <div className="sticky top-0 z-10 w-full flex justify-end items-center px-[30px] py-[10px]">
               <button
                 onClick={handleCreateNewProject}
                 disabled={loading}

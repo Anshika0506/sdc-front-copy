@@ -39,7 +39,7 @@ const ServicesPage = () => {
   };
 
   return (
-    <div className="w-[1136px] h-[855px] absolute top-[132px] left-[272px] opacity-100 rotate-0 overflow-hidden">
+    <div className="w-[1136px] absolute top-[132px] left-[272px] opacity-100 rotate-0 overflow-hidden">
       {/* Header */}
       <div className="w-full h-[60px] flex justify-between items-center px-[28px] py-[8px] bg-[#8E8E8E] rounded-t-2xl">
         <h2 className="text-[#333333] font-semibold font-sans text-lg">
@@ -60,7 +60,7 @@ const ServicesPage = () => {
       </div>
 
       {/* Body */}
-      <div className="w-full h-[722px] bg-[#141414] rounded-b-xl shadow-[2px_2px_6px_0px_#FFFFFF26] flex flex-col">
+      <div className="w-full bg-[#141414] rounded-b-xl shadow-[2px_2px_6px_0px_#FFFFFF26] flex flex-col">
         <div
           ref={contentRef}
           className="pt-[32px] pb-[24px] flex-1 overflow-y-auto scroll-container"

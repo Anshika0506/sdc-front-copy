@@ -3,6 +3,9 @@ import left from "../../../assets/leftimage.svg";
 import right from "../../../assets/rightimage.svg";
 
 const HeroSection = () => {
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   return (
     <section className="relative w-full overflow-hidden bg-gradient-to-br text-white">
       {/* Glass background box */}
@@ -25,11 +28,13 @@ const HeroSection = () => {
             Empowering IDEAS
           </span>
           <br />
-          <span className="text-transparent bg-clip-text bg-[linear-gradient(180deg,var(--Colors-Text-Primary,#FFF)_0%,var(--inputFileds-placeholderColour-Focus,#2B88A8)_100%)]">Through CODE</span>
+          <span className="text-transparent bg-clip-text bg-[linear-gradient(180deg,var(--Colors-Text-Primary,#FFF)_0%,var(--inputFileds-placeholderColour-Focus,#2B88A8)_100%)]">
+            Through CODE
+          </span>
         </h1>
 
         {/* Stats Box */}
-        <div className="mt-6 sm:mt-10 bg-[#112132]/70 backdrop-blur-xl border border-cyan-400 text-cyan-300 rounded-xl flex justify-between items-center w-full max-w-[90%] sm:max-w-[500px] px-4 py-4 sm:px-6 sm:py-5 z-20">
+        <div className="mt-6 sm:mt-10 bg-[#333333]/85 backdrop-blur-lg border border-cyan-400 text-cyan-300 rounded-xl flex justify-between items-center w-full max-w-[90%] sm:max-w-[500px] px-4 py-4 sm:px-6 sm:py-5 z-20">
           <div className="text-center flex-1">
             <div className="text-lg sm:text-2xl font-semibold">10+</div>
             <div className="text-xs sm:text-base text-cyan-200">Projects</div>
@@ -47,7 +52,10 @@ const HeroSection = () => {
         </div>
 
         {/* Subtext */}
-        <p className="mt-4 sm:mt-8 text-xs sm:text-base text-white text-center max-w-xs sm:max-w-xl z-20">
+        <p
+          className="mt-4 sm:mt-8 text-xs md:text-lg sm:text-base text-white text-center max-w-xs sm:max-w-xl z-20 "
+          style={{ fontFamily: "Inter, sans-serif" }}
+        >
           We’re a foundation driven by purpose and powered by technology —
           delivering software solutions that create lasting impact.
         </p>

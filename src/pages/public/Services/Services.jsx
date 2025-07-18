@@ -13,6 +13,9 @@ const services = [
 ];
 
 const Services = () => {
+    React.useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, []);
     const navigate = useNavigate();
     return(
 <div className=" text-white px-6 sm:px-10 lg:px-20 py-6 font-sans">

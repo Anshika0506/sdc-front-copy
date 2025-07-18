@@ -23,16 +23,21 @@ const RootCenterMedi = () => {
           className="text-sm font-mono text-gray-200 text-justify py-[8px] pr-[11px] pl-[8px]"
           style={{ fontWeight: 400, fontSize: 16 }}
         >
-          Potter ipsum wand elf parchment wingardium. Ludo glory house
-          peruvian-night-powder crush dobby last wand. Order azkaban umbrella
-          elder hunt knight-bus lion. Floor head map carriages giant out
-          slytherin's. Hexed mrs memory of peg-leg great dress catherine floo.
-          Downfall easy is sticking this hair 10 azkaban.
+          The Developers’ Community operates within the innovation-centric
+          environment of Medi-Caps University, where the Centre for Innovation
+          (CFI) acts as a core enabler of problem-solving, idea validation, and
+          impactful execution. This collaboration of institutional support and
+          focused innovation has created the foundation that drives our platform
+          forward.
         </p>
       </div>
 
       <div className="-ml-10 mt-[1rem] z-0 rounded-xl w-[300px] h-[300px] flex items-center justify-center">
-        <img src={center} alt="Centre for Innovation" className="object-contain" />
+        <img
+          src={center}
+          alt="Centre for Innovation"
+          className="object-contain"
+        />
       </div>
 
       <div className="-ml-15 mt-[1rem] z-0 rounded-2xl w-[300px] h-[300px] flex items-center justify-center">

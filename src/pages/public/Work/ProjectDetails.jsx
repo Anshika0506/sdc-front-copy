@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import backgroundImage from '../../../assets/mesh-gradient.webp';
+// import backgroundImage from '../../../assets/mesh-gradient.webp';
 import projectImage from '../../../assets/project.png';
 import icon from '../../../assets/icons.png';
 import { getProject } from "../../../api/Public/getProjectDetails";
@@ -70,7 +70,7 @@ export default function ProjectDetails() {
       <div
         className="min-h-screen p-2 flex items-center justify-center"
         style={{
-          backgroundImage: `url(${backgroundImage})`,
+          // backgroundImage: `url(${backgroundImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -85,7 +85,7 @@ export default function ProjectDetails() {
       <div
         className="min-h-screen p-2 flex items-center justify-center"
         style={{
-          backgroundImage: `url(${backgroundImage})`,
+          // backgroundImage: `url(${backgroundImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -97,9 +97,9 @@ export default function ProjectDetails() {
 
   return (
     <div
-      className="min-h-screen p-2"
+      className="min-h-screen mt-10 p-2"
       style={{
-        backgroundImage: `url(${backgroundImage})`,
+        // backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}

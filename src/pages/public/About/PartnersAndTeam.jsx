@@ -4,6 +4,9 @@ import partner1 from "../../../assets/partner1.svg";
 import partner2 from "../../../assets/partner2.svg";
 
 const PartnersAndTeam = () => {
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   return (
     <>
       {/* Our Partners Section */}
@@ -87,6 +90,7 @@ const PartnersAndTeam = () => {
           </div>
           <div>
             <h3 className="text-2xl font-semibold mb-3">Frontend Developers</h3>
+            <p className="text-sm font-mono text-gray-300">Anurag Agrawal</p>
             <p className="text-sm font-mono text-gray-300">Vidhi Prajapati</p>
             <p className="text-sm font-mono text-gray-300">Vedanshi Saini</p>
             <p className="text-sm font-mono text-gray-300">Nikhil Sharma</p>
@@ -95,7 +99,10 @@ const PartnersAndTeam = () => {
           <div>
             <h3 className="text-2xl font-semibold mb-3">Backend Developers</h3>
             <p className="text-sm font-mono text-gray-300">Devansh Solanki</p>
-            <p className="text-sm font-mono text-gray-300">Parth</p>
+            <p className="text-sm font-mono text-gray-300">Ayushi Choudhary</p>
+            <p className="text-sm font-mono text-gray-300">Mayuresh Khedkar</p>
+            <p className="text-sm font-mono text-gray-300">Anshika Kushwah</p>
+            <p className="text-sm font-mono text-gray-300">Devanshi Vyas</p>
           </div>
         </div>
       </section>

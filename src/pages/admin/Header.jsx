@@ -37,7 +37,7 @@ const Header = () => {
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 w-[125px] h-[45px] rounded-md px-4 py-2 border border-white text-white font-mono text-sm shadow-[2px_4px_4px_rgba(0,0,0,0.25)]"
+          className="flex items-center gap-2 w-[125px] h-[45px] rounded-md px-4 py-2 border border-white text-white font-semibold text-sm shadow-[2px_4px_4px_rgba(0,0,0,0.25)]"
           style={{
             backgroundColor: "rgba(172, 172, 172, 0.25)",
             boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 0.3)",
@@ -51,13 +51,9 @@ const Header = () => {
         <button
           onClick={handleProfileClick}
           title={admin?.name || "Admin"}
-          className="w-[45px] h-[45px] rounded-md p-2 border border-white shadow-[2px_4px_4px_rgba(0,0,0,0.25)]"
-          style={{
-            backgroundColor: "rgba(172, 172, 172, 0.25)",
-            boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 0.3)",
-          }}
+          className="w-[45px] h-[45px]"
         >
-          <img src={profileIcon} alt="Profile" className="w-[28px] h-[28px]" />
+          <img src={profileIcon} alt="Profile" className="w-[48px] h-[48px]" />
         </button>
       </div>
     </header>
