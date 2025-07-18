@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import hide from "../../assets/hide.png";
+
 import save from "../../assets/save.png";
 import attachicon from "../../assets/attachicon.png";
 import edit from "../../assets/edit.png";
@@ -10,24 +9,25 @@ import frame1 from "../../assets/profile1.jpg";
 import frame2 from "../../assets/profile1.jpg";
 import frame3 from "../../assets/profile1.jpg";
 import frame4 from "../../assets/profile1.jpg";
-import { getPeople, postPeople, updatePeople, deletePeople } from '../../api/Admin/People';
+import { getPeople } from "../../api/Admin/People/getPeople";
+import { postPeople } from "../../api/Admin/People/postPeople";
+import { updatePeople } from "../../api/Admin/People/updatePeople";
+import { deletePeople } from "../../api/Admin/People/deletePeople";
+
 const PeoplePage = () => {
-  // Loading and error states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // State for the first team section (Team Members)
-  const [teamData1, setTeamData1] = useState([]);
-  // State for the second team section (Alumni)
-  const [teamData2, setTeamData2] = useState([]);
+  const [teamData1, setTeamData1] = useState([]); // Team Members
+  const [teamData2, setTeamData2] = useState([]); // Alumni
 
-  const [isTeamEditing, setIsTeamEditing] = useState(false); // For Team Members modal
-  const [isAlumniEditing, setIsAlumniEditing] = useState(false); // For Alumni modal
-  const [currentEditingTeamId, setCurrentEditingTeamId] = useState(null); // 'team1' or 'team2'
+  const [isTeamEditing, setIsTeamEditing] = useState(false);
+  const [isAlumniEditing, setIsAlumniEditing] = useState(false);
+  const [currentEditingTeamId, setCurrentEditingTeamId] = useState(null);
 
-  const [frame1Img, setFrame1Img] = useState(frame1);
-  const [frame2Img, setFrame2Img] = useState(frame2);
-  const [frame3Img, setFrame3Img] = useState(frame3);
+  const [frame1Img] = useState(frame1);
+  const [frame2Img] = useState(frame2);
+  const [frame3Img] = useState(frame3);
   const frame4Img = frame4;
 
   const availableProjects = [
@@ -37,19 +37,17 @@ const PeoplePage = () => {
     { id: 4, name: "Project Delta" }
   ];
 
-  // Fetch data from backend API on mount
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Use admin getPeople for team1
         const [teamRes, alumniRes] = await Promise.all([
-          getPeople(),
-          axios.get('/public/getAll-Alumini'),
+          getPeople("teamMembers"),
+          getPeople("alumni"),
         ]);
-        setTeamData1(teamRes);
-        setTeamData2(alumniRes.data);
+        setTeamData1(Array.isArray(teamRes.data) ? teamRes.data : []);
+        setTeamData2(Array.isArray(alumniRes.data) ? alumniRes.data : []);
       } catch (err) {
         setError('Failed to load data.');
       } finally {
@@ -59,16 +57,23 @@ const PeoplePage = () => {
     fetchData();
   }, []);
 
-  // Helper function to get the correct team data and setter based on currentEditingTeamId
-  const getActiveTeamData = () => {
-    if (currentEditingTeamId === 'team1') {
-      return [teamData1, setTeamData1];
-    } else if (currentEditingTeamId === 'team2') {
-      return [teamData2, setTeamData2];
-    }
-    return [[], () => {}]; // Return empty array and no-op setter if no team is being edited
+  // -- ID Helper
+  const getMemberId = (member, type) => {
+    if (type === "teamMembers") return member.memberId;
+    if (type === "alumni") return member.aluminiId;
+    return member.id || member._id;
   };
 
+  const getActiveTeamData = () => {
+    if (currentEditingTeamId === 'team1') {
+      return [teamData1, setTeamData1, "teamMembers"];
+    } else if (currentEditingTeamId === 'team2') {
+      return [teamData2, setTeamData2, "alumni"];
+    }
+    return [[], () => {}, ""];
+  };
+
+  // Edit handlers
   const handleChange = (index, field, value) => {
     const [activeTeamData, setActiveTeamData] = getActiveTeamData();
     const updated = [...activeTeamData];
@@ -91,7 +96,6 @@ const PeoplePage = () => {
     setActiveTeamData(updatedTeamData);
   };
 
-  // Store the selected image file in the member object
   const handleImageChange = (e, idx) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -101,59 +105,37 @@ const PeoplePage = () => {
     setActiveTeamData(updated);
   };
 
-  // Add new member/alumni (API call)
+  // CRUD
   const handleAddNew = async () => {
-    const [activeTeamData, setActiveTeamData] = getActiveTeamData();
+    const [activeTeamData, setActiveTeamData, type] = getActiveTeamData();
     let newMember = {};
-    if (currentEditingTeamId === 'team1') {
+    if (type === "teamMembers") {
       newMember = {
         name: '', branch: '', position: '',
         linkdin_url: '', github_url: '', insta_url: '',
         image: null,
         projectIds: []
       };
-    } else if (currentEditingTeamId === 'team2') {
+    } else if (type === "alumni") {
       newMember = {
         aluminiName: '', companyName: '', lpa: '', content: '', image: null
       };
     }
     try {
-      if (currentEditingTeamId === 'team1') {
-        // Use admin postPeople for team1
-        const res = await postPeople(newMember);
-        setActiveTeamData([res, ...activeTeamData]);
-      } else {
-        const formData = new FormData();
-        Object.entries(newMember).forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            value.forEach((v) => formData.append(key, v));
-          } else if (value !== null && value !== undefined) {
-            formData.append(key, value);
-          }
-        });
-        const res = await axios.post(
-          '/public/getAll-Alumini',
-          formData,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
-        );
-        setActiveTeamData([res.data, ...activeTeamData]);
-      }
+      const res = await postPeople(type, newMember);
+      const newItemObj = res.data ? res.data : res;
+      setActiveTeamData([newItemObj, ...activeTeamData]);
     } catch (err) {
       setError('Failed to add new member.');
     }
   };
 
-  // Delete member/alumni (API call)
   const handleDeleteMember = async (index) => {
-    const [activeTeamData, setActiveTeamData] = getActiveTeamData();
+    const [activeTeamData, setActiveTeamData, type] = getActiveTeamData();
     const member = activeTeamData[index];
+    const id = getMemberId(member, type);
     try {
-      if (currentEditingTeamId === 'team1') {
-        // Use admin deletePeople for team1
-        await deletePeople(member.id || member._id);
-      } else {
-        await axios.delete(`/public/getAll-Alumini/${member.id || member._id}`);
-      }
+      await deletePeople(type, id);
       const updated = [...activeTeamData];
       updated.splice(index, 1);
       setActiveTeamData(updated);
@@ -162,22 +144,12 @@ const PeoplePage = () => {
     }
   };
 
-  // Delete all members/alumni (API call)
   const handleDeleteAllMembers = async () => {
-    const [activeTeamData, setActiveTeamData] = getActiveTeamData();
+    const [activeTeamData, setActiveTeamData, type] = getActiveTeamData();
     try {
-      if (currentEditingTeamId === 'team1') {
-        // Use admin deletePeople for team1
-        await Promise.all(
-          activeTeamData.map(member => deletePeople(member.id || member._id))
-        );
-      } else {
-        await Promise.all(
-          activeTeamData.map(member =>
-            axios.delete(`/public/getAll-Alumini/${member.id || member._id}`)
-          )
-        );
-      }
+      await Promise.all(
+        activeTeamData.map(member => deletePeople(type, getMemberId(member, type)))
+      );
       setActiveTeamData([]);
     } catch (err) {
       setError('Failed to delete all members.');
@@ -195,15 +167,13 @@ const PeoplePage = () => {
     }
   };
 
-  // Save edits to backend (API call)
   const handleSaveAndClose = async () => {
-    const [activeTeamData] = getActiveTeamData();
-    // Check if any card is completely empty
+    const [activeTeamData, , type] = getActiveTeamData();
     const isEmptyCardPresent = activeTeamData.some(member => {
-      if (currentEditingTeamId === 'team1') {
+      if (type === 'teamMembers') {
         return !member.name.trim() && !member.branch.trim() && !member.position.trim() &&
                !member.linkdin_url.trim() && !member.github_url.trim() && !member.insta_url.trim();
-      } else if (currentEditingTeamId === 'team2') {
+      } else if (type === 'alumni') {
         return !member.aluminiName.trim() && !member.companyName.trim() &&
                !member.lpa.trim() && !member.content.trim();
       }
@@ -214,39 +184,20 @@ const PeoplePage = () => {
       return;
     }
     try {
-      if (currentEditingTeamId === 'team1') {
-        // Use admin updatePeople for team1
-        await Promise.all(
-          activeTeamData.map(async (member) => {
-            await updatePeople(member.id || member._id, member);
-          })
-        );
-        setIsTeamEditing(false);
-      } else {
-        await Promise.all(
-          activeTeamData.map(async (member) => {
-            const formData = new FormData();
-            Object.entries(member).forEach(([key, value]) => {
-              if (Array.isArray(value)) {
-                value.forEach((v) => formData.append(key, v));
-              } else if (value !== null && value !== undefined) {
-                formData.append(key, value);
-              }
-            });
-            await axios.put(
-              `/public/getAll-Alumini/${member.id || member._id}`,
-              formData,
-              { headers: { 'Content-Type': 'multipart/form-data' } }
-            );
-          })
-        );
-        setIsAlumniEditing(false);
-      }
+      await Promise.all(
+        activeTeamData.map(async (member) => {
+          const id = getMemberId(member, type);
+          await updatePeople(type, id, member);
+        })
+      );
+      setIsTeamEditing(false);
+      setIsAlumniEditing(false);
     } catch (err) {
       setError('Failed to save changes.');
     }
   };
 
+  // ----- UI -----
   const labelStyle = "text-white text-[14px] font-[600] font-inter uppercase tracking-[1.12px]";
   const inputStyle = "h-[48px] px-4 py-3 rounded-md opacity-100 shadow-[2px_2px_4px_0px_#00000040,inset_2px_2px_6px_0px_#FFFFFF80] bg-[#121212] text-white text-sm font-inter";
 
@@ -263,7 +214,7 @@ const PeoplePage = () => {
       <div className={`relative bg-[#1a1a1a] w-full text-white font-sans rounded-b px-6 ${Array.isArray(teamData) && teamData.length > 0 ? 'pt-4 min-h-[280px]' : 'min-h-[73px]'} pb-[90px] overflow-hidden`} style={{ boxShadow: '4px 4px 8px rgba(255, 255, 255, 0.2)' }}>
         <div className="scroll-container grid grid-cols-2 gap-6 overflow-y-auto max-h-[245px] pr-2">
           {Array.isArray(teamData) && teamData.map((member, idx) => (
-            <div key={member.id || member._id || idx} className="flex p-3 rounded-lg items-center gap-4">
+            <div key={getMemberId(member, teamId === "team1" ? "teamMembers" : "alumni") || idx} className="flex p-3 rounded-lg items-center gap-4">
               <img src={[frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]} alt="profile" className="w-[130px] h-[130px] rounded-lg object-cover" />
               <div className="text-white text-sm leading-relaxed font-mono">
                 {teamId === 'team1' ? (
@@ -308,7 +259,7 @@ const PeoplePage = () => {
     </div>
   );
 
-  // Get active team data for rendering the modal content
+  // ----
   const [activeTeamData] = getActiveTeamData();
 
   if (loading) return <div className="text-center text-white pt-10">Loading...</div>;
@@ -325,13 +276,13 @@ const PeoplePage = () => {
             <div className="bg-[#1a1a1a] w-[920px] max-h-[90vh] overflow-hidden rounded-xl shadow-lg border border-[#5a5a5a] flex flex-col">
               <div className="h-[65px] w-full flex justify-between items-center px-7 bg-[#8E8E8E] rounded-t-xl">
                 <h2 className="text-[#333] font-semibold text-[22px] font-inter">Edit Team Members</h2>
-                <img src={cross} alt="close" className="h-[20px] w-[20px] cursor-pointer" onClick={() => handleSaveAndClose()} />
+                <img src={cross} alt="close" className="h-[20px] w-[20px] cursor-pointer" onClick={handleSaveAndClose} />
               </div>
 
               <div className="flex flex-col max-h-[80vh]">
                 <div className="scroll-container overflow-y-auto px-6 pt-6 pb-2 flex flex-col gap-6" style={{ maxHeight: "calc(80vh - 130px)" }}>
                   {activeTeamData.map((member, idx) => (
-                    <div key={member.id || member._id || idx} className="flex gap-4 items-start p-4 rounded-lg">
+                    <div key={getMemberId(member, "teamMembers") || idx} className="flex gap-4 items-start p-4 rounded-lg">
                       <label className="relative min-w-[131px] w-[131px] h-[168px] shrink-0 cursor-pointer border-white border-2 rounded-xl">
                         <img src={[frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]} alt="" className='w-full h-full rounded-lg object-cover opacity-20' />
                         <span className="absolute inset-0 flex items-center justify-center">
@@ -339,7 +290,6 @@ const PeoplePage = () => {
                         </span>
                         <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageChange(e, idx)} />
                       </label>
-
                       <div className="flex flex-col grow gap-[6px] px-[10px] py-[12px]">
                         <label className={labelStyle}>Student Name</label>
                         <input className={`${inputStyle} w-[620px]`} value={member.name} onChange={e => handleChange(idx, 'name', e.target.value)} placeholder="Student Name" />
@@ -361,7 +311,7 @@ const PeoplePage = () => {
 
                         <label className={labelStyle}>Projects</label>
                         <div className="flex flex-col gap-2 p-4 rounded-md opacity-100 shadow-[2px_2px_4px_0px_#00000040,inset_2px_2px_6px_0px_#FFFFFF80] bg-[#121212]">
-                          {availableProjects.map((project, projectIdx) => (
+                          {availableProjects.map((project) => (
                             <div key={project.id} className="flex items-center gap-2">
                               <input
                                 type="checkbox"
@@ -377,7 +327,6 @@ const PeoplePage = () => {
                           ))}
                         </div>
                       </div>
-
                       <img
                         src={deletei}
                         alt="delete"
@@ -408,13 +357,12 @@ const PeoplePage = () => {
             <div className="bg-[#1a1a1a] w-[920px] max-h-[90vh] overflow-hidden rounded-xl shadow-lg border border-[#5a5a5a] flex flex-col">
               <div className="h-[65px] w-full flex justify-between items-center px-7 bg-[#8E8E8E] rounded-t-xl">
                 <h2 className="text-[#333] font-semibold text-[22px] font-inter">Edit Alumni</h2>
-                <img src={cross} alt="close" className="h-[20px] w-[20px] cursor-pointer" onClick={() => handleSaveAndClose()} />
+                <img src={cross} alt="close" className="h-[20px] w-[20px] cursor-pointer" onClick={handleSaveAndClose} />
               </div>
-
               <div className="flex flex-col max-h-[80vh]">
                 <div className="scroll-container overflow-y-auto px-6 pt-6 pb-2 flex flex-col gap-6" style={{ maxHeight: "calc(80vh - 130px)" }}>
                   {activeTeamData.map((member, idx) => (
-                    <div key={member.id || member._id || idx} className="flex gap-4 items-start p-4 rounded-lg">
+                    <div key={getMemberId(member, "alumni") || idx} className="flex gap-4 items-start p-4 rounded-lg">
                       <label className="relative min-w-[131px] w-[131px] h-[168px] shrink-0 cursor-pointer border-white border-2 rounded-xl">
                         <img src={[frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]} alt="" className='w-full h-full rounded-lg object-cover opacity-20' />
                         <span className="absolute inset-0 flex items-center justify-center">
@@ -422,7 +370,6 @@ const PeoplePage = () => {
                         </span>
                         <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageChange(e, idx)} />
                       </label>
-
                       <div className="flex flex-col grow gap-[6px] px-[10px] py-[12px]">
                         <label className={labelStyle}>Alumni Name</label>
                         <input className={`${inputStyle} w-[620px]`} value={member.aluminiName} onChange={e => handleChange(idx, 'aluminiName', e.target.value)} placeholder="Alumni Name" />
@@ -436,7 +383,6 @@ const PeoplePage = () => {
                         <label className={labelStyle}>Content</label>
                         <input className={`${inputStyle} w-[620px]`} value={member.content} onChange={e => handleChange(idx, 'content', e.target.value)} placeholder="Content" />
                       </div>
-
                       <img
                         src={deletei}
                         alt="delete"
@@ -446,7 +392,6 @@ const PeoplePage = () => {
                     </div>
                   ))}
                 </div>
-
                 <div className="flex justify-end items-center gap-2 px-6 py-4 bg-[#2a2a2a] rounded-b-xl border-t border-[#444]">
                   <button onClick={handleSaveAndClose} className='font-mono w-[115px] h-[45px] rounded-md border bg-[#4a4a4a] border-white text-white flex items-center justify-center gap-2'>
                     <img src={save} alt="save" className='h-[20px] w-[20px]' />
@@ -477,8 +422,6 @@ const PeoplePage = () => {
           .scroll-container::-webkit-scrollbar-thumb:hover {
             background: #5a5a5a;
           }
-
-          /* Custom square checkbox styling */
           input[type="checkbox"] {
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -493,12 +436,10 @@ const PeoplePage = () => {
             position: relative;
             background-color: #8E8E8E;
           }
-
           input[type="checkbox"]:checked {
             background-color: #8E8E8E;
             border-color: #8E8E8E;
           }
-
           input[type="checkbox"]:checked::before {
             content: '✓';
             display: block;
@@ -510,7 +451,6 @@ const PeoplePage = () => {
             font-size: 14px;
             font-weight: bold;
           }
-
           input[type="checkbox"]:focus {
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
           }

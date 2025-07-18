@@ -9,6 +9,7 @@ const HomeLayout = () => {
   return (
     <>
       <FacultyCards />
+      
       <AlumniCardsCards />
     </>
   );

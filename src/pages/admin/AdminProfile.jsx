@@ -9,7 +9,8 @@ import icons from "../../assets/icons.png";
 
 const AdminProfile = () => {
   const [page, setPage] = useState(1);
-  const [adminData, setAdminData] = useState(null);
+  
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
@@ -47,10 +48,9 @@ const loadAdminData = async () => {
     setError(null);
 
     const data = await getAdminProfile();
-    console.log("Loaded admin data:", data);
 
     // Normalize and set admin data
-    setAdminData({
+    setData({
       adminId: data.adminId || data.AdminId || '',
       name: data.name || '',
       contact_no: data.contact_no || '',
@@ -103,9 +103,9 @@ const loadAdminData = async () => {
 
   const openEditDetailsModal = () => {
     setEditDetails({
-      name: adminData.name || '',
-      contact_no: adminData.contact_no || '',
-      email: adminData.email || ''
+      name: data.name || '',
+      contact_no: data.contact_no || '',
+      email: data.email || ''
     });
     setShowEditDetailsModal(true);
   };
@@ -161,7 +161,7 @@ const loadAdminData = async () => {
       await changeAdminPassword(
         passwordForm.oldPassword,
         passwordForm.newPassword,
-        adminData.adminId || adminData.AdminId
+        data.adminId || data.AdminId
       );
       
       alert("Password changed successfully!");
@@ -208,7 +208,7 @@ const loadAdminData = async () => {
       setUpdating(true);
       
       const updateData = {
-        adminId: adminData.adminId || adminData.AdminId,
+        adminId: data.adminId || data.AdminId,
         name: editDetails.name.trim(),
         contact_no: editDetails.contact_no.trim(),
         email: editDetails.email.trim()
@@ -217,7 +217,7 @@ const loadAdminData = async () => {
       const updatedData = await updateAdminDetails(updateData);
       
       // Update local state
-      setAdminData(prev => ({
+      setData(prev => ({
         ...prev,
         name: editDetails.name.trim(),
         contact_no: editDetails.contact_no.trim(),
@@ -285,7 +285,7 @@ const loadAdminData = async () => {
   }
 
   // No admin data
-  if (!adminData) {
+  if (!data) {
     return (
       <div className="w-[1136px] h-[855px] absolute top-[132px] left-[272px] flex items-center justify-center">
         <div className="text-white text-xl">No admin data available</div>
@@ -334,24 +334,20 @@ const loadAdminData = async () => {
 
           <div className="w-full text-white flex justify-between items-start pt-4 pb-8">
             <div className="flex-1 pl-10 pr-4">
+            
               <p className="text-base p-1">
-                <strong className="text-[#8E8E8E]">Admin ID:</strong> {adminData.adminId || adminData.AdminId}
+                <strong className="text-[#8E8E8E]">Name:</strong> {data.name}
               </p>
               <p className="text-base p-1">
-                <strong className="text-[#8E8E8E]">Name:</strong> {adminData.name}
+                <strong className="text-[#8E8E8E]">Contact Number:</strong> {data.contact_no}
               </p>
               <p className="text-base p-1">
-                <strong className="text-[#8E8E8E]">Contact Number:</strong> {adminData.contact_no}
+                <strong className="text-[#8E8E8E]">Email:</strong> {data.email}
               </p>
-              <p className="text-base p-1">
-                <strong className="text-[#8E8E8E]">Email:</strong> {adminData.email}
-              </p>
-              <p className="text-base p-1">
-                <strong className="text-[#8E8E8E]">Role:</strong> {adminData.role || 'Admin'}
-              </p>
-              {adminData.createdAt && (
+             
+              {data.createdAt && (
                 <p className="text-base p-1">
-                  <strong className="text-[#8E8E8E]">Created:</strong> {new Date(adminData.createdAt).toLocaleDateString()}
+                  <strong className="text-[#8E8E8E]">Created:</strong> {new Date(data.createdAt).toLocaleDateString()}
                 </p>
               )}
             </div>

@@ -4,35 +4,18 @@ import api from "../config";
 
 
 export const getAdminProfile = async () => {
-  try {
-    console.log("Fetching admin profile...");
-    
-
-    let response;
-    
-    try {
-      response = await api.get("/admin/profile"); 
-      console.log("Admin profile response:", response.data);
-      return response.data;
-    } catch (error) {
-      console.log("Primary endpoint failed, trying alternative...");
-      
-     
-      response = await api.get("/admin/all-admins");
-      console.log("All admins response:", response.data);
-     
-      if (Array.isArray(response.data)) {
-        return response.data[0];
-      }
-      
-      return response.data;
-    }
-  } catch (error) {
-    console.error("Failed to fetch admin profile:", error);
-    console.error("Error details:", error.response?.data);
-    throw error;
+  const response = await api.get("/admin/all-admins");
+  if (response.data && Array.isArray(response.data.data)) {
+    // Get adminId from localStorage or context (set after login)
+    const adminId = localStorage.getItem('adminId');
+    // If you store as number, ensure type matches!
+    const myAdmin = response.data.data.find(x => String(x.adminId) === String(adminId));
+    if (!myAdmin) throw new Error("Current admin not found");
+    return myAdmin;
   }
+  throw new Error("Unexpected admin API structure");
 };
+
 
 // Update admin details
 export const updateAdminDetails = async (updatedData) => {
