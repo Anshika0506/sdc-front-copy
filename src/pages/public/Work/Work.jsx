@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { getProject } from "../../../api/Public/getProjectDetails";
 
 export default function WorkPage() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -92,7 +95,7 @@ export default function WorkPage() {
 
   return (
     <div
-      className="w-full min-h-screen pt-0 pr-2 pb-4 pl-2 bg-cover bg-center bg-no-repeat bg-fixed"
+      className="w-full min-h-screen pt-30 pr-2 pb-4 pl-2 bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="max-w-[1420px] mx-auto px-3">

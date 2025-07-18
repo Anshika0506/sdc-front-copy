@@ -324,7 +324,7 @@ const Main = () => {
   };
 
   return (
-    <div className='w-[1136px] h-[856px] pb-[159px] pt-10 pl-7'>
+    <div className='w-[1136px] pt-10 pl-7'>
       <div className='w-[1136px] h-[60px] flex justify-between px-7 py-2 bg-[#8E8E8E] rounded-t-xl'>
         <h1 className="font-semibold text-[#333333] py-1" style={{ fontFamily: "Inter", fontSize: 24, fontWeight: 600 }}>Testimonials</h1>
         <div className='flex gap-4'>

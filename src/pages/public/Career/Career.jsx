@@ -16,6 +16,9 @@ const positions = [
 ];
 
 const Career = () => {
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const [selectedBranch, setSelectedBranch] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedPosition, setSelectedPosition] = useState("");

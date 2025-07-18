@@ -29,8 +29,7 @@ const FeaturedProjects = () => {
                 : p.imagePath
                 ? p.imagePath
                 : imgFallback,
-              projectDescription:
-                p.description || p.projectDescription || "",
+              projectDescription: p.description || p.projectDescription || "",
               teamMembers: p.teamMembers
                 ? Array.isArray(p.teamMembers)
                   ? p.teamMembers
@@ -93,9 +92,7 @@ const FeaturedProjects = () => {
   }
 
   if (error) {
-    return (
-      <div className="w-full text-center py-20 text-red-400">{error}</div>
-    );
+    return <div className="w-full text-center py-20 text-red-400">{error}</div>;
   }
 
   if (projects.length === 0) {
@@ -117,7 +114,7 @@ const FeaturedProjects = () => {
         {projects.length > 1 && (
           <button
             onClick={goToPrev}
-            className="absolute w-15 h-15 left-4 md:left-10 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl cursor-pointer"
+            className="absolute w-15 h-15 left-4 md:left-40 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl cursor-pointer"
           >
             <img src={arrowleft} alt="left" className="w-full h-full" />
           </button>
@@ -159,52 +156,55 @@ const FeaturedProjects = () => {
           </div>
         ) : (
           <div className="flex -space-x-16 md:-space-x-20 items-center overflow-x-visible">
-            {[getCardAt(-1), getCardAt(0), getCardAt(1)].map((project, index) => {
-              if (!project) return null;
-              const scale =
-                index === 1
-                  ? "scale-100 z-20"
-                  : "scale-80 md:scale-80 z-10 opacity-30 md:opacity-40";
-              return (
-                <div
-                  key={`${project.projectName}-${index}`}
-                  className={`w-[85%] sm:w-[70%] md:w-full h-full rounded-2xl transition-all duration-500 ${scale} shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] bg-white/10`}
-                >
-                  <div className="p-4 flex flex-col gap-4 h-full">
-                    <img
-                      src={project.projectImage}
-                      alt={project.projectName}
-                      className="rounded-xl object-cover w-full"
-                    />
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-sm md:text-xl font-semibold">
-                        {project.projectName}
-                      </h3>
-                    </div>
-                    <p className="text-sm text-gray-300 whitespace-pre-wrap">
-                      {project.projectDescription}
-                    </p>
-                    {project.teamMembers && (
-                      <p className="text-xs text-gray-400 whitespace-pre-wrap">
-                        <strong>Team:</strong>
-                        <br />
-                        {project.teamMembers}
+            {[getCardAt(-1), getCardAt(0), getCardAt(1)].map(
+              (project, index) => {
+                if (!project) return null;
+                const scale =
+                  index === 1
+                    ? "scale-100 z-20"
+                    : "scale-80 md:scale-80 z-10 opacity-30 md:opacity-40";
+                return (
+                  <div
+                    key={`${project.projectName}-${index}`}
+                    className={`w-[85%] sm:w-[70%] md:w-full h-full rounded-2xl transition-all duration-500 ${scale} shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] bg-white/10`}
+                  >
+                    <div className="p-4 flex flex-col gap-4 h-full">
+                      <img
+                        src={project.projectImage}
+                        alt={project.projectName}
+                        className="rounded-xl object-cover w-full"
+                      />
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="text-sm md:text-xl font-semibold">
+                          {project.projectName}
+                        </h3>
+                        {project.projectLink && (
+                          <a
+                            href={project.projectLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ml-4 px-3 py-2 rounded-full shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] font-semibold text-yellow-300 transition-all text-xs md:text-sm"
+                            style={{ textDecoration: 'none' }}
+                          >
+                            Visit Project
+                          </a>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-300 whitespace-pre-wrap" style={{ fontFamily: 'IBM Plex Mono, monospace' }} >
+                        {project.projectDescription}
                       </p>
-                    )}
-                    {project.projectLink && (
-                      <a
-                        href={project.projectLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block mt-2 text-blue-400 underline text-xs"
-                      >
-                        Visit Project
-                      </a>
-                    )}
+                      {project.teamMembers && (
+                        <p className="text-xs text-gray-400 whitespace-pre-wrap">
+                          <strong>Team:</strong>
+                          <br />
+                          {project.teamMembers}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              }
+            )}
           </div>
         )}
 
@@ -212,7 +212,7 @@ const FeaturedProjects = () => {
         {projects.length > 1 && (
           <button
             onClick={goToNext}
-            className="absolute w-15 h-15 right-4 md:right-10 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl cursor-pointer"
+            className="absolute w-15 h-15 right-4 md:right-40 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl cursor-pointer"
           >
             <img src={arrowRight} alt="right" className="w-full h-full" />
           </button>

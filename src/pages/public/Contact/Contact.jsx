@@ -17,6 +17,9 @@ const navLinks = [
 ];
 
 const Contact = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const [openFaq, setOpenFaq] = useState(-1);
   const [isQueryOpen, setIsQueryOpen] = useState(false);
   const [selectedQuery, setSelectedQuery] = useState("");
@@ -143,34 +146,31 @@ const Contact = () => {
             {/* Contact */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-start gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
-                <input
-                  type="text"
-                  placeholder="Enter phone no."
-                  className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
-                  value={contactNo}
-                  onChange={e => setContactNo(e.target.value)}
-                  required
-                />
+                <div className="text-white text-2xl font-semibold font-inter leading-[32px]">
+                  Contact
+                </div>
               </div>
-              <div className="text-[#D2D2D2] text-sm font-normal font-ibmplexmono leading-5">
-                +91-07313111500
-              </div>
-            </div>
-            <div className="self-stretch p-0.5 flex flex-col gap-1">
-              <div className="text-white text-base font-normal font-ibmplexmono leading-6">
-                Email ID
-              </div>
-              <div className="text-[#D2D2D2] text-sm font-normal font-ibmplexmono leading-5">
-                <input
-                  type="email"
-                  placeholder="Enter Gmail id"
-                  className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required
-                />
+              <div className="flex flex-col gap-2">
+                <div className="p-0.5 flex flex-col gap-1">
+                  <div className="text-white text-base font-normal font-ibmplexmono leading-6">
+                    Phone No.
+                  </div>
+                  <div className="text-[#D2D2D2] text-sm font-normal font-ibmplexmono leading-5">
+                    +91-07313111500
+                  </div>
+                </div>
+                <div className="self-stretch p-0.5 flex flex-col gap-1">
+                  <div className="text-white text-base font-normal font-ibmplexmono leading-6">
+                    Email ID
+                  </div>
+                  <div className="text-[#D2D2D2] text-sm font-normal font-ibmplexmono leading-5">
+                    sdc@medicaps.ac.in
+                  </div>
+                </div>
               </div>
             </div>
+            <div className="hidden md:block w-0 h-20 outline-1 outline-white outline-offset-[-0.5px]"></div>
+
             {/* Social Media */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-center gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
@@ -202,9 +202,7 @@ const Contact = () => {
                   </span>
                 </a>
               </div>
-            </div>
-            {/* Divider */}
-            <div className="hidden md:block w-0 h-20 outline outline-1 outline-white outline-offset-[-0.5px]"></div>
+            </div> 
             {/* Operating Hour */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-start gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
@@ -222,7 +220,7 @@ const Contact = () => {
               </div>
             </div>
             {/* Divider */}
-            <div className="hidden md:block w-0 h-20 outline outline-1 outline-white outline-offset-[-0.5px]"></div>
+            <div className="hidden md:block w-0 h-20 outline-1 outline-white outline-offset-[-0.5px]"></div>
             {/* Office Address */}
             <div className="w-40 min-w-[160px] flex-1 flex flex-col justify-center items-start gap-3">
               <div className="self-stretch p-0.5 flex items-center gap-2.5">
@@ -309,7 +307,7 @@ const Contact = () => {
                     Query
                   </label>
                   <div
-                    className="w-full px-4 py-3 relative rounded-[10px] shadow-[2px_2px_4px_0px_rgba(0,0,0,0.25)] shadow-[inset_2px_2px_6px_0px_rgba(255,255,255,0.50)] flex flex-col justify-start items-start gap-2.5 cursor-pointer"
+                    className="w-full px-4 py-3 relative rounded-[10px] shadow-[inset_2px_2px_6px_0px_rgba(255,255,255,0.50)] flex flex-col justify-start items-start gap-2.5 cursor-pointer"
                     onClick={() => setIsQueryOpen(!isQueryOpen)}
                   >
                     {/* Selected or placeholder */}
