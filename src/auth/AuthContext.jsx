@@ -1,77 +1,65 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { loginAdmin, verifyToken, logoutAdmin } from '../api/Admin/login';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      return {
-        token,
-        name: localStorage.getItem('adminName'),
-        id: localStorage.getItem('adminId'),
-        email: localStorage.getItem('adminEmail')
-      };
-    }
-    return null;
+    if (!token) return null;
+    return {
+      token,
+      name: localStorage.getItem('adminName'),
+      id: localStorage.getItem('adminId'),
+      email: localStorage.getItem('adminEmail'),
+    };
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(true);
-
+  // Optional: on mount, can re-verify token
   useEffect(() => {
-    // Check if user is logged in on app start
     const token = localStorage.getItem('token');
     if (token) {
       setAdmin({
         token,
         name: localStorage.getItem('adminName'),
         id: localStorage.getItem('adminId'),
-        email: localStorage.getItem('adminEmail')
+        email: localStorage.getItem('adminEmail'),
       });
+    } else {
+      setAdmin(null);
     }
-    setIsLoading(false);
+    // Optionally, verify token by calling verifyToken() here
   }, []);
 
-  const login = (data) => {
-    const { token, name, adminId, email } = data;
-    
-    // Store in localStorage
+  const login = async ({ token, name, adminId, email }) => {
+    // This is for context-internal use, see login page for the actual API call
     localStorage.setItem('token', token);
     localStorage.setItem('adminName', name);
     localStorage.setItem('adminId', adminId);
     localStorage.setItem('adminEmail', email);
-    
-    // Set in context
-    setAdmin({
-      token,
-      name,
-      id: adminId,
-      email
-    });
+
+    setAdmin({ token, name, id: adminId, email });
   };
 
-  const logout = () => {
-    // Clear localStorage
+  const logout = async () => {
+    await logoutAdmin();
     localStorage.removeItem('token');
     localStorage.removeItem('adminName');
     localStorage.removeItem('adminId');
     localStorage.removeItem('adminEmail');
-    
-    // Clear context
     setAdmin(null);
   };
 
-  const isAuthenticated = () => {
-    return !!admin?.token;
-  };
+  const isAuthenticated = () => !!admin?.token;
 
   return (
-    <AuthContext.Provider value={{ 
-      admin, 
-      login, 
-      logout, 
+    <AuthContext.Provider value={{
+      admin,
+      login,
+      logout,
       isAuthenticated: isAuthenticated(),
-      isLoading 
+      isLoading
     }}>
       {children}
     </AuthContext.Provider>
@@ -79,9 +67,7 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  return ctx;
 };
