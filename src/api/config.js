@@ -24,7 +24,7 @@ adminApi.interceptors.response.use(
       localStorage.removeItem('adminId');
       localStorage.removeItem('adminEmail');
       // Optionally, force reload/redirect to login:
-      window.location.href = '/login';
+      // window.location.href = '/login';
     }
     return Promise.reject(error);
   }

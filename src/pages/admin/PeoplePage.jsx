@@ -105,6 +105,30 @@ const PeoplePage = () => {
     setActiveTeamData(updated);
   };
 
+  // Helper to build payload for updatePeople
+  const buildPayload = (member, type) => {
+    if (member.image && typeof member.image !== "string") {
+      const formData = new FormData();
+      if (type === "teamMembers") {
+        formData.append("name", member.name);
+        formData.append("branch", member.branch);
+        formData.append("position", member.position);
+        formData.append("linkdin_url", member.linkdin_url);
+        formData.append("github_url", member.github_url);
+        formData.append("insta_url", member.insta_url);
+        formData.append("projectIds", JSON.stringify(member.projectIds || []));
+      } else if (type === "alumni") {
+        formData.append("aluminiName", member.aluminiName);
+        formData.append("companyName", member.companyName);
+        formData.append("lpa", member.lpa);
+        formData.append("content", member.content);
+      }
+      formData.append("image", member.image);
+      return formData;
+    }
+    return member;
+  };
+
   // CRUD
   const handleAddNew = async () => {
     const [activeTeamData, setActiveTeamData, type] = getActiveTeamData();
@@ -187,7 +211,8 @@ const PeoplePage = () => {
       await Promise.all(
         activeTeamData.map(async (member) => {
           const id = getMemberId(member, type);
-          await updatePeople(type, id, member);
+          const payload = buildPayload(member, type);
+          await updatePeople(type, id, payload);
         })
       );
       setIsTeamEditing(false);
@@ -215,7 +240,17 @@ const PeoplePage = () => {
         <div className="scroll-container grid grid-cols-2 gap-6 overflow-y-auto max-h-[245px] pr-2">
           {Array.isArray(teamData) && teamData.map((member, idx) => (
             <div key={getMemberId(member, teamId === "team1" ? "teamMembers" : "alumni") || idx} className="flex p-3 rounded-lg items-center gap-4">
-              <img src={[frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]} alt="profile" className="w-[130px] h-[130px] rounded-lg object-cover" />
+              <img
+                src={
+                  member.image
+                    ? typeof member.image === "string"
+                      ? member.image
+                      : URL.createObjectURL(member.image)
+                    : [frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]
+                }
+                alt="profile"
+                className="w-[130px] h-[130px] rounded-lg object-cover"
+              />
               <div className="text-white text-sm leading-relaxed font-mono">
                 {teamId === 'team1' ? (
                   <>
@@ -284,7 +319,17 @@ const PeoplePage = () => {
                   {activeTeamData.map((member, idx) => (
                     <div key={getMemberId(member, "teamMembers") || idx} className="flex gap-4 items-start p-4 rounded-lg">
                       <label className="relative min-w-[131px] w-[131px] h-[168px] shrink-0 cursor-pointer border-white border-2 rounded-xl">
-                        <img src={[frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]} alt="" className='w-full h-full rounded-lg object-cover opacity-20' />
+                        <img
+                          src={
+                            member.image
+                              ? typeof member.image === "string"
+                                ? member.image
+                                : URL.createObjectURL(member.image)
+                              : [frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]
+                          }
+                          alt=""
+                          className='w-full h-full rounded-lg object-cover opacity-20'
+                        />
                         <span className="absolute inset-0 flex items-center justify-center">
                           <img src={edit} alt="edit" className='w-[30px] h-[30px]' />
                         </span>
@@ -364,7 +409,17 @@ const PeoplePage = () => {
                   {activeTeamData.map((member, idx) => (
                     <div key={getMemberId(member, "alumni") || idx} className="flex gap-4 items-start p-4 rounded-lg">
                       <label className="relative min-w-[131px] w-[131px] h-[168px] shrink-0 cursor-pointer border-white border-2 rounded-xl">
-                        <img src={[frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]} alt="" className='w-full h-full rounded-lg object-cover opacity-20' />
+                        <img
+                          src={
+                            member.image
+                              ? typeof member.image === "string"
+                                ? member.image
+                                : URL.createObjectURL(member.image)
+                              : [frame1Img, frame2Img, frame3Img, frame4Img][idx % 4]
+                          }
+                          alt=""
+                          className='w-full h-full rounded-lg object-cover opacity-20'
+                        />
                         <span className="absolute inset-0 flex items-center justify-center">
                           <img src={edit} alt="edit" className='w-[30px] h-[30px]' />
                         </span>

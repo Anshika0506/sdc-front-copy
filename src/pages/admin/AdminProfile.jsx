@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAdminProfile, updateAdminDetails, changeAdminPassword } from "../../api/Admin/profile";
-import trash from "../../assets/delete.png";
+// import trash from "../../assets/delete.png";
 import save from "../../assets/save.png";
 import cross from "../../assets/cross.svg";
 import edit from "../../assets/edit.png";
-import icons from "../../assets/icons.png";
+
+import profileButton from "../../assets/profile button.png";
+import keyIcon from "../../assets/key.png";
 
 const AdminProfile = () => {
   const [page, setPage] = useState(1);
@@ -294,85 +296,98 @@ const loadAdminData = async () => {
   }
 
   return (
-    <div className="w-[1136px] h-[855px] absolute top-[132px] left-[272px]">
+    <div className="w-[1136px] absolute top-[132px] left-[272px]">
       <div className="w-[1136px] h-[60px] flex justify-between items-center px-[28px] py-[8px] bg-[#8E8E8E] rounded-t-2xl">
-        <h2 className="text-[#333333] font-semibold text-2xl">Admin Profile</h2>
-        <button
-          onClick={loadAdminData}
-          className="px-3 py-1 bg-[#666666] text-white rounded text-sm hover:bg-[#555555]"
-        >
-          Refresh
-        </button>
+        <h2 className="text-[#333333] font-semibold text-3xl">Admin Profile</h2>
       </div>
 
-      <div className="w-full h-[722px] bg-[#141414] rounded-b-xl shadow-[2px_2px_6px_0px_#FFFFFF26] flex flex-col">
-        <div
-          ref={contentRef}
-          className="flex-1 overflow-y-auto scroll-container relative"
-          style={{
-            scrollbarWidth: "thin",
-            scrollbarColor: "#4a4a4a #1a1a1a",
-            msOverflowStyle: "auto",
-          }}
-        >
-          <style>{`
-            .scroll-container::-webkit-scrollbar {
-              width: 6px;
-            }
-            .scroll-container::-webkit-scrollbar-track {
-              background: #1a1a1a;
-              border-radius: 3px;
-            }
-            .scroll-container::-webkit-scrollbar-thumb {
-              background: #4a4a4a;
-              border-radius: 3px;
-            }
-            .scroll-container::-webkit-scrollbar-thumb:hover {
-              background: #5a5a5a;
-            }
-          `}</style>
-
-          <div className="w-full text-white flex justify-between items-start pt-4 pb-8">
-            <div className="flex-1 pl-10 pr-4">
-            
-              <p className="text-base p-1">
-                <strong className="text-[#8E8E8E]">Name:</strong> {data.name}
-              </p>
-              <p className="text-base p-1">
-                <strong className="text-[#8E8E8E]">Contact Number:</strong> {data.contact_no}
-              </p>
-              <p className="text-base p-1">
-                <strong className="text-[#8E8E8E]">Email:</strong> {data.email}
-              </p>
-             
-              {data.createdAt && (
-                <p className="text-base p-1">
-                  <strong className="text-[#8E8E8E]">Created:</strong> {new Date(data.createdAt).toLocaleDateString()}
-                </p>
-              )}
+      <div className="w-full bg-[#141414] rounded-b-xl shadow-[2px_2px_6px_0px_#FFFFFF26] min-h-[240px] flex flex-col relative">
+        {/* Profile Info */}
+        <div className="flex flex-row items-center pl-10 pr-4 pt-8 pb-4 mb-8" style={{ fontSize: '1.15rem' }}>
+          {/* Profile Icon (left, as main visual) */}
+          <img src={profileButton} alt="profile" className="w-[96px] h-[96px] opacity-70 mr-6" />
+          {/* Info */}
+          <div className="flex flex-col justify-center">
+            <div className="flex flex-row items-center mb-1">
+              <span className="text-[#8E8E8E] font-bold text-4xl mr-4 font-mono">Name:</span>
+              <span className="text-white font-extrabold text-4xl font-mono" style={{ fontWeight: 800 }}>{data.name}</span>
             </div>
-
-            <div className="p-4 flex flex-col justify-start items-center gap-4 mt-10 mr-10">
-              <button
-                onClick={openChangePasswordModal}
-                className="w-[260px] h-[45px] flex items-center justify-center gap-[8px] rounded-md px-4 py-2 bg-[#ACACAC0D] border border-white backdrop-blur-[4px] shadow-custom cursor-pointer hover:bg-[#ACACAC20]"
-              >
-                <img src={icons} alt="change password" className="w-5 h-5" />
-                <span className="text-white font-semibold text-base uppercase">
-                  CHANGE PASSWORD
-                </span>
-              </button>
-              <button
-                onClick={openEditDetailsModal}
-                className="w-[260px] h-[45px] flex items-center justify-center gap-[8px] rounded-md px-4 py-2 bg-[#ACACAC40] border border-white backdrop-blur-[4px] shadow-custom cursor-pointer hover:bg-[#ACACAC60]"
-              >
-                <img src={edit} alt="edit" className="w-6 h-6" />
-                <span className="text-white font-semibold text-base uppercase">
-                  EDIT DETAILS
-                </span>
-              </button>
+            <div className="flex flex-row items-center mb-1">
+              <span className="text-[#8E8E8E] font-bold text-base mr-2 font-mono">Email:</span>
+              <span className="text-white font-mono text-base">{data.email}</span>
+            </div>
+            <div className="flex flex-row items-center mb-6">
+              <span className="text-[#8E8E8E] font-bold text-base mr-2 font-mono">Contact Number:</span>
+              <span className="text-white font-mono text-base">{data.contact_no}</span>
             </div>
           </div>
+        </div>
+        {/* Buttons Box with white line at the top */}
+        <div
+          className="flex flex-row items-center gap-[10px] border-t border-white"
+          style={{
+            width: '1136px',
+            height: '93px',
+            opacity: 1,
+            paddingTop: '1.25rem', // Spacing/5
+            paddingRight: '2rem',  // Spacing/7
+            paddingBottom: '2rem', // Spacing/7
+            paddingLeft: '2rem',   // Spacing/7
+            borderTopWidth: '1px',
+          }}
+        >
+          <button
+            onClick={openChangePasswordModal}
+            className="flex items-center justify-center cursor-pointer hover:bg-[#ACACAC20]"
+            style={{
+              width: '535px',
+              height: '45px',
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              borderColor: '#fff',
+              borderRadius: '12px',
+              gap: '8px',
+              paddingTop: '0.5rem',
+              paddingBottom: '0.5rem',
+              paddingLeft: '0.25rem',
+              paddingRight: '0.25rem',
+              opacity: 1,
+              backdropFilter: 'blur(4px)',
+              background: 'rgba(172,172,172,0.05)',
+              boxShadow: '2px 4px 4px 0px #00000040, 2px 2px 8px 0px #FFFFFF40 inset'
+            }}
+          >
+            <img src={keyIcon} alt="change password" className="w-5 h-5" />
+            <span className="text-white font-semibold text-lg uppercase">
+              CHANGE PASSWORD
+            </span>
+          </button>
+          <button
+            onClick={openEditDetailsModal}
+            className="flex items-center justify-center cursor-pointer hover:bg-[#ACACAC60]"
+            style={{
+              width: '535px',
+              height: '45px',
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              borderColor: '#fff',
+              borderRadius: '12px',
+              gap: '8px',
+              paddingTop: '0.5rem',
+              paddingBottom: '0.5rem',
+              paddingLeft: '0.25rem',
+              paddingRight: '0.25rem',
+              opacity: 1,
+              backdropFilter: 'blur(4px)',
+              background: 'rgba(172,172,172,0.25)',
+              boxShadow: '2px 4px 4px 0px #00000040, 2px 2px 8px 0px #FFFFFF40 inset'
+            }}
+          >
+            <img src={edit} alt="edit" className="w-6 h-6" />
+            <span className="text-white font-semibold text-lg uppercase">
+              EDIT DETAILS
+            </span>
+          </button>
         </div>
       </div>
 

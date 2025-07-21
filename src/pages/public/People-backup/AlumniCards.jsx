@@ -61,7 +61,7 @@ export default function AlumniCarousel() {
           {/* Left Button */}
           <button
           onClick={handlePrev}
-          className="absolute left-1 md:left-72 top-1/2 -translate-y-1/2 z-20 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] backdrop-blur p-3 rounded-xl transition hover:bg-white/20"
+          className="absolute left-72 top-1/2 -translate-y-1/2 z-10 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] backdrop-blur p-3 rounded-xl transition hover:bg-white/20"
         >
             <img src={leftArrow} alt="Left" className="w-10 h-10" />
           </button>
@@ -83,10 +83,10 @@ export default function AlumniCarousel() {
                 // Only show visible cards (offset -3 to 3 for 7 cards)
                 if (offset < -3 || offset > 3) return null;
 
-                let cardWidth = "ml-3 md:ml-0 w-70 md:w-85";
-                if (Math.abs(offset) === 3) cardWidth = "w-80 md:w-85"; // smallest for far left/right
-                if (Math.abs(offset) === 2) cardWidth = "w-80 md:w-85"; // smaller for next
-                if (Math.abs(offset) === 1) cardWidth = "w-80 md:w-85"; // slightly smaller for near
+                let cardWidth = "w-85";
+                if (Math.abs(offset) === 3) cardWidth = "w-85"; // smallest for far left/right
+                if (Math.abs(offset) === 2) cardWidth = "w-85"; // smaller for next
+                if (Math.abs(offset) === 1) cardWidth = "w-85"; // slightly smaller for near
 
                 if (offset === -3) {
                   transform = `translateX(-${
@@ -132,7 +132,7 @@ export default function AlumniCarousel() {
                 return (
                   <div
                   key={idx}
-                  className={`absolute top-0 left-1/2 ${cardWidth} py-5 h-full`}
+                  className={`absolute top-0 left-1/2 ${cardWidth} py-4 h-full`}
                   style={{
                     transform: `${transform} translate(-50%, 0%)`,
                     opacity,
@@ -141,7 +141,7 @@ export default function AlumniCarousel() {
                     transformOrigin: "center",
                   }}
                 >
-                    <div className="shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-2xl overflow-hidden h-full">
+                    <div className="shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] p-2 rounded-xl overflow-hidden h-full">
                       <img
                         src={alum.image || alumni3}
                         alt={alum.aluminiName}
@@ -154,10 +154,10 @@ export default function AlumniCarousel() {
                         <p className="text-sm text-gray-400 font-medium">
                           {alum.companyName}
                         </p>
-                        <p className="text-sm mt-1 text-gray-300">
+                        <p className="text-sm mt-2 text-gray-300">
                           {alum.content}
                         </p>
-                        <p className="text-sm mt-0 text-green-400 font-semibold">
+                        <p className="text-sm mt-1 text-green-400 font-semibold">
                           {alum.lpa}
                         </p>
                       </div>
@@ -170,7 +170,7 @@ export default function AlumniCarousel() {
           {/* Right Button */}
            <button
           onClick={handleNext}
-          className="absolute right-1 md:right-80 top-1/2 -translate-y-1/2 z-10 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] backdrop-blur p-3 rounded-xl transition hover:bg-white/20"
+          className="absolute right-80 top-1/2 -translate-y-1/2 z-10 shadow-[inset_0_0_14px_rgba(255,255,255,0.3),inset_-1px_-3px_2px_rgba(255,255,255,0.1),inset_1px_3px_2px_rgba(255,255,255,0.3)] backdrop-blur p-3 rounded-xl transition hover:bg-white/20"
         >
           <img src={rightArrow} alt="Right" className="w-10 h-10" />
         </button>
