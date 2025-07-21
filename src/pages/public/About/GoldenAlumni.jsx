@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import alumni3 from "../../../assets/alumni3.svg";
 import leftArrow from "../../../assets/leftArrow.svg";
 import rightArrow from "../../../assets/rightArrow.svg";
-import { getAlumini } from "../../../api/Public/getAlumini";
+import { getGoldenAlumini } from "../../../api/Public/getGoldenAlumni"; 
 
 export default function AlumniCarousel() {
   const [alumni, setAlumni] = useState([]);
@@ -11,26 +11,21 @@ export default function AlumniCarousel() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchAlumni = async () => {
+    const fetchGoldenAlumni = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await getAlumini();
-        if (res.status && Array.isArray(res.data)) {
-          const topAlumni = res.data.filter((a) => a.isTopAlumni); // ✅ Only top alumni
-          setAlumni(topAlumni);
-        } else {
-          setError("Failed to load alumni.");
-        }
+        const topAlumni = await getGoldenAlumini(); // ✅ NEW call
+        setAlumni(topAlumni);
       } catch (err) {
-        console.error("Error fetching alumni:", err);
-        setError("Failed to load alumni.");
+        console.error("Error fetching golden alumni:", err);
+        setError("Failed to load golden alumni.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAlumni();
+    fetchGoldenAlumni();
   }, []);
 
   useEffect(() => {
@@ -67,7 +62,7 @@ export default function AlumniCarousel() {
       ) : error ? (
         <div className="text-red-500 text-center">{error}</div>
       ) : alumni.length === 0 ? (
-        <div className="text-gray-400 text-center">No top alumni found.</div>
+        <div className="text-gray-400 text-center">No golden alumni found.</div>
       ) : (
         <div className="relative max-w-6xl mx-auto px-6">
           {/* Left Arrow */}
