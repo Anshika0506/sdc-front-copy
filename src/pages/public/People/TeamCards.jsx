@@ -1,20 +1,12 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Listbox } from "@headlessui/react";
 import Testimonial1 from "../../../assets/Testimonial1.svg";
 import linkedin from "../../../assets/linkeldin.png";
 import git from "../../../assets/GitIcon.svg";
 import cross from "../../../assets/cross.svg";
 import attachicon from "../../../assets/PlusButton.svg";
-
-const team = [
-  ...Array.from({ length: 22 }, (_, i) => ({
-    name: `Member`,
-    role: "Core Team",
-    position: "POSITION",
-    image: Testimonial1,
-  })),
-];
+import { getPeople } from "../../../api/Public/getPeople";
 
 const years = ["1st", "2nd", "3rd", "4th"];
 const branches = [
@@ -25,13 +17,13 @@ const branches = [
 ];
 const positions = ["Member", "Lead", "Coordinator"];
 
-const ProfileCard = ({ name, role, position, image }) => {
+const ProfileCard = ({ name, role, position, image, linkedinUrl, gitUrl }) => {
   return (
     <div className="w-full md:gap-8 p-4 md:p-4 rounded-xl shadow-[2px_2px_4px_0px_#00000040,inset_2px_2px_6px_0px_#FFFFFF80] text-white flex flex-row items-center">
       {/* Image on the left */}
       <div className="w-[70px] h-[150px] md:w-[120px] md:h-[140px] rounded-lg overflow-hidden flex-shrink-0">
         <img
-          src={Testimonial1}
+          src={image || Testimonial1}
           alt={name}
           className="w-full h-full object-cover rounded-lg"
         />
@@ -49,16 +41,24 @@ const ProfileCard = ({ name, role, position, image }) => {
           {position}
         </p>
         <div className="flex items-center gap-2 md:gap-4 mt-10">
-          <img
-            src={linkedin}
-            alt="LinkedIn"
-            className="w-8 h-8 md:w-10 md:h-10 cursor-pointer hover:opacity-80"
-          />
-          <img
-            src={git}
-            alt="GitIcon"
-            className="w-8 h-8 md:w-10 md:h-10 cursor-pointer hover:opacity-80"
-          />
+          {linkedinUrl && (
+            <a href={linkedinUrl} target="_blank" rel="noopener noreferrer">
+              <img
+                src={linkedin}
+                alt="LinkedIn"
+                className="w-8 h-8 md:w-10 md:h-10 cursor-pointer hover:opacity-80"
+              />
+            </a>
+          )}
+          {gitUrl && (
+            <a href={gitUrl} target="_blank" rel="noopener noreferrer">
+              <img
+                src={git}
+                alt="GitIcon"
+                className="w-8 h-8 md:w-10 md:h-10 cursor-pointer hover:opacity-80"
+              />
+            </a>
+          )}
         </div>
       </div>
     </div>
@@ -84,6 +84,9 @@ const JoinCard = ({ setShowModal }) => (
 
 const TeamMembers = () => {
   const [showModal, setShowModal] = useState(false);
+  const [team, setTeam] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     contact: "",
@@ -98,6 +101,28 @@ const TeamMembers = () => {
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [resumeFile, setResumeFile] = useState(null);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await getPeople();
+        const teamData = response?.data || response;
+        if (Array.isArray(teamData)) {
+          setTeam(teamData);
+        } else {
+          setTeam([]);
+        }
+      } catch (err) {
+        console.error("Error fetching team:", err);
+        setError("Failed to load team members.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTeam();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -142,15 +167,29 @@ const TeamMembers = () => {
 
         {/* Grid of Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6 align-center w-full ">
-          {team.map((member, idx) => (
-            <ProfileCard
-              key={idx}
-              name={member.name}
-              role={member.role}
-              position={member.position}
-              image={member.image}
-            />
-          ))}
+          {loading && (
+            <p className="text-white text-center col-span-2 md:col-span-3">
+              Loading...
+            </p>
+          )}
+          {error && (
+            <p className="text-red-500 text-center col-span-2 md:col-span-3">
+              {error}
+            </p>
+          )}
+          {!loading &&
+            !error &&
+            team.map((member, idx) => (
+              <ProfileCard
+                key={member.memberId || idx}
+                name={member.name}
+                role={member.branch}
+                position={member.position}
+                image={member.imagePath}
+                linkedinUrl={member.linkdin_url}
+                gitUrl={member.github_url}
+              />
+            ))}
           <JoinCard setShowModal={setShowModal} />
         </div>
       </div>

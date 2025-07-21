@@ -8,6 +8,6 @@ export const getPeople = async () => {
   } catch (error) {
     console.error('Error fetching Peoples:', error.response?.data || error.message);
     console.error('Error details:', error);
-    return [];
+    throw error;
   }
 };
