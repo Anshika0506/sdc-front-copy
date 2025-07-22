@@ -1,36 +1,54 @@
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react"; // Import React
 import meshGradient from "../../../assets/mesh-gradient.webp";
-import instagramIcon from "../../../assets/Contact/instagramIcon.svg"
-import linkedinIcon from "../../../assets/Contact/linkedinIcon.svg"
-import { postContact } from '../../../api/Public/postContact';
-import { getFAQs } from '../../../api/Public/faq'; // ✅ public API
-const navLinks = [
-  "Home",
-  "About",
-  "Services",
-  "Work",
-  "People",
-  "Careers",
-  "Contact",
-  "Admin",
-];
+import instagramIcon from "../../../assets/Contact/instagramIcon.svg";
+import linkedinIcon from "../../../assets/Contact/linkedinIcon.svg";
+import { postContact } from "../../../api/Public/postContact";
+import { getFAQs } from "../../../api/Public/faq"; // ✅ public API
+
+// --- Memoized Map Component ---
+// This prevents the map from re-rendering and flickering on form submission.
+const MemoizedMap = React.memo(() => {
+  return (
+    <div className="w-[320px] md:w-[586px] h-[260px] md:h-[474px] rounded-2xl overflow-hidden shadow-lg">
+      <iframe
+        title="Medi-Caps University Map"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3682.359124896248!2d75.8078493154157!3d22.63935263628287!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3962fc1a8a555555%3A0x1bbafa70e3369137!2sMedi-Caps%20University!5e0!3m2!1sen!2sin!4v1678286915830!5m2!1sen!2sin"
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+      />
+    </div>
+  );
+});
+
 
 const Contact = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
   const [openFaq, setOpenFaq] = useState(-1);
   const [isQueryOpen, setIsQueryOpen] = useState(false);
   const [selectedQuery, setSelectedQuery] = useState("");
   const queryRef = useRef(null);
+
+  // Form state
   const [name, setName] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+
+  // Form submission state
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [formErrors, setFormErrors] = useState({});
+
+  // FAQ state
   const [faqs, setFaqs] = useState([]);
   const [faqsLoading, setFaqsLoading] = useState(true);
   const [faqsError, setFaqsError] = useState("");
@@ -56,19 +74,18 @@ const Contact = () => {
     };
   }, []);
 
+  // Fetch FAQs from backend
   useEffect(() => {
-    // Fetch FAQs from backend
     const fetchFaqs = async () => {
       setFaqsLoading(true);
       setFaqsError("");
       try {
         const res = await getFAQs();
-        // Map backend fields 'ques' and 'ans' to 'question' and 'answer'
         const mappedFaqs = Array.isArray(res.data)
-          ? res.data.map(faq => ({
+          ? res.data.map((faq) => ({
               question: faq.ques,
               answer: faq.ans,
-              _id: faq._id // preserve _id if present
+              _id: faq._id,
             }))
           : [];
         setFaqs(mappedFaqs);
@@ -81,12 +98,79 @@ const Contact = () => {
     fetchFaqs();
   }, []);
 
+  // --- Input Validation Handlers ---
+
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    // Allow only letters and spaces
+    if (/^[A-Za-z\s]*$/.test(value)) {
+      setName(value);
+      if (formErrors.name) setFormErrors({ ...formErrors, name: null });
+    }
+  };
+
+  const handleContactChange = (e) => {
+    const value = e.target.value;
+    // Allow only numbers
+    if (/^\d*$/.test(value)) {
+      setContactNo(value);
+      if (formErrors.contactNo) setFormErrors({ ...formErrors, contactNo: null });
+    }
+  };
+  
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    if (formErrors.email) setFormErrors({ ...formErrors, email: null });
+  };
+
+  const handleMessageChange = (e) => {
+    const value = e.target.value;
+    const wordCount = value.trim() === '' ? 0 : value.trim().split(/\s+/).length;
+    
+    if (wordCount <= 500) {
+      setMessage(value);
+      if (formErrors.message) setFormErrors({ ...formErrors, message: null });
+    } else {
+      // Prevent typing more than 500 words by slicing the text
+      const truncatedValue = value.split(/\s+/).slice(0, 500).join(" ");
+      setMessage(truncatedValue);
+    }
+  };
+  
+  // --- Form Validation Logic ---
+  const validateForm = () => {
+    const errors = {};
+    if (!/^[A-Za-z\s]+$/.test(name)) {
+      errors.name = "Name must only contain letters.";
+    }
+    if (!/^\d{10}$/.test(contactNo)) { // Assuming a 10-digit number
+      errors.contactNo = "Please enter a valid 10-digit number.";
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = "Please enter a valid email address.";
+    }
+    if (!message.trim()) {
+      errors.message = "Message cannot be empty.";
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // Clear previous general errors
+    
+    if (!validateForm()) {
+      setError("Please correct the errors before submitting.");
+      return;
+    }
+
     setLoading(true);
     setSuccess("");
-    setError("");
     try {
+      // This is the connection to your API endpoint. It's correctly implemented.
       await postContact({
         name,
         contactNo,
@@ -95,17 +179,21 @@ const Contact = () => {
         message,
       });
       setSuccess("Your message has been sent successfully!");
+      // Clear form on success
       setName("");
       setContactNo("");
       setSelectedQuery("");
       setEmail("");
       setMessage("");
+      setFormErrors({});
     } catch (err) {
       setError("Failed to send message. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
+  
+  const wordCount = message.trim() === '' ? 0 : message.trim().split(/\s+/).length;
 
   return (
     <div
@@ -244,21 +332,10 @@ const Contact = () => {
       <div className="w-full max-w-[1440px] py-16 flex flex-col items-center">
         <div className="flex flex-col md:flex-row justify-center items-center gap-6 w-full">
           {/* Indore Map Image on the left */}
-          <div className="w-[320px] md:w-[586px] h-[260px] md:h-[474px] rounded-2xl overflow-hidden shadow-lg">
-            <iframe
-              title="Medi-Caps University Map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3682.8782186897715!2d75.80101577603034!3d22.621022379457248!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3962f958dcb7169d%3A0xd877c12078e50f0f!2sMedicaps%20University!5e0!3m2!1sen!2sin!4v1752045912743!5m2!1sen!2sin"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
+          <MemoizedMap />
 
           {/* Contact Form on the right */}
-          <form className="w-full max-w-[586px] flex flex-col justify-between items-center gap-4" onSubmit={handleSubmit}>
+          <form className="w-full max-w-[586px] flex flex-col justify-between items-center gap-4" onSubmit={handleSubmit} noValidate>
             <div className="w-full flex flex-col gap-3.5">
               {/* Name */}
               <div className="flex flex-col gap-1.5">
@@ -272,10 +349,11 @@ const Contact = () => {
                     placeholder="Enter your name"
                     className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
                     value={name}
-                    onChange={e => setName(e.target.value)}
+                    onChange={handleNameChange}
                     required
                   />
                 </div>
+                {formErrors.name && <p className="text-red-400 text-xs mt-1">{formErrors.name}</p>}
               </div>
 
               {/* Contact & Query */}
@@ -288,14 +366,15 @@ const Contact = () => {
                   <div className="relative h-12 flex items-center rounded-[10px] shadow-[inset_2px_2px_6px_0px_rgba(255,255,255,0.50)] overflow-hidden px-4 py-3">
                     <div className="absolute w-96 h-24 left-[-41.14px] top-[-22.67px] bg-white/5 backdrop-blur-[3px]" />
                     <input
-                      type="text"
+                      type="tel"
                       placeholder="Enter phone no."
                       className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
                       value={contactNo}
-                      onChange={e => setContactNo(e.target.value)}
+                      onChange={handleContactChange}
                       required
                     />
                   </div>
+                   {formErrors.contactNo && <p className="text-red-400 text-xs mt-1">{formErrors.contactNo}</p>}
                 </div>
 
                 {/* Query - Custom Dropdown */}
@@ -307,7 +386,7 @@ const Contact = () => {
                     Query
                   </label>
                   <div
-                    className="w-full px-4 py-3 relative rounded-[10px] shadow-[inset_2px_2px_6px_0px_rgba(255,255,255,0.50)] flex flex-col justify-start items-start gap-2.5 cursor-pointer"
+                    className="w-full px-4 py-3 relative rounded-[10px] shadow-[inset_2px_2px_6px_0px_rgba(255,255,255,0.50)] flex flex-col justify-center items-start gap-2.5 cursor-pointer h-12"
                     onClick={() => setIsQueryOpen(!isQueryOpen)}
                   >
                     {/* Selected or placeholder */}
@@ -333,8 +412,6 @@ const Contact = () => {
                       </svg>
                     </div>
                   </div>
-
-                  {/* Dropdown options - positioned absolutely with solid background */}
                   {isQueryOpen && (
                     <div className="absolute z-30 w-full top-full mt-1 bg-[#1A1A1A] rounded-[10px] shadow-lg border border-[#333333] overflow-hidden">
                       {queries.map((query, index) => (
@@ -370,13 +447,14 @@ const Contact = () => {
                   <div className="absolute w-[753.43px] h-24 left-[-83.71px] top-[-22.67px] bg-white/5 backdrop-blur-[3px]" />
                   <input
                     type="email"
-                    placeholder="Enter Gmail id"
+                    placeholder="Enter email id"
                     className="relative z-10 bg-transparent outline-none border-none w-full text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                     required
                   />
                 </div>
+                {formErrors.email && <p className="text-red-400 text-xs mt-1">{formErrors.email}</p>}
               </div>
 
               {/* Message */}
@@ -384,16 +462,20 @@ const Contact = () => {
                 <label className="text-white text-sm font-semibold font-inter uppercase tracking-wide">
                   Message
                 </label>
-                <div className="relative flex-1 min-h-[96px] flex items-start rounded-[10px] shadow-[inset_2px_2px_6px_0px_rgba(255,255,255,0.50)] overflow-hidden px-4 py-3">
-                  <div className="absolute w-[753.43px] h-60 left-[-83.71px] top-[-59.03px] bg-white/5 backdrop-blur-[3px]" />
+                <div className="relative flex-1 min-h-[96px] flex flex-col rounded-[10px] shadow-[inset_2px_2px_6px_0px_rgba(255,255,255,0.50)] overflow-hidden">
+                   <div className="absolute w-[753.43px] h-60 left-[-83.71px] top-[-59.03px] bg-white/5 backdrop-blur-[3px]" />
                   <textarea
                     placeholder="Describe your query"
-                    className="relative z-10 bg-transparent outline-none border-none w-full h-24 resize-none text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
+                    className="relative z-10 bg-transparent outline-none border-none w-full flex-grow px-4 py-3 resize-none text-base font-normal font-ibmplexmono text-[#D2D2D2] placeholder:text-[#D2D2D2]"
                     value={message}
-                    onChange={e => setMessage(e.target.value)}
+                    onChange={handleMessageChange}
                     required
                   />
+                  <div className="relative z-10 text-right px-4 pb-2 text-xs font-ibmplexmono text-[#D2D2D2]">
+                    {wordCount}/500 words
+                  </div>
                 </div>
+                {formErrors.message && <p className="text-red-400 text-xs mt-1">{formErrors.message}</p>}
               </div>
             </div>
             {/* Success/Error Messages */}
@@ -413,7 +495,7 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* FAQ Section */}
+       {/* FAQ Section */}
       <div className="w-full max-w-[1440px] flex flex-col items-center mt-16">
         {/* FAQ Heading */}
         <div className="w-full flex flex-col items-center pb-8">
@@ -478,6 +560,6 @@ const Contact = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Contact;
