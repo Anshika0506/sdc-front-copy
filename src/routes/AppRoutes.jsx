@@ -22,7 +22,7 @@ import AdminLogin from '../pages/admin/Login';
 import PrivateRoute from '../auth/PrivateRoute';
 
 // Admin Pages
-import Testimonial from '../pages/admin/Testimonial'; // Testimonials Management
+import Testimonial from '../pages/admin/Testimonial';
 import Gallery from '../pages/admin/Gallery';
 import AdminWork from '../pages/admin/Project';
 import AdminServices from '../pages/admin/Services';
@@ -30,7 +30,6 @@ import FAQSection from '../pages/admin/FAQSection';
 import CareerPage from '../pages/admin/CareerPage';
 import PeoplePage from '../pages/admin/PeoplePage';
 import Profile from '../pages/admin/AdminProfile';
-
 
 const AppRoutes = () => {
   return (
@@ -47,39 +46,26 @@ const AppRoutes = () => {
         <Route path="/work/projectdetails/:title" element={<ProjectDetails />} />
         <Route path="/people" element={<People />} />
         <Route path="/contact" element={<Contact />} />
-
-
-        {/* Fallback for Public Pages */}
         <Route path="*" element={<Error404Page />} />
       </Route>
 
       {/* ✅ ADMIN LOGIN */}
-      <Route path="/login" element={<AdminLogin />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
 
       {/* ✅ PROTECTED ADMIN ROUTES */}
-      <Route
-        path="/admin"
-        element={
-          <PrivateRoute>
-            <AdminLayout />
-          </PrivateRoute>
-        }
-      >
-        {/* Redirect to default admin section */}
-        <Route index element={<Navigate to="manage-testimonials" replace />} />
-
-        {/* Admin Pages */}
-        <Route path="manage-testimonials" element={<Testimonial />} />
-        <Route path="manage-about" element={<Gallery />} />
-        <Route path="manage-work" element={<AdminWork />} />
-        <Route path="manage-services" element={<AdminServices />} />
-        <Route path="manage-faqs" element={<FAQSection />} />
-        <Route path="manage-career" element={<CareerPage />} />
-        <Route path="manage-people" element={<PeoplePage />} />
-        <Route path="profile" element={<Profile />} />
-
-        {/* Fallback for unknown admin routes */}
-        <Route path="*" element={<Testimonial />} />
+      <Route path="/admin" element={<PrivateRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route index element={<Navigate to="manage-testimonials" replace />} />
+          <Route path="manage-testimonials" element={<Testimonial />} />
+          <Route path="manage-about" element={<Gallery />} />
+          <Route path="manage-work" element={<AdminWork />} />
+          <Route path="manage-services" element={<AdminServices />} />
+          <Route path="manage-faqs" element={<FAQSection />} />
+          <Route path="manage-career" element={<CareerPage />} />
+          <Route path="manage-people" element={<PeoplePage />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="*" element={<Testimonial />} />
+        </Route>
       </Route>
     </Routes>
   );

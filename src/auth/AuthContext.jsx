@@ -1,66 +1,41 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { loginAdmin, verifyToken, logoutAdmin } from '../api/Admin/login';
+import { loginAdmin, logoutAdmin, verifyToken } from '../api/Admin/login';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [admin, setAdmin] = useState(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-    return {
-      token,
-      name: localStorage.getItem('adminName'),
-      id: localStorage.getItem('adminId'),
-      email: localStorage.getItem('adminEmail'),
-    };
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const [admin, setAdmin] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Optional: on mount, can re-verify token
+  // ✅ Optional: verify cookie on app load
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setAdmin({
-        token,
-        name: localStorage.getItem('adminName'),
-        id: localStorage.getItem('adminId'),
-        email: localStorage.getItem('adminEmail'),
-      });
-    } else {
-      setAdmin(null);
-    }
-    // Optionally, verify token by calling verifyToken() here
+    const fetchAdmin = async () => {
+      try {
+        const data = await verifyToken(); // backend reads cookie
+        setAdmin(data);
+      } catch (err) {
+        setAdmin(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchAdmin();
   }, []);
 
-  const login = async ({ token, name, adminId, email }) => {
-    // This is for context-internal use, see login page for the actual API call
-    localStorage.setItem('token', token);
-    localStorage.setItem('adminName', name);
-    localStorage.setItem('adminId', adminId);
-    localStorage.setItem('adminEmail', email);
-
-    setAdmin({ token, name, id: adminId, email });
+  const login = async (email, password) => {
+    const data = await loginAdmin(email, password);
+    setAdmin(data); // { adminId, name, email }
   };
 
   const logout = async () => {
-    await logoutAdmin();
-    localStorage.removeItem('token');
-    localStorage.removeItem('adminName');
-    localStorage.removeItem('adminId');
-    localStorage.removeItem('adminEmail');
+    await logoutAdmin(); // cookie cleared by backend
     setAdmin(null);
   };
 
-  const isAuthenticated = () => !!admin?.token;
+  const isAuthenticated = !!admin;
 
   return (
-    <AuthContext.Provider value={{
-      admin,
-      login,
-      logout,
-      isAuthenticated: isAuthenticated(),
-      isLoading
-    }}>
+    <AuthContext.Provider value={{ admin, login, logout, isAuthenticated, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
