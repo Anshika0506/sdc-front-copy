@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import meshGradient from "../../assets/mesh-gradient.webp";
 import { useNavigate } from "react-router-dom";
-import { loginAdmin } from "../../api/Admin/login";
-import { useAuth } from "../../auth/AuthContext";
+import { useAuth } from "../../auth/AuthContext"; // ✅ Only use context
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -30,29 +29,24 @@ export default function LoginPage() {
     setIsLoading(true);
     setLocalError("");
     try {
-      const adminData = await loginAdmin(email, password);
-      login({
-        token: localStorage.getItem("token"),
-        name: adminData.name,
-        adminId: adminData.adminId || adminData.id,
-        email: adminData.email,
-      });
-      // navigation happens via effect
+      await login(email, password); // ✅ Let AuthContext handle everything
     } catch (err) {
-      setLocalError(err.message || 'Login failed');
+      setLocalError(err.message || "Login failed");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-full h-screen relative overflow-hidden"
+    <div
+      className="w-full h-screen relative overflow-hidden"
       style={{
         backgroundImage: `url(${meshGradient})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-      }}>
+      }}
+    >
       <div className="absolute inset-0 bg-black/10" />
       <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <div className="w-[460px] px-8 py-10 rounded-3xl backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl">
