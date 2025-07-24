@@ -7,13 +7,14 @@ export const AuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ Optional: verify cookie on app load
+  // 🔐 Verify session on app mount
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const data = await verifyToken(); // backend reads cookie
-        setAdmin(data);
+        const data = await verifyToken(); // server reads JWT cookie
+        setAdmin(data); // { adminId, name, email }
       } catch (err) {
+        console.warn('Auth verification failed:', err.message);
         setAdmin(null);
       } finally {
         setIsLoading(false);
@@ -22,16 +23,19 @@ export const AuthProvider = ({ children }) => {
     fetchAdmin();
   }, []);
 
+  // 🔑 Call this on login form submit
   const login = async (email, password) => {
     const data = await loginAdmin(email, password);
-    setAdmin(data); // { adminId, name, email }
+    setAdmin(data); // server returns admin info (cookie is set by backend)
   };
 
+  // 🚪 Logout clears cookie and context
   const logout = async () => {
-    await logoutAdmin(); // cookie cleared by backend
+    await logoutAdmin(); // server clears JWT cookie
     setAdmin(null);
   };
 
+  // ✅ Boolean auth status
   const isAuthenticated = !!admin;
 
   return (
@@ -41,6 +45,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// 🧠 Hook to use context
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
