@@ -165,15 +165,6 @@ const Main = () => {
     }
   };
 
-  // Check authentication before making requests
-  const checkAuth = () => {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    if (!token) {
-      throw new Error('Authentication required. Please log in again.');
-    }
-    return token;
-  };
-
   // Save all changes to database
   const handleSaveAll = async () => {
     // Check if any testimonial is blank
@@ -187,9 +178,6 @@ const Main = () => {
 
     setSaveLoading(true);
     try {
-      // Check authentication first
-      checkAuth();
-      
       const updatedTestimonials = [];
       
       for (const testimonial of testimonials) {
@@ -241,9 +229,6 @@ const Main = () => {
 
     setDeleteLoading(true);
     try {
-      // Check authentication first
-      checkAuth();
-      
       // Delete all testimonials from database
       for (const testimonial of testimonials) {
         if (!testimonial.isNew) {
@@ -279,8 +264,6 @@ const Main = () => {
     
     try {
       if (!testimonial.isNew) {
-        // Check authentication first
-        checkAuth();
         await handleDeleteTestimonial(testimonial.id);
       }
       

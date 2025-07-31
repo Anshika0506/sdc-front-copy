@@ -1,11 +1,12 @@
-import api from '../../config';
+import { authApi } from '../../axios';
 
 export const getContact = async () => {
   try {
-    const res = await api.get('/admin/getAllContacts');
+    const res = await authApi.get('/admin/getAllContacts');
     return res.data;
   } catch (error) {
     console.error('Error fetching Contact Details:', error.response?.data || error.message);
-    return [];
+    // Don't return empty array - let the error bubble up so components can handle it properly
+    throw error;
   }
 };

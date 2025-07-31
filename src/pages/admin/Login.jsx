@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import meshGradient from "../../assets/mesh-gradient.webp";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth/AuthContext"; // ✅ Only use context
+import { useAuth } from "../../auth/AuthContext"; 
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -16,7 +16,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/admin/dashboard");
+      console.log('🔄 User already authenticated, redirecting to dashboard...');
+      navigate("/admin/dashboard", { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -29,8 +30,16 @@ export default function LoginPage() {
     setIsLoading(true);
     setLocalError("");
     try {
-      await login(email, password); // ✅ Let AuthContext handle everything
+      console.log('🚀 Attempting login...');
+      const userData = await login(email, password); // ✅ Let AuthContext handle everything
+      
+      // ✅ Explicit navigation after successful login
+      if (userData) {
+        console.log('✅ Login successful, redirecting to dashboard...');
+        navigate("/admin/dashboard", { replace: true });
+      }
     } catch (err) {
+      console.error('❌ Login error:', err);
       setLocalError(err.message || "Login failed");
     } finally {
       setIsLoading(false);

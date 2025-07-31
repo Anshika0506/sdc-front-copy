@@ -17,11 +17,23 @@ const ServicesPage = () => {
       setLoading(true);
       setError(null);
       try {
+        console.log('🔍 Services page: About to fetch contacts');
+        console.log('🍪 Available cookies:', document.cookie);
+        
         const res = await getContact();
         let data = Array.isArray(res) ? res : Array.isArray(res.data) ? res.data : [];
         setQueries(data);
+        console.log('✅ Services page: Successfully fetched contacts, count:', data.length);
       } catch (err) {
-        setError("Failed to load contact queries");
+        console.error('❌ Services page: Failed to fetch contacts:', err);
+        
+        if (err.response?.status === 403) {
+          setError("Authentication required. Please log in to access contact queries.");
+        } else {
+          setError("Failed to load contact queries. Please try again.");
+        }
+        
+        setQueries([]); // Set empty array only on error
       } finally {
         setLoading(false);
       }
