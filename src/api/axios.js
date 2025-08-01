@@ -2,45 +2,66 @@
 
 import axios from 'axios';
 
-export const authApi = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 30000,
-  withCredentials: true, // This sends cookies automatically
-});
-
-// Add request interceptor for debugging
-authApi.interceptors.request.use(
-  (config) => {
-    console.log('🔍 Making authenticated request to:', config.url);
-    console.log('🍪 Cookies being sent:', document.cookie);
-    return config;
-  },
-  (error) => {
-    console.error('❌ Request interceptor error:', error);
-    return Promise.reject(error);
-  }
-);
-
-// Add response interceptor for debugging
-authApi.interceptors.response.use(
-  (response) => {
-    console.log('✅ Response received:', response.status);
-    return response;
-  },
-  (error) => {
-    console.error('❌ Response error:', error.response?.status, error.response?.data);
-    if (error.response?.status === 403) {
-      console.error('🚫 403 Forbidden - Authentication failed or missing');
-      console.log('🍪 Current cookies:', document.cookie);
-    }
-    return Promise.reject(error);
-  }
-);
-
+// 🌐 Public API instance for unauthenticated requests (registration, public content)
 export const publicApi = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 30000,
-  withCredentials: false,
+  withCredentials: false, // ✅ Disable cookies for public endpoints to avoid CORS issues
 });
+
+// 🔐 Login API instance with credentials for cookie-based authentication
+export const loginApi = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 30000,
+  withCredentials: true, // ✅ Enable cookies for login endpoint
+});
+
+// Add request interceptor for debugging public requests
+publicApi.interceptors.request.use(
+  (config) => {
+    console.log('🌐 Making public request to:', config.url);
+    return config;
+  },
+  (error) => {
+    console.error('❌ Public request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for debugging public responses
+publicApi.interceptors.response.use(
+  (response) => {
+    console.log('✅ Public response received:', response.status);
+    return response;
+  },
+  (error) => {
+    console.error('❌ Public response error:', error.response?.status, error.response?.data);
+    return Promise.reject(error);
+  }
+);
+
+// Add request interceptor for debugging login requests
+loginApi.interceptors.request.use(
+  (config) => {
+    console.log('🔐 Making login request to:', config.url);
+    return config;
+  },
+  (error) => {
+    console.error('❌ Login request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for debugging login responses
+loginApi.interceptors.response.use(
+  (response) => {
+    console.log('✅ Login response received:', response.status);
+    return response;
+  },
+  (error) => {
+    console.error('❌ Login response error:', error.response?.status, error.response?.data);
+    return Promise.reject(error);
+  }
+);
 
 export default publicApi;

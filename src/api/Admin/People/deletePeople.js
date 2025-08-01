@@ -1,4 +1,4 @@
-import adminApi from '../../config';
+import { authApi } from '../../config'; // ✅ Use config.js for authenticated admin requests
 
 export const deletePeople = async (type, id) => {
   try {

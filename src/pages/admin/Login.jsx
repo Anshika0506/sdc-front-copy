@@ -12,14 +12,13 @@ export default function LoginPage() {
   const [localError, setLocalError] = useState("");
   const navigate = useNavigate();
 
-  const { login, isAuthenticated } = useAuth();
+  const { login, isLoggedIn } = useAuth();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      console.log('🔄 User already authenticated, redirecting to dashboard...');
+    if (isLoggedIn) {
       navigate("/admin/dashboard", { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isLoggedIn, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,16 +29,13 @@ export default function LoginPage() {
     setIsLoading(true);
     setLocalError("");
     try {
-      console.log('🚀 Attempting login...');
-      const userData = await login(email, password); // ✅ Let AuthContext handle everything
+      const userData = await login(email, password);
       
-      // ✅ Explicit navigation after successful login
       if (userData) {
-        console.log('✅ Login successful, redirecting to dashboard...');
         navigate("/admin/dashboard", { replace: true });
       }
     } catch (err) {
-      console.error('❌ Login error:', err);
+      console.error('Login error:', err);
       setLocalError(err.message || "Login failed");
     } finally {
       setIsLoading(false);

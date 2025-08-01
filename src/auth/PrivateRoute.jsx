@@ -2,9 +2,9 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
 const PrivateRoute = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isLoggedIn, loading } = useAuth();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-white">Loading...</div>
@@ -12,7 +12,15 @@ const PrivateRoute = () => {
     );
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/admin/login" replace />;
+  // Check authentication - use the correct property from AuthContext
+  const hasValidAuth = isLoggedIn;
+
+  if (!hasValidAuth) {
+    console.log('🚫 Access denied - redirecting to login');
+    return <Navigate to="/admin/login" replace />;
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;

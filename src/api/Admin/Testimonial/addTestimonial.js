@@ -1,4 +1,4 @@
-import api from '../../config';
+import { authApi } from '../../config'; // ✅ Use config.js for authenticated admin requests
 
 export const addTestimonial = async ({ clientName, des, imageBase64 }) => {
   const formData = new FormData();
@@ -24,7 +24,7 @@ export const addTestimonial = async ({ clientName, des, imageBase64 }) => {
   }
 
   try {
-    const res = await api.post('/admin/testimonials/add', formData, {
+    const res = await authApi.post('/admin/testimonials/add', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data;

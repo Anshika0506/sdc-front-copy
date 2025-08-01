@@ -1,4 +1,4 @@
-import adminApi from '../../axios';
+import { publicApi } from '../../axios'; // ✅ Use axios.js for public endpoints (no credentials needed)
 
 /**
  * Fetches people data from the backend.
@@ -18,7 +18,7 @@ export const getPeople = async (type) => {
       throw new Error('Invalid type passed to getPeople');
     }
 
-    const response = await adminApi.get(url);
+    const response = await publicApi.get(url);
     console.log(`Fetched ${type}:`, response.data); 
     return response.data;
   } catch (error) {

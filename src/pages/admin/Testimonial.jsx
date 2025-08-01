@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { getTestimonials } from '../../api/Admin/Testimonial/getTestimonials';
+import { getTestimonials } from '../../api/Public/getTestimonials';
 import { addTestimonial } from '../../api/Admin/Testimonial/addTestimonial';
 import { updateTestimonial } from '../../api/Admin/Testimonial/updateTestimonial';
 import { deleteTestimonial } from '../../api/Admin/Testimonial/deleteTestimonial';
 import profile1 from "../../assets/alumni1.svg";
-import profile2 from "../../assets/alumni1.svg";
-import profile3 from "../../assets/alumni1.svg";
-import hide from "../../assets/hide.png";
 import save from "../../assets/save.png";
 import add from "../../assets/add.png";
 import edit from "../../assets/edit.png";
@@ -44,7 +41,6 @@ const Main = () => {
     setLoading(true);
     setError(null);
     try {
-      console.log('🔄 Fetching testimonials from API...');
       const res = await getTestimonials();
       // Support both array and object with data property
       let data = Array.isArray(res) ? res : (Array.isArray(res.data) ? res.data : (Array.isArray(res.testimonials) ? res.testimonials : []));
@@ -67,8 +63,6 @@ const Main = () => {
   // Add new testimonial to database
  const handleAddTestimonial = async (testimonialData) => {
   try {
-    console.log('🔄 Adding new testimonial to database...', testimonialData);
-    
     // Prepare the image data for API call
     let imageBase64 = null;
     if (testimonialData.image && testimonialData.image !== profile1) {
@@ -121,8 +115,6 @@ const Main = () => {
   // Update existing testimonial in database
  const handleUpdateTestimonial = async (testimonialData) => {
   try {
-    console.log('🔄 Updating testimonial in database...', testimonialData);
-    
     // Prepare the image data for API call
     let imageBase64 = null;
     if (testimonialData.image && testimonialData.image !== profile1) {
@@ -157,7 +149,6 @@ const Main = () => {
   // Delete testimonial from database
   const handleDeleteTestimonial = async (testimonialId) => {
     try {
-      console.log('🔄 Deleting testimonial from database...', testimonialId);
       await deleteTestimonial(testimonialId);
     } catch (err) {
       console.error('Error deleting testimonial:', err);
@@ -183,12 +174,10 @@ const Main = () => {
       for (const testimonial of testimonials) {
         if (testimonial.isNew) {
           // Add new testimonial
-          console.log('Adding new testimonial:', testimonial);
           const newTestimonial = await handleAddTestimonial(testimonial);
           updatedTestimonials.push(newTestimonial);
         } else {
           // Update existing testimonial
-          console.log('Updating existing testimonial:', testimonial);
           const updatedTestimonial = await handleUpdateTestimonial(testimonial);
           updatedTestimonials.push(updatedTestimonial);
         }
@@ -201,7 +190,6 @@ const Main = () => {
       await fetchTestimonials();
       
       alert('All testimonials saved successfully!');
-      console.log('✅ All testimonials saved successfully!');
     } catch (err) {
       console.error('Error saving testimonials:', err);
       
@@ -237,7 +225,6 @@ const Main = () => {
       }
       
       setTestimonials([]);
-      console.log('✅ All testimonials deleted successfully!');
     } catch (err) {
       console.error('Error deleting all testimonials:', err);
       let errorMessage = 'Failed to delete testimonials: ';
@@ -270,7 +257,6 @@ const Main = () => {
       const updated = testimonials.filter((_, i) => i !== index);
       setTestimonials(updated);
       
-      console.log('✅ Testimonial deleted successfully!');
     } catch (err) {
       console.error('Error deleting testimonial:', err);
       let errorMessage = 'Failed to delete testimonial: ';

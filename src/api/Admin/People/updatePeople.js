@@ -1,4 +1,4 @@
-import adminApi from '../../config';
+import { authApi } from '../../config'; // ✅ Use config.js for authenticated admin requests
 
 export const updatePeople = async (type, id, data) => {
   try {

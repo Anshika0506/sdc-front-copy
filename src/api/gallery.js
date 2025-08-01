@@ -1,4 +1,5 @@
-import { authApi, publicApi } from './axios'; // ✅ Replaces adminApi with cookie-based authApi
+import { authApi } from './config'; // ✅ Use config.js for authenticated admin requests
+import { publicApi } from './axios'; // ✅ Use axios.js for public requests
 
 // ✅ PUBLIC: anyone can view
 export const getAllGalleryImages = async () => {

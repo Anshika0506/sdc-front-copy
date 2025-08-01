@@ -1,20 +1,17 @@
-import { authApi } from '../axios'; 
-
+import { authApi } from '../config'; // ✅ Use config.js for authenticated requests
+import { loginApi } from '../axios'; // ✅ Use loginApi for login (with credentials)
+import { storeAuthData, clearAuthData } from '../../utils/cookieAuth';
 
 export const loginAdmin = async (email, password) => {
   try {
-    console.log('🔑 Making login request to:', '/auth/login');
-    const response = await authApi.post('/auth/login', {
+    const response = await loginApi.post('/auth/login', {
       email,
       pass: password,
     });
 
-    console.log('📥 Login response:', response.data);
-    console.log('🍪 Login response headers:', response.headers);
-    console.log('🍪 Set-Cookie header:', response.headers['set-cookie']);
-
     // Handle different success response formats
-    const isSuccess = response.data.success === true || 
+    const isSuccess = response.data.status === true || 
+                      response.data.success === true || 
                       response.data.message === 'Login successfull' ||
                       response.data.message === 'Login successful' ||
                       response.status === 200;
@@ -25,18 +22,45 @@ export const loginAdmin = async (email, password) => {
 
     // Extract admin data
     const adminData = response.data.data || response.data || { email };
-    console.log('✅ Admin data extracted:', adminData);
+    
+    // Check if we can find a JWT cookie that was set by the backend
+    const allCookies = document.cookie;
+    
+    // Look for common JWT cookie names that backends use
+    const jwtCookieNames = ['jwt', 'token', 'authToken', 'jwtToken', 'access_token', 'auth'];
+    let foundJwtCookie = false;
+    
+    for (const cookieName of jwtCookieNames) {
+      if (allCookies.includes(`${cookieName}=`)) {
+        foundJwtCookie = true;
+        break;
+      }
+    }
+    
+    if (foundJwtCookie) {
+      storeAuthData(adminData, 'backend-cookie-jwt');
+    } else {
+      storeAuthData(adminData, 'dev-token-placeholder');
+    }
+    
     return adminData;
 
   } catch (error) {
-    console.log('❌ Login error details:', error.response?.data, error.response?.status);
-    
-    // Handle case where backend returns success message but axios treats as error
     if (error.response?.data?.message === 'Login successfull' || 
         error.response?.data?.message === 'Login successful') {
       const adminData = error.response.data.data || error.response.data || { email };
-      console.log('✅ Login successful (from catch):', adminData);
-      return adminData;
+      
+      const token = error.response.data.token || 
+                    error.response.data.data?.token || 
+                    error.response.data.jwt || 
+                    error.response.data.data?.jwt ||
+                    error.response.data.accessToken ||
+                    error.response.data.data?.accessToken;
+      
+      if (token) {
+        storeAuthData(adminData, token);
+        return adminData;
+      }
     }
     
     const message = error.response?.data?.message || error.message || 'Login failed';
@@ -47,25 +71,19 @@ export const loginAdmin = async (email, password) => {
 
 export const verifyToken = async () => {
   try {
-    console.log('🔍 Verifying authentication token...');
-    console.log('🍪 Current cookies before verification:', document.cookie);
-    
     const response = await authApi.get('/auth/verify'); 
-    console.log('✅ Token verification successful:', response.data);
     return response.data;
   } catch (error) {
-    console.warn('❌ Token verification failed:', error.response?.status, error.response?.data);
     throw error;
   }
 };
 
-
 export const logoutAdmin = async () => {
   try {
-    console.log('🚪 Attempting logout...');
     await authApi.post('/auth/logout');
-    console.log('✅ Logout successful');
   } catch (err) {
-    console.warn('Logout failed:', err);
+    console.warn('Logout API call failed:', err);
+  } finally {
+    clearAuthData();
   }
 };

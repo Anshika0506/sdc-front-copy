@@ -1,4 +1,4 @@
-import api from '../../config';
+import { authApi } from '../../config'; // ✅ Use config.js for authenticated admin requests
 
 export const updateTestimonial = async (testId, { clientName, des, imageBase64 }) => {
   const formData = new FormData();
@@ -19,7 +19,7 @@ export const updateTestimonial = async (testId, { clientName, des, imageBase64 }
   }
 
   try {
-    const res = await api.put(`/admin/testimonials/update/${testId}`, formData, {
+    const res = await authApi.put(`/admin/testimonials/update/${testId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data;

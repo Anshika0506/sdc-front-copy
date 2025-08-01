@@ -1,144 +1,96 @@
+import { authApi } from "../config";
 
 
-import { authApi } from "../axios"; 
-import { checkSessionHealth, hasAuthCookie } from "../../utils/sessionUtils";
 
-export const getAdminProfile = async () => {
-  // With cookie-based auth, the server should return the current logged-in admin's profile
-  const response = await authApi.get("/admin/profile");
-  return response.data;
-};
-
-
-// Update admin details
-export const updateAdminDetails = async (updatedData) => {
+/**
+ * Get current admin's profile details
+ * Uses cookie authentication to identify the current admin from all-admins list
+ * @returns {Promise} Current admin's profile data { name, email, contact_no }
+ */
+export const getCurrentAdminProfile = async () => {
   try {
-    console.log("Updating admin details:", updatedData);
-
-    const response = await authApi.put("/admin/updateAdmin", updatedData);
-
-    console.log("Update response:", response.data);
-    return response.data;
+    const response = await authApi.get("/admin/all-admins");
+    const allAdmins = response.data.data || response.data;
+    
+    // The current admin should be identifiable from the response
+    // This could be the first admin, or marked with a special flag
+    // For now, returning the first admin as current admin
+    const currentAdmin = Array.isArray(allAdmins) && allAdmins.length > 0 ? allAdmins[0] : null;
+    
+    if (!currentAdmin) {
+      throw new Error('No admin profile found');
+    }
+    
+    return currentAdmin;
   } catch (error) {
-    console.error("Failed to update admin details:", error);
-    console.error("Error details:", error.response?.data);
+    console.error('Error fetching current admin profile:', error.response?.data || error.message);
     throw error;
   }
 };
 
-// Change admin password
-export const changeAdminPassword = async (oldPassword, newPassword) => {
+/**
+ * Update current admin's profile
+ * @param {Object} data - Profile data to update { name, email, contact_no }
+ * @returns {Promise} Updated profile data
+ */
+export const updateAdminProfile = async (data) => {
   try {
-    console.log("Changing admin password");
+    // Map frontend field names to backend field names
+    const backendData = {
+      name: data.name,
+      email: data.email,
+      contact_no: data.phoneNumber || data.contact_no || data.contact
+    };
 
-    const response = await authApi.put("/admin/change-password", {
-      oldPassword,
-      newPassword,
+    const response = await authApi.put("/admin/updateAdmin", backendData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
-
-    console.log("Password change response:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Failed to change admin password:", error);
+    console.error('Error updating admin profile:', error.response?.data || error.message);
     throw error;
   }
 };
 
-// Check authentication status
-export const checkAuthStatus = async () => {
+/**
+ * Change current admin's password
+ * @param {Object} data - Password change data { oldPassword, newPassword }
+ * @returns {Promise} Success response
+ */
+export const changeAdminPassword = async (data) => {
   try {
-    console.log("🔍 Checking authentication status...");
-    console.log("🍪 Current cookies:", document.cookie);
+    // Map frontend field names to backend field names
+    const backendData = {
+      oldPassword: data.oldPassword,  // Old password for verification
+      newPassword: data.newPassword   // New password to set
+    };
+
+    const response = await authApi.put("/admin/change-password", backendData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     
-    const response = await authApi.get("/auth/verify");
-    console.log("✅ Authentication verified:", response.data);
     return response.data;
   } catch (error) {
-    console.error("❌ Authentication check failed:", error.response?.status, error.response?.data);
+    console.error('Error changing admin password:', error.response?.data || error.message);
     throw error;
   }
 };
 
-// Quick test function for admin authentication
-export const testAuth = async () => {
+/**
+ * Get list of all admins (for admin view)
+ * @returns {Promise} Array of all admin details
+ */
+export const getAllAdmins = async () => {
   try {
-    console.log("🧪 Testing authentication...");
-    checkSessionHealth(); // Show detailed cookie info
-    
-    if (!hasAuthCookie()) {
-      return { 
-        success: false, 
-        error: "No authentication cookie found. Please login again.",
-        needsLogin: true
-      };
-    }
-    
-    // Test the profile endpoint
-    const profile = await authApi.get("/admin/profile");
-    console.log("✅ Profile endpoint works:", profile.data);
-    return { success: true, data: profile.data };
+    const response = await authApi.get("/admin/all-admins");
+    // Return the actual data array, not the whole response
+    return response.data.data || response.data;
   } catch (error) {
-    console.error("❌ Profile endpoint failed:", error.response?.status, error.response?.data);
-    
-    // Test auth verification endpoint
-    try {
-      const auth = await authApi.get("/auth/verify");
-      console.log("✅ Auth verification works:", auth.data);
-      return { success: true, authOnly: true, data: auth.data };
-    } catch (authError) {
-      console.error("❌ Auth verification also failed:", authError.response?.status, authError.response?.data);
-      return { 
-        success: false, 
-        error: authError.response?.data,
-        needsLogin: authError.response?.status === 401 || authError.response?.status === 403
-      };
-    }
-  }
-};
-
-// Test session persistence specifically
-export const testSessionPersistence = () => {
-  console.log("🔍 Session Persistence Test:");
-  console.log("🕐 Current time:", new Date().toISOString());
-  checkSessionHealth();
-  
-  const hasAuth = hasAuthCookie();
-  if (hasAuth) {
-    console.log("✅ Authentication cookie found - session should persist");
-  } else {
-    console.log("❌ No authentication cookie - session will not persist");
-    console.log("💡 This means you'll need to login after every page refresh");
-  }
-  
-  return hasAuth;
-};
-
-// Alternative function to test API connectivity
-export const testAdminAPI = async () => {
-  try {
-    console.log("Testing admin API endpoints...");
-    
-    // Test different possible endpoints
-    const endpoints = [
-      "/admin/profile",
-      "/admin/current",
-      "/admin/all-admins",
-      "/admin"
-    ];
-    
-    for (const endpoint of endpoints) {
-      try {
-        const response = await authApi.get(endpoint);
-        console.log(`✅ ${endpoint} works:`, response.data);
-        return { endpoint, data: response.data };
-      } catch (error) {
-        console.log(`❌ ${endpoint} failed:`, error.response?.status);
-      }
-    }
-    
-    throw new Error("No working endpoints found");
-  } catch (error) {
-    console.error("API test failed:", error);
+    console.error('Error fetching all admins:', error.response?.data || error.message);
     throw error;
   }
 };

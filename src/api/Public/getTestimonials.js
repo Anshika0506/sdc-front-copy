@@ -1,4 +1,4 @@
-import publicApi from '../axios'; // ✅ Use public instance instead of config
+import { publicApi } from '../axios'; // ✅ Use axios.js for public requests
 
 export const getTestimonials = async () => {
   try {

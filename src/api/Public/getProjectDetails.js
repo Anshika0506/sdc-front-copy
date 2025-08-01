@@ -11,14 +11,17 @@
 // };
 
 
-import api from '../axios'; // Use publicApi instead of config for public endpoints
+import { publicApi } from '../axios'; // ✅ Fixed: named import
 
 export const getProject = async () => {
   try {
-    const res = await api.get('/public/allproject');
+    console.log('🚀 Fetching projects...');
+    const res = await publicApi.get('/public/allproject');
+    console.log('✅ Projects fetched:', res.data);
     return res.data;
   } catch (error) {
-    console.error('Error fetching Projects:', error.response?.data || error.message);
+    console.error('❌ Error fetching projects:', error.response?.data || error.message);
+    console.error('🔍 Response status:', error.response?.status);
     return [];
   }
 };

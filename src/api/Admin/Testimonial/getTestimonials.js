@@ -1,37 +1,14 @@
-// import api from '../../config';
-
-// export const getTestimonials = async () => {
-//   try {
-//     const res = await api.get('/public/testimonies/All');
-//     return res.data;
-//   } catch (error) {
-//     console.error('Error fetching testimonials:', error.response?.data || error.message);
-//     return [];
-//   }
-// };
-
-
-// import publicApi from '../../axios'; // ✅ Use public instance instead of config
-
-// export const getTestimonials = async () => {
-//   try {
-//     const res = await publicApi.get('/public/testimonies/All');
-//     return res.data;
-//   } catch (error) {
-//     console.error('Error fetching testimonials:', error.response?.data || error.message);
-//     return [];
-//   }
-// };
-
-
-import { publicApi } from '../../axios'; // ✅ Fixed: named import
+import { publicApi } from '../../axios'; // ✅ Use public API for testimonials
 
 export const getTestimonials = async () => {
   try {
+    console.log('📝 Fetching testimonials...');
     const res = await publicApi.get('/public/testimonies/All');
+    console.log('✅ Testimonials fetched:', res.data);
     return res.data;
   } catch (error) {
-    console.error('Error fetching testimonials:', error.response?.data || error.message);
+    console.error('❌ Error fetching testimonials:', error.response?.data || error.message);
+    console.error('🔍 Response status:', error.response?.status);
     return [];
   }
 };

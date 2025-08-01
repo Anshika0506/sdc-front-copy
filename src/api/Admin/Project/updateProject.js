@@ -1,4 +1,4 @@
-import api from '../../config';
+import { authApi } from '../../config'; // ✅ Use config.js for authenticated admin requests
 
 export const updateProject = async (projectID, { title, description, link, imageBase64, teamMembers }) => {
   const formData = new FormData();
@@ -25,7 +25,7 @@ export const updateProject = async (projectID, { title, description, link, image
     formData.append('teamMembers', teamMembers);
   }
   try {
-    const res = await api.put(`/admin/projects/update/${projectID}`, formData, {
+    const res = await authApi.put(`/admin/projects/update/${projectID}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data;
