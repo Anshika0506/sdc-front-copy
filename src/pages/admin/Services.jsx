@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { getContact } from "../../api/Admin/Contact/getContact";
-import exported from "../../assets/exported.png";
+import exported from "../../assets/images/exported.png";
 
 const ServicesPage = () => {
   const [page, setPage] = useState(1);

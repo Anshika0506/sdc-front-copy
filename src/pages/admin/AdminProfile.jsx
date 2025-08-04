@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import trash from "../../assets/delete.png";
-import save from "../../assets/save.png";
-import cross from "../../assets/cross.svg";
-import edit from "../../assets/edit.png";
-import icons from "../../assets/icons.png";
+import trash from "../../assets/icons/delete.png";
+import save from "../../assets/icons/save.png";
+import cross from "../../assets/icons/cross.svg";
+import edit from "../../assets/icons/edit.png";
+import icons from "../../assets/icons/Icons.png";
 import { 
   getCurrentAdminProfile, 
   updateAdminProfile, 

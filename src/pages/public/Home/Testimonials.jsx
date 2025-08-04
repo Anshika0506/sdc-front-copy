@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getTestimonials } from '../../../api/Public/getTestimonials';
-import upButton from "../../../assets/upbutton.svg";
-import downButton from "../../../assets/downbutton.svg";
+import upButton from "../../../assets/buttons/upbutton.svg";
+import downButton from "../../../assets/buttons/downbutton.svg";
 
 export default function TestimonialsCarousel() {
   const [testimonials, setTestimonials] = useState([]);

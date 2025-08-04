@@ -1,7 +1,7 @@
 import React from "react";
-import linkedin from "../assets/linkeldin.png";
-import GitIcon from "../assets/GitIcon.svg";
-import alumni3 from "../assets/alumni3.svg";
+import linkedin from "../assets/social/linkeldin.png";
+import GitIcon from "../assets/social/GitIcon.svg";
+import alumni3 from "../assets/graphics/alumni3.svg";
 
 const MentorCard = ({ name, title, role, position, image }) => {
   return (

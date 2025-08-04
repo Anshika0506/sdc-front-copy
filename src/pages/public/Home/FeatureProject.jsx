@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import arrowleft from "../../../assets/leftarrow.svg";
-import arrowRight from "../../../assets/rightarrow.svg";
+import React, { useState, useEffect } from "react";
+import arrowleft from "../../../assets/buttons/leftarrow.svg";
+import arrowRight from "../../../assets/buttons/rightarrow.svg";
 import { getProject } from "../../../api/Public/getProjectDetails";
-import imgFallback from "../../../assets/laptopimg.svg";
+import imgFallback from "../../../assets/graphics/laptopimg.svg";
 
 const FeaturedProjects = () => {
   const [projects, setProjects] = useState([]);

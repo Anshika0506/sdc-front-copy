@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// import backgroundImage from '../../../assets/mesh-gradient.webp';
-import projectImage from '../../../assets/project.png';
-import icon from '../../../assets/icons.png';
+// import backgroundImage from '../../../assets/images/mesh-gradient.webp';
+import projectImage from '../../../assets/images/project.png';
+import icon from '../../../assets/icons/Icons.png';
 import { getProject } from "../../../api/Public/getProjectDetails";
 
 export default function ProjectDetails() {

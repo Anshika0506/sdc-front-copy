@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import meshGradient from "../../assets/mesh-gradient.webp";
+import meshGradient from "../../assets/images/mesh-gradient.webp";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext"; 
 

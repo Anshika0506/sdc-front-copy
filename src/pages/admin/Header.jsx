@@ -1,7 +1,7 @@
 import React from 'react';
-import logo from "../../assets/logo.png";
-import profileIcon from "../../assets/profile button.png";
-import logoutIcon from "../../assets/logout.png";
+import logo from "../../assets/logos/logo.png";
+import profileIcon from "../../assets/buttons/profile button.png";
+import logoutIcon from "../../assets/icons/logout.png";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 

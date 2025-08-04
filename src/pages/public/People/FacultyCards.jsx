@@ -1,5 +1,5 @@
 import React from "react";
-import alumni3 from "../../../assets/alumni3.svg"; // Adjust path as needed
+import alumni3 from "../../../assets/graphics/alumni3.svg"; // Adjust path as needed
 
 const mentors = [
   {

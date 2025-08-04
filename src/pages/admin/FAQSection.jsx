@@ -3,12 +3,12 @@ import { getFAQs } from '../../api/Public/faq';       // ✅ public API
 import { addFAQ, updateFAQ, deleteFAQ } from '../../api/Admin/faq'; // ✅ admin APIs
 
 // Assets
-import EditIcon from "../../assets/edit.svg";
-import DeleteIcon from "../../assets/deleteIcon.svg";
-import cross from "../../assets/cross.svg";
-import PlusButton from "../../assets/PlusButton.svg";
-import deleteIcon from "../../assets/deleteIcon.svg";
-import RightIcon from "../../assets/RightIcon.svg";
+import EditIcon from "../../assets/icons/edit.svg";
+import DeleteIcon from "../../assets/icons/deleteIcon.svg";
+import cross from "../../assets/icons/cross.svg";
+import PlusButton from "../../assets/buttons/PlusButton.svg";
+import deleteIcon from "../../assets/icons/deleteIcon.svg";
+import RightIcon from "../../assets/buttons/RightIcon.svg";
 
 const FAQs = () => {
   const [faqList, setFaqList] = useState([]);

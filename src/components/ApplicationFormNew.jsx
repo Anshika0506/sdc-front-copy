@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Listbox } from "@headlessui/react";
-import cross from "../assets/cross.svg";
-import attachicon from "../assets/attachicon.png";
+import cross from "../assets/icons/cross.svg";
+import attachicon from "../assets/icons/attachicon.png";
 import { postApplication } from "../api/Public/postApplication";
 
 const branches = ["CSE", "CS-AI", "CS-DS", "IT"];

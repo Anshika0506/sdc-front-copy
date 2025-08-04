@@ -1,7 +1,7 @@
 // File: components/RootCenterMedi.jsx
 import React from "react";
-import medi from "../../../assets/center.svg";
-import center from "../../../assets/medi1.svg";
+import medi from "../../../assets/graphics/center.svg";
+import center from "../../../assets/graphics/medi1.svg";
 
 const RootCenterMedi = () => {
   return (

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   getAllGalleryImages,
   addGalleryImage,
   updateGalleryImage,
   deleteGalleryImage,
 } from "../../api/gallery";
-import pencil from "../../assets/pencil.png";
-import deleteIcon from "../../assets/delete.png";
-import addIcon from "../../assets/add.png";
+import pencil from "../../assets/icons/pencil.png";
+import deleteIcon from "../../assets/icons/delete.png";
+import addIcon from "../../assets/icons/add.png";
 
 const AboutGalleryPage = () => {
   const [gallery, setGallery] = useState([]);

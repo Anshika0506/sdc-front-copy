@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Listbox } from "@headlessui/react";
-import cross from "../../../assets/cross.svg";
-import attachicon from "../../../assets/attachicon.png"; // or .png depending on your file
+import cross from "../../../assets/icons/cross.svg";
+import attachicon from "../../../assets/icons/attachicon.png"; // or .png depending on your file
 import { postApplication } from "../../../api/Public/postApplication";
 import ApplicationFormNew from "../../../components/ApplicationFormNew";
 

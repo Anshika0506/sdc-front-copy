@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getAllApplications, deleteApplicationById } from "../../api/Admin/ApplicationForm.js";
 
-import ViewIcon from "../../assets/resumeIcon.svg";
-import DeleteIcon from "../../assets/deleteIcon.svg";
-import ExportIcon from "../../assets/ExportIcon.svg";
+import ViewIcon from "../../assets/icons/resumeIcon.svg";
+import DeleteIcon from "../../assets/icons/deleteIcon.svg";
+import ExportIcon from "../../assets/icons/ExportIcon.svg";
 
 export default function JoiningApplications() {
   const [applications, setApplications] = useState([]);

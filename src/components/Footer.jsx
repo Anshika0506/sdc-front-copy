@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/LogoWhite.png";
-import mail from "../assets/mail.png";
-import phone from "../assets/phone.png";
-import linkeldin from "../assets/linkeldin.png";
-import location from "../assets/location.png";
-import instagram from "../assets/instagram.webp";
+import logo from "../assets/logos/LogoWhite.png";
+import mail from "../assets/icons/mail.png";
+import phone from "../assets/icons/phone.png";
+import linkeldin from "../assets/social/linkeldin.png";
+import location from "../assets/icons/location.png";
+import instagram from "../assets/social/instagram.webp";
 
 const Footer = () => {
   return (

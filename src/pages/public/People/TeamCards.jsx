@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect } from "react";
 import { Listbox } from "@headlessui/react";
-import Testimonial1 from "../../../assets/Testimonial1.svg";
-import linkedin from "../../../assets/linkeldin.png";
-import git from "../../../assets/GitIcon.svg";
-import cross from "../../../assets/cross.svg";
-import attachicon from "../../../assets/PlusButton.svg";
+import Testimonial1 from "../../../assets/graphics/Testimonial1.svg";
+import linkedin from "../../../assets/social/linkeldin.png";
+import git from "../../../assets/social/GitIcon.svg";
+import cross from "../../../assets/icons/cross.svg";
+import attachicon from "../../../assets/buttons/PlusButton.svg";
 import { getPeople } from "../../../api/Public/getPeople";
 
 const years = ["1st", "2nd", "3rd", "4th"];

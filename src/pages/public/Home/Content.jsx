@@ -1,5 +1,5 @@
 import React from "react";
-import img from "../../../assets/SDCframe.svg";
+import img from "../../../assets/logos/SDCframe.svg";
 
 const Content = () => {
   return (

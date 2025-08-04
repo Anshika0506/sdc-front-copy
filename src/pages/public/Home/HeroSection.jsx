@@ -1,6 +1,6 @@
-import React from "react";
-import left from "../../../assets/leftimage.svg";
-import right from "../../../assets/rightimage.svg";
+import React from 'react';
+import left from "../../../assets/graphics/leftimage.svg";
+import right from "../../../assets/graphics/rightimage.svg";
 
 const HeroSection = () => {
   React.useEffect(() => {

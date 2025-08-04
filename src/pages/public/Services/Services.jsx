@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Mail from '../../../assets/mail.png'; // if it's your own component
+import Mail from '../../../assets/icons/mail.png'; // if it's your own component
 
 
 const services = [

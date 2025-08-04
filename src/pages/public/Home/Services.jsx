@@ -1,10 +1,10 @@
 import React from 'react';
 
 // Importing icons from assets
-import SupportIcon from '../../../assets/Support.png';
-import SecuredLetterIcon from '../../../assets/imail.svg';
-import EditIcon from '../../../assets/edit.svg';
-import ServiceIcon from '../../../assets/setting.svg';
+import SupportIcon from '../../../assets/images/Support.png';
+import SecuredLetterIcon from '../../../assets/icons/imail.svg';
+import EditIcon from '../../../assets/icons/edit.svg';
+import ServiceIcon from '../../../assets/icons/setting.svg';
 
 const services = [
   { title: 'Custom Software Development', icon: SupportIcon },

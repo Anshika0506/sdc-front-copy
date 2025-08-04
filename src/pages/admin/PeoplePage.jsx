@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-import save from "../../assets/save.png";
-import attachicon from "../../assets/attachicon.png";
-import edit from "../../assets/edit.png";
-import deletei from "../../assets/delete.png";
-import cross from "../../assets/Group.svg";
-import frame1 from "../../assets/profile1.jpg";
-import frame2 from "../../assets/profile1.jpg";
-import frame3 from "../../assets/profile1.jpg";
-import frame4 from "../../assets/profile1.jpg";
+import save from "../../assets/icons/save.png";
+import attachicon from "../../assets/icons/attachicon.png";
+import edit from "../../assets/icons/edit.png";
+import deletei from "../../assets/icons/delete.png";
+import cross from "../../assets/graphics/Group.svg";
+import frame1 from "../../assets/profiles/profile1.jpg";
+import frame2 from "../../assets/profiles/profile1.jpg";
+import frame3 from "../../assets/profiles/profile1.jpg";
+import frame4 from "../../assets/profiles/profile1.jpg";
 import { getPeople } from "../../api/Admin/People/getPeople";
 import { postPeople } from "../../api/Admin/People/postPeople";
 import { updatePeople } from "../../api/Admin/People/updatePeople";

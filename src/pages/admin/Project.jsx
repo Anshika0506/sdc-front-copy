@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import project from "../../assets/project.png";
-import edit from "../../assets/edit.png";
-import trash from "../../assets/delete.png";
-import cross from "../../assets/cross.svg";
-import save from "../../assets/save.png";
-import plus from "../../assets/add.png";
+import project from "../../assets/images/project.png";
+import edit from "../../assets/icons/edit.png";
+import trash from "../../assets/icons/delete.png";
+import cross from "../../assets/icons/cross.svg";
+import save from "../../assets/icons/save.png";
+import plus from "../../assets/icons/add.png";
 import { addProject } from '../../api/Admin/Project/addProject';
 import { getProject } from '../../api/Admin/Project/getProject';
 import { updateProject } from '../../api/Admin/Project/updateProject';

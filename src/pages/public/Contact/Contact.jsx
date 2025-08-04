@@ -1,8 +1,8 @@
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import React, { useState, useRef, useEffect } from "react"; // Import React
-import meshGradient from "../../../assets/mesh-gradient.webp";
-import instagramIcon from "../../../assets/Contact/instagramIcon.svg";
-import linkedinIcon from "../../../assets/Contact/linkedinIcon.svg";
+import meshGradient from "../../../assets/images/mesh-gradient.webp";
+import instagramIcon from "../../../assets/social/instagramIcon.svg";
+import linkedinIcon from "../../../assets/social/linkedinIcon.svg";
 import { postContact } from "../../../api/Public/postContact";
 import { getFAQs } from "../../../api/Public/faq"; // ✅ public API
 

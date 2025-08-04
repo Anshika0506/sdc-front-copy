@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import part1 from '../../assets/404PageGIF/404part-1.mp4';
-import part2 from '../../assets/404PageGIF/404part-2.mp4';
+import part1 from '../../assets/videos/404part-1.mp4';
+import part2 from '../../assets/videos/404part-2.mp4';
 
 const Error404Page = () => {
   const [showLoopVideo, setShowLoopVideo] = useState(false);

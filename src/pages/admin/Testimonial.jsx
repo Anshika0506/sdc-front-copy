@@ -3,13 +3,13 @@ import { getTestimonials } from '../../api/Public/getTestimonials';
 import { addTestimonial } from '../../api/Admin/Testimonial/addTestimonial';
 import { updateTestimonial } from '../../api/Admin/Testimonial/updateTestimonial';
 import { deleteTestimonial } from '../../api/Admin/Testimonial/deleteTestimonial';
-import profile1 from "../../assets/alumni1.svg";
-import save from "../../assets/save.png";
-import add from "../../assets/add.png";
-import edit from "../../assets/edit.png";
-import deletei from "../../assets/delete.png";
-import cross from "../../assets/group.svg";
-import pencil from "../../assets/pencil.png";
+import profile1 from "../../assets/graphics/alumni1.svg";
+import save from "../../assets/icons/save.png";
+import add from "../../assets/icons/add.png";
+import edit from "../../assets/icons/edit.png";
+import deletei from "../../assets/icons/delete.png";
+import cross from "../../assets/graphics/Group.svg";
+import pencil from "../../assets/icons/pencil.png";
 
 const Main = () => {
   const [testimonials, setTestimonials] = useState([]);

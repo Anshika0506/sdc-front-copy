@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import icon from "../../../assets/icon.svg";
+import { NavLink, Link } from "react-router-dom";
+import icon from "../../../assets/icons/icon.svg";
 
 const IgniteIdeaSection = () => {
   return (

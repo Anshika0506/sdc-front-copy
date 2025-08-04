@@ -1,7 +1,7 @@
 // File: components/PartnersAndTeam.jsx
 import React from "react";
-import partner1 from "../../../assets/partner1.svg";
-import partner2 from "../../../assets/partner2.svg";
+import partner1 from "../../../assets/graphics/partner1.svg";
+import partner2 from "../../../assets/graphics/partner2.svg";
 
 const PartnersAndTeam = () => {
   React.useEffect(() => {

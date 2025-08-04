@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import alumni3 from "../../../assets/alumni3.svg";
-import leftArrow from "../../../assets/leftArrow.svg";
-import rightArrow from "../../../assets/rightArrow.svg";
+import alumni3 from "../../../assets/graphics/alumni3.svg";
+import leftArrow from "../../../assets/buttons/leftarrow.svg";
+import rightArrow from "../../../assets/buttons/rightarrow.svg";
 import { getGoldenAlumini } from "../../../api/Public/getGoldenAlumni"; 
 
 export default function AlumniCarousel() {

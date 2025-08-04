@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import meshGradient from "../../../assets/mesh-gradient.webp";
+import meshGradient from "../../../assets/images/mesh-gradient.webp";
 import { X, Calendar, Loader2 } from "lucide-react";
 import { getAllGalleryImages } from "../../../api/gallery"; // Adjust path as needed
 

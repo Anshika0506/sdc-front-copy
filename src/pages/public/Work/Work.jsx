@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import backgroundImage from '../../../assets/mesh-gradient.webp';
-import projectImage from '../../../assets/project.png';
-import externalLinkIcon from '../../../assets/breakpoint=Tablet, icon=external-link.png';
+import backgroundImage from '../../../assets/images/mesh-gradient.webp';
+import projectImage from '../../../assets/images/project.png';
+import externalLinkIcon from '../../../assets/icons/breakpoint=Tablet, icon=external-link.png';
 import { useNavigate } from 'react-router-dom'; 
 import { getProject } from "../../../api/Public/getProjectDetails";
 
