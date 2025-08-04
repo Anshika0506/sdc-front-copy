@@ -15,4 +15,5 @@ export const getContact = async () => {
     // Don't return empty array - let the error bubble up so components can handle it properly
     throw error;
   }
+  
 };
